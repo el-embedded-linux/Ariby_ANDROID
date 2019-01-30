@@ -31,13 +31,13 @@ public class SplashActivity extends AppCompatActivity {
     private void StartAnimations() {
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.alpha);
         anim.reset();
-        LinearLayout l=(LinearLayout) findViewById(R.id.lin_lay);
+        LinearLayout l=findViewById(R.id.lin_lay);
         l.clearAnimation();
         l.startAnimation(anim);
 
         anim = AnimationUtils.loadAnimation(this, R.anim.translate);
         anim.reset();
-        ImageView iv = (ImageView) findViewById(R.id.splash);
+        ImageView iv = findViewById(R.id.splash);
         iv.clearAnimation();
         iv.startAnimation(anim);
 
@@ -52,7 +52,7 @@ public class SplashActivity extends AppCompatActivity {
                         waited += 100;
                     }
                     Intent intent = new Intent(SplashActivity.this,
-                            MainActivity.class); // MainActivity가 이름이 아닐경우 바꿔줘야함
+                            StartActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(intent);
                     SplashActivity.this.finish();

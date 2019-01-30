@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.el.ariby.AgeActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#ffffff">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/back"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:background="@color/colorWhite"
+                android:drawableStart="@drawable/ic_arrow_back_black_24dp"
+                android:drawableLeft="@drawable/ic_arrow_back_black_24dp" />
+
+            <Button
+                android:id="@+id/jump"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="280dp"
+                android:background="@color/colorWhite"
+                android:text="넘어가기"
+                android:textColor="@color/colorAccent" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="출생년도가 어떻게 되나요?"
+                android:textStyle="bold"
+                android:padding="25dp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="40dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="60dp"
+                android:layout_marginTop="2dp"
+                android:text="날짜를 선택하세요"
+                android:textColor="@color/colorAccent"
+                android:textSize="35sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="다음"
+                android:layout_marginTop="25dp"
+                android:textSize="18dp"
+                android:layout_marginRight="25dp"
+                android:background="@color/colorButton"
+                android:textColor="@color/colorPrimaryDark"
+                android:id="@+id/next"
+                android:drawableEnd="@drawable/ic_chevron_right_black_24dp"
+                android:drawableRight="@drawable/ic_chevron_right_black_24dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.el.ariby.GenderActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/colorWhite">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/back"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:background="@color/colorWhite"
+                android:drawableStart="@drawable/ic_arrow_back_black_24dp"
+                android:drawableLeft="@drawable/ic_arrow_back_black_24dp" />
+
+            <Button
+                android:id="@+id/jump"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="280dp"
+                android:background="@color/colorWhite"
+                android:text="넘어가기"
+                android:textColor="@color/colorAccent" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="성별이 어떻게 되나요?"
+                android:textStyle="bold"
+                android:padding="25dp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="50dp"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp">
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="83dp"
+                android:layout_marginBottom="70dp"
+                android:checkedButton="@+id/btnRadio1"
+                android:orientation="horizontal"
+                android:id="@+id/radioGroup">
+
+                <RadioButton
+                    android:id="@id/btnRadio1"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/activity_gender_male_img"
+                    android:button="@android:color/transparent" />
+
+                <RadioButton
+                    android:id="@+id/btnRadio2"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginLeft="65dp"
+                    android:background="@drawable/activity_gender_female_img"
+                    android:button="@android:color/transparent" />
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignStart="@+id/radioGroup"
+                android:layout_marginStart="19dp"
+                android:text="남"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:textSize="40dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/radioGroup"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="16dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="여"
+                android:textStyle="bold"
+                android:textSize="40dp" />
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="다음"
+                android:layout_marginTop="50dp"
+                android:textSize="18dp"
+                android:layout_marginRight="25dp"
+                android:background="@color/colorButton"
+                android:textColor="@color/colorPrimaryDark"
+                android:id="@+id/next"
+                android:drawableEnd="@drawable/ic_chevron_right_black_24dp"
+                android:drawableRight="@drawable/ic_chevron_right_black_24dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
