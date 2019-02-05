@@ -29,7 +29,7 @@ public class GenderActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent= new Intent(getApplicationContext(),LoginActivity.class);
+                Intent intent= new Intent(getApplicationContext(), JoiningActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.anim_slide_out_left,R.anim.anim_slide_in_right);
 
@@ -38,7 +38,7 @@ public class GenderActivity extends AppCompatActivity {
         jump.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent= new Intent(getApplicationContext(),LoginActivity.class);
+                Intent intent= new Intent(getApplicationContext(), JoiningActivity.class);
                 startActivity(intent);
 
             }

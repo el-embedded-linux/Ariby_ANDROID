@@ -10,15 +10,25 @@
     android:paddingRight="20dp"
     android:paddingBottom="15dp"
     android:background="@color/colorWhite"
-    tools:context="com.el.ariby.LoginActivity">
+    tools:context="com.el.ariby.JoiningActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="맞춤이 완료 되었습니다!"
+        android:textColor="#1DDB16"
+        android:textSize="70px"
+        android:id="@+id/textView"
+        />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="40px"
-        android:text="환영합니다!"
-        android:textColor="#000000"
-        android:textSize="35sp" />
+        android:text="계정 만들기"
+        android:textColor="#000"
+        android:textSize="35sp"
+        />
 
     <TextView
         android:layout_width="match_parent"
@@ -28,7 +38,7 @@
         android:textColor="#8C8C8C" />
 
     <EditText
-        android:id="@+id/login_email"
+        android:id="@+id/joining_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#000" />
@@ -41,18 +51,18 @@
         android:textColor="#8C8C8C" />
 
     <EditText
-        android:id="@+id/login_pw"
+        android:id="@+id/joining_pw"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:textColor="#000" />
 
     <Button
-        android:id="@+id/login_button"
+        android:id="@+id/joining_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50px"
         android:background="@drawable/activity_login_button"
-        android:text="로그인"
+        android:text="회원가입"
         android:textColor="#ffffff" />
 </LinearLayout>

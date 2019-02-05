@@ -11,6 +11,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,13 +20,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StartActivity"/>
+        <activity android:name=".StartActivity" />
         <activity android:name=".TallActivity" />
         <activity android:name=".WeightActivity" />
         <activity android:name=".GenderActivity" />
         <activity android:name=".AgeActivity" />
-        <activity android:name=".LoginActivity" />
-
+        <activity android:name=".JoiningActivity" />
     </application>
 
 </manifest>
