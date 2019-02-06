@@ -2,6 +2,7 @@ package com.el.ariby;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -15,10 +16,12 @@ import java.util.Calendar;
 
 public class AgeActivity extends AppCompatActivity {
     private static final String TAG = "StartActivity";
+    public final String PREFERENCE = "com.el.ariby_joining";
 
     private TextView mDisplayDate;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     Button next,jump,back;
+    String date,preference_date;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,13 +51,15 @@ public class AgeActivity extends AppCompatActivity {
                 month = month + 1;
                 Log.d(TAG, "onDateSet: mm/dd/yyy: " + month + "/" + day + "/" + year);
 
-                String date = year + " / " + month + " / " + day;
+                date = year + " / " + month + " / " + day;
+                preference_date = year + "-" + month + "-" + day;
                 mDisplayDate.setText(date);
             }
         };
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setPreference("age",preference_date);
                 Intent intent= new Intent(getApplicationContext(),TallActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.anim_slide_out_left,R.anim.anim_slide_in_right);
@@ -77,6 +82,12 @@ public class AgeActivity extends AppCompatActivity {
             }
         });
 
+    }
+    public void setPreference(String key, String value){
+        SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(key, value);
+        editor.commit();
     }
 }
 

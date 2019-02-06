@@ -6,4 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="hello"/>
 </android.support.constraint.ConstraintLayout>

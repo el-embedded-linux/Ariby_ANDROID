@@ -62,17 +62,17 @@
                 android:layout_marginBottom="70dp"
                 android:checkedButton="@+id/btnRadio1"
                 android:orientation="horizontal"
-                android:id="@+id/radioGroup">
+                android:id="@+id/gendergrp">
 
                 <RadioButton
-                    android:id="@id/btnRadio1"
+                    android:id="@+id/radio_male"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:background="@drawable/activity_gender_male_img"
                     android:button="@android:color/transparent" />
 
                 <RadioButton
-                    android:id="@+id/btnRadio2"
+                    android:id="@+id/radio_female"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginLeft="65dp"
@@ -84,7 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignStart="@+id/radioGroup"
+                android:layout_alignStart="@+id/gendergrp"
                 android:layout_marginStart="19dp"
                 android:text="남"
                 android:textColor="@color/colorPrimaryDark"
@@ -94,7 +94,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/radioGroup"
+                android:layout_alignEnd="@+id/gendergrp"
                 android:layout_alignParentBottom="true"
                 android:layout_marginEnd="16dp"
                 android:textColor="@color/colorPrimaryDark"
