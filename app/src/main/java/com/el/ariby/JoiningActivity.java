@@ -79,7 +79,7 @@ public class JoiningActivity extends AppCompatActivity {
                                     }
 
 
-                                    UserModel userInfo = new UserModel(email,password,weight,age,tall,gender);
+                                    UserModel userInfo = new UserModel(weight,age,tall,gender);
                                     myRef.child("user").child(firebaseAuth.getUid()).setValue(userInfo);
                                     Intent intent = new Intent(JoiningActivity.this, MainActivity.class);
                                     startActivity(intent);
@@ -106,21 +106,13 @@ public class JoiningActivity extends AppCompatActivity {
         SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
         return pref.getInt(key, 0);
     }
-    public void setPreference(String key, int value){
-        SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt(key, value);
-        editor.commit();
-    }
 }
 class UserModel {
-    String email,password,age;
+    String age;
     Boolean gender;
     int weight,tall;
 
-    public UserModel(String email, String password, int weight, String age, int tall, Boolean gender) {
-        this.email=email;
-        this.password=password;
+    public UserModel(int weight, String age, int tall, Boolean gender) {
         this.weight=weight;
         this.age=age;
         this.tall=tall;
