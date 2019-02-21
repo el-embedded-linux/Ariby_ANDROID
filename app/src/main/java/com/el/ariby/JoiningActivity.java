@@ -2,10 +2,12 @@ package com.el.ariby;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +18,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -28,6 +32,7 @@ public class JoiningActivity extends AppCompatActivity {
     boolean gender=true;
     String age="";
     int tall=0;
+    String nickName="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +79,13 @@ public class JoiningActivity extends AppCompatActivity {
                                         gender=getPreferenceBoolean("gender"); // 성별
                                         age=getPreferenceString("age"); // 나이
                                         tall=getPreferenceInt("tall"); // 키
+                                        nickName=getPreferenceString("displayName");
                                     } catch (Exception e) { // 사용자가 정보(키,몸무게 등)를 입력하지 않았을 경우, 변수 값에 DEFAULT 값 설정해 두었기 때문에 비워둠
 
                                     }
 
 
-                                    UserModel userInfo = new UserModel(weight,age,tall,gender);
+                                    UserModel userInfo = new UserModel(weight,age,tall,gender,nickName);
                                     myRef.child("user").child(firebaseAuth.getUid()).setValue(userInfo);
                                     Intent intent = new Intent(JoiningActivity.this, MainActivity.class);
                                     startActivity(intent);
@@ -89,8 +95,21 @@ public class JoiningActivity extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "등록 에러", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                UserProfileChangeRequest profileUpdate=new UserProfileChangeRequest.Builder().setDisplayName(nickName).setPhotoUri(Uri.parse("https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/displayImage.png?alt=media&token=210079dc-d9af-43b4-a364-d7b5deb47a05")).build();
+
+                                user.updateProfile(profileUpdate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(getApplicationContext(),"완료",Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
                             }
                         });
+
+
             }
         });
     }
@@ -108,14 +127,15 @@ public class JoiningActivity extends AppCompatActivity {
     }
 }
 class UserModel {
-    String age;
+    String age,nickname;
     Boolean gender;
     int weight,tall;
 
-    public UserModel(int weight, String age, int tall, Boolean gender) {
+    public UserModel(int weight, String age, int tall, Boolean gender,String nickname) {
         this.weight=weight;
         this.age=age;
         this.tall=tall;
         this.gender=gender;
+        this.nickname=nickname;
     }
 }
