@@ -8,17 +8,4 @@
     android:orientation="vertical"
     tools:context=".HomeFragment">
 
-    <ImageView
-        android:id="@+id/imagetest"
-        android:layout_width="match_parent"
-        android:layout_height="300dp" />
-
-    <TextView
-        android:id="@+id/test"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="home"
-        android:textColor="#000"
-        android:textSize="50dp"/>
 </LinearLayout>
