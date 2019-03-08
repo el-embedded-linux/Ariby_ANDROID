@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" >
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,7 +11,7 @@
     android:paddingRight="20dp"
     android:paddingBottom="15dp"
     android:background="@color/colorWhite"
-    tools:context="com.el.ariby.LoginActivity">
+    tools:context="com.el.ariby.ui.login.LoginActivity">
 
     <TextView
         android:layout_width="match_parent"
@@ -28,7 +29,7 @@
         android:textColor="#8C8C8C" />
 
     <EditText
-        android:id="@+id/login_email"
+        android:id="@+id/et_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#000" />
@@ -41,14 +42,14 @@
         android:textColor="#8C8C8C" />
 
     <EditText
-        android:id="@+id/login_pw"
+        android:id="@+id/et_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:textColor="#000" />
 
     <Button
-        android:id="@+id/login_button"
+        android:id="@+id/btn_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50px"
@@ -56,3 +57,4 @@
         android:text="로그인"
         android:textColor="#ffffff" />
 </LinearLayout>
+</layout>

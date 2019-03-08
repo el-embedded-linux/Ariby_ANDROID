@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<layout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" >
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.el.ariby.GenderActivity">
+    tools:context="com.el.ariby.ui.join.GenderActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/back"
+                android:id="@+id/btn_back"
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -27,7 +27,7 @@
                 android:drawableLeft="@drawable/ic_arrow_back_black_24dp" />
 
             <Button
-                android:id="@+id/jump"
+                android:id="@+id/btn_jump"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="280dp"
@@ -53,6 +53,7 @@
             android:layout_height="180dp">
 
             <RadioGroup
+                android:id="@+id/grp_gender"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
@@ -61,8 +62,7 @@
                 android:layout_marginStart="83dp"
                 android:layout_marginBottom="70dp"
                 android:checkedButton="@+id/btnRadio1"
-                android:orientation="horizontal"
-                android:id="@+id/gendergrp">
+                android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/radio_male"
@@ -84,7 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignStart="@+id/gendergrp"
+                android:layout_alignStart="@+id/grp_gender"
                 android:layout_marginStart="19dp"
                 android:text="남"
                 android:textColor="@color/colorPrimaryDark"
@@ -94,7 +94,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/gendergrp"
+                android:layout_alignEnd="@+id/grp_gender"
                 android:layout_alignParentBottom="true"
                 android:layout_marginEnd="16dp"
                 android:textColor="@color/colorPrimaryDark"
@@ -107,6 +107,7 @@
             android:layout_height="match_parent"
             android:gravity="right">
             <Button
+                android:id="@+id/btn_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="다음"
@@ -115,9 +116,9 @@
                 android:layout_marginRight="25dp"
                 android:background="@color/colorButton"
                 android:textColor="@color/colorPrimaryDark"
-                android:id="@+id/next"
                 android:drawableEnd="@drawable/ic_chevron_right_black_24dp"
                 android:drawableRight="@drawable/ic_chevron_right_black_24dp"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
+</layout>

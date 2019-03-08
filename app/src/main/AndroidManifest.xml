@@ -13,8 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".NicknameActivity" />
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".ui.join.NicknameActivity" />
+        <activity android:name=".ui.login.LoginActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".SplashActivity">
             <intent-filter>
@@ -23,12 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StartActivity" />
-        <activity android:name=".TallActivity" />
-        <activity android:name=".WeightActivity" />
-        <activity android:name=".GenderActivity" />
-        <activity android:name=".AgeActivity" />
-        <activity android:name=".JoiningActivity" />
+        <activity android:name=".FirstActivity" />
+        <activity android:name=".ui.join.HeightActivity" />
+        <activity android:name=".ui.join.WeightActivity" />
+        <activity android:name=".ui.join.GenderActivity" />
+        <activity android:name=".ui.join.AgeActivity" />
+        <activity android:name=".ui.join.JoiningActivity" />
     </application>
 
 </manifest>

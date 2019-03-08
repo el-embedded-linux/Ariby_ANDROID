@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,35 +11,32 @@
     android:paddingRight="20dp"
     android:paddingBottom="15dp"
     android:background="@color/colorWhite"
-    tools:context="com.el.ariby.JoiningActivity">
+    tools:context="com.el.ariby.ui.join.JoiningActivity">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="맞춤이 완료 되었습니다!"
         android:textColor="#1DDB16"
-        android:textSize="70px"
-        android:id="@+id/textView"
-        />
+        android:textSize="25sp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="40px"
+        android:paddingTop="15dp"
         android:text="계정 만들기"
         android:textColor="#000"
-        android:textSize="35sp"
-        />
+        android:textSize="35sp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="70px"
+        android:paddingTop="15dp"
         android:text="이메일"
         android:textColor="#8C8C8C" />
 
     <EditText
-        android:id="@+id/joining_email"
+        android:id="@+id/et_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#000" />
@@ -46,23 +44,24 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="70px"
+        android:paddingTop="20dp"
         android:text="비밀번호"
         android:textColor="#8C8C8C" />
 
     <EditText
-        android:id="@+id/joining_pw"
+        android:id="@+id/et_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:textColor="#000" />
 
     <Button
-        android:id="@+id/joining_button"
+        android:id="@+id/btn_joining"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50px"
+        android:layout_marginTop="15dp"
         android:background="@drawable/activity_login_button"
         android:text="회원가입"
         android:textColor="#ffffff" />
 </LinearLayout>
+</layout>

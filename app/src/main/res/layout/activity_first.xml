@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<android.support.constraint.ConstraintLayout
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StartActivity">
+    tools:context=".FirstActivity">
     <VideoView
-        android:id="@+id/videoView"
+        android:id="@+id/vdo_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <LinearLayout
@@ -38,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <Button
-            android:id="@+id/btn_start"
+            android:id="@+id/btn_new_user"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="center_horizontal|bottom"
@@ -50,7 +52,7 @@
             android:textColor="@android:color/white"
             android:textStyle="bold"/>
         <Button
-            android:id="@+id/btn_restart"
+            android:id="@+id/btn_old_user"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="center_horizontal|bottom"
@@ -63,3 +65,4 @@
             android:textStyle="bold"/>
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>
+</layout>
