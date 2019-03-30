@@ -1,23 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     tools:context=".ui.main.menu.ClubFragment">
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+
+    <TableLayout
+        android:id="@+id/layout_tab"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="CLUB"
-        android:textColor="#ff0000"
-        android:textSize="50sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</android.support.constraint.ConstraintLayout>
+        android:stretchColumns="0,1,2,3">
+        <TableRow>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FF0000"
+                android:textColor="#000"
+                android:text="추천"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FF0000"
+                android:textColor="#000"
+                android:text="만들기"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FF0000"
+                android:textColor="#000"
+                android:text="검색"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FF0000"
+                android:textColor="#000"
+                android:text="관리"/>
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/txt_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#3F3737"
+        android:gravity="center"
+        android:text="리스트"
+        android:textColor="#fff"
+        android:layout_below="@+id/layout_tab"/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_list">
+
+    </ListView>
+    
+</RelativeLayout>

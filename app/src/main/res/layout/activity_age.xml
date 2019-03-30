@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="#ffffff">
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -23,7 +23,9 @@
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:background="@color/colorWhite"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="#00FF0000"
                 android:drawableStart="@drawable/ic_arrow_back_black_24dp"
                 android:drawableLeft="@drawable/ic_arrow_back_black_24dp" />
 
@@ -31,11 +33,13 @@
                 android:id="@+id/btn_jump"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="280dp"
-                android:background="@color/colorWhite"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:background="#00FF0000"
                 android:text="넘어가기"
-                android:textColor="@color/colorAccent" />
-        </LinearLayout>
+                android:textColor="@color/colorAccent"
+                android:textSize="14sp" />
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="180dp">
@@ -49,7 +53,7 @@
                 android:textSize="40dp"/>
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="100dp">
 
@@ -57,13 +61,16 @@
                 android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="60dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
                 android:layout_marginTop="2dp"
+                android:gravity="center"
                 android:text="날짜를 선택하세요"
                 android:textColor="@color/colorAccent"
                 android:textSize="35sp" />
-        </LinearLayout>
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
