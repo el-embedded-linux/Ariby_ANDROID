@@ -4,10 +4,30 @@ public class ClubItem {
     int mainLogo; // 클럽 대표사진
     String title; // 클럽명
     String nick; // 닉네임
-    String number; // 인원수
+    long number; // 인원수
     String map; // 위치명
 
-    public ClubItem(int mainLogo, String title, String nick, String number, String map) {
+    public ClubItem(String title) {
+        this.title = title;
+    }
+
+    public ClubItem(String title, long num) {
+        this.title = title;
+        this.number = num;
+    }
+    public ClubItem(String title, long num, String location) {
+        this.title = title;
+        this.number = num;
+        this.map=location;
+    }
+    public ClubItem(String nick, String title, long num, String location) {
+        this.nick = nick;
+        this.title = title;
+        this.number = num;
+        this.map=location;
+    }
+
+    public ClubItem(int mainLogo, String title, String nick, long number, String map) {
         this.mainLogo = mainLogo;
         this.title = title;
         this.nick = nick;
@@ -27,7 +47,7 @@ public class ClubItem {
         return nick;
     }
 
-    public String getNumber() {
+    public long getNumber() {
         return number;
     }
 
@@ -47,7 +67,7 @@ public class ClubItem {
         this.nick = nick;
     }
 
-    public void setNumber(String number) {
+    public void setNumber(long number) {
         this.number = number;
     }
 
