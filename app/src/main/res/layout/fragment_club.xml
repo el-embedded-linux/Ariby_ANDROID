@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context=".ui.main.menu.ClubFragment">
+    tools:context=".ui.main.menu.Club.ClubFragment">
 
     <TableLayout
         android:id="@+id/layout_tab"
@@ -50,9 +50,12 @@
         android:textColor="#fff"
         android:layout_below="@+id/layout_tab"/>
     <ListView
+        android:id="@+id/list_club"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_list">
+        android:layout_below="@+id/txt_list"
+        android:divider="#979797"
+        android:dividerHeight="2px">
 
     </ListView>
     

@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.el.ariby.ui.main.menu.Club.ClubFragment;
+
 public class ContentsPagerAdapter extends FragmentStatePagerAdapter {
     private int mPageCount;
     private ClubFragment clubFragment=new ClubFragment();

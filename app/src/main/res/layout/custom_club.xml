@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".ui.main.menu.Club.CustomClub">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp">
+    <ImageView
+        android:id="@+id/img_main"
+        android:layout_width="65dp"
+        android:layout_height="56dp"
+        android:src="@drawable/ic_room_black_24dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="5dp">
+
+        <TextView
+            android:id="@+id/txt_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="2dp"
+            android:text="자전거로 출퇴근하는 모임"
+            android:textColor="#000"
+            android:textSize="18dp" />
+        <RelativeLayout
+            android:id="@+id/relative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="5dp">
+            <ImageView
+                android:id="@+id/img_nick"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/ic_account_circle_black_24dp"/>
+
+            <TextView
+                android:id="@+id/txt_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/img_nick"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/img_nick"
+                android:text="nickname"
+                android:textColor="#000" />
+            <ImageView
+                android:id="@+id/img_perlogo"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/ic_group_black_24dp"
+                android:layout_toRightOf="@+id/txt_nickname"/>
+
+            <TextView
+                android:id="@+id/txt_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/img_nick"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/img_perlogo"
+                android:text="6"
+                android:textColor="#000" />
+            <ImageView
+                android:id="@+id/img_map"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/ic_room_black_24dp"
+                android:layout_toRightOf="@id/txt_number"/>
+
+            <TextView
+                android:id="@+id/txt_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/img_nick"
+                android:layout_toRightOf="@+id/img_map"
+                android:text="서울특별시 구로구"
+                android:textColor="#000" />
+        </RelativeLayout>
+    </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
