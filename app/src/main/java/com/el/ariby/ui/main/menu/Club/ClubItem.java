@@ -1,7 +1,7 @@
 package com.el.ariby.ui.main.menu.Club;
 
 public class ClubItem {
-    int mainLogo; // 클럽 대표사진
+    String mainLogo; // 클럽 대표사진
     String title; // 클럽명
     String nick; // 닉네임
     long number; // 인원수
@@ -15,27 +15,19 @@ public class ClubItem {
         this.title = title;
         this.number = num;
     }
-    public ClubItem(String title, long num, String location) {
+    public ClubItem(String title, long num, String map) {
         this.title = title;
         this.number = num;
-        this.map=location;
+        this.map=map;
     }
-    public ClubItem(String nick, String title, long num, String location) {
-        this.nick = nick;
+    public ClubItem(String mainLogo,String title, long num, String map){
+        this.mainLogo=mainLogo;
         this.title = title;
         this.number = num;
-        this.map=location;
+        this.map=map;
     }
 
-    public ClubItem(int mainLogo, String title, String nick, long number, String map) {
-        this.mainLogo = mainLogo;
-        this.title = title;
-        this.nick = nick;
-        this.number = number;
-        this.map = map;
-    }
-
-    public int getMainLogo() {
+    public String getMainLogo() {
         return mainLogo;
     }
 
@@ -55,7 +47,7 @@ public class ClubItem {
         return map;
     }
 
-    public void setMainLogo(int mainLogo) {
+    public void setMainLogo(String mainLogo) {
         this.mainLogo = mainLogo;
     }
 

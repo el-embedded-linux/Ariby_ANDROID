@@ -1,5 +1,6 @@
 package com.el.ariby.ui.main.menu.Club;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.el.ariby.R;
+import com.el.ariby.ui.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,22 +25,36 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class ClubFragment extends Fragment {
+    Button btnCreat;
     ListView listClub;
     ClubAdapter adapter;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_club, container, false);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("club");
+
+        btnCreat = v.findViewById(R.id.btn_create);
+
+        btnCreat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ClubCreateActivity.class);
+                startActivity(intent);
+            }
+        });
+
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String url = snapshot.child("clubImageURL").getValue().toString();
                     String club = snapshot.getKey();
                     long num = snapshot.child("member").getChildrenCount();
                     String location = snapshot.child("location").getValue().toString();
-                    adapter.addItem(new ClubItem(club,num,location));
+                    adapter.addItem(new ClubItem(url, club, num, location));
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -50,16 +67,7 @@ public class ClubFragment extends Fragment {
         listClub = v.findViewById(R.id.list_club);
         adapter = new ClubAdapter();
 
-        adapter.addItem(new ClubItem(R.drawable.testimage, "아리비 자전거 회원들", "아리비", 14, "서울시 구로구"));
-        adapter.addItem(new ClubItem(R.drawable.testimage, "아리비 자전거 회원들", "아리비", 14, "서울시 구로구"));
-        adapter.addItem(new ClubItem(R.drawable.testimage, "아리비 자전거 회원들", "아리비", 14, "서울시 구로구"));
-        adapter.addItem(new ClubItem(R.drawable.testimage, "아리비 자전거 회원들", "아리비", 14, "서울시 구로구"));
-        adapter.addItem(new ClubItem(R.drawable.testimage, "아리비 자전거 회원들", "아리비", 14, "서울시 구로구"));
-        adapter.addItem(new ClubItem(R.drawable.testimage, "아리비 자전거 회원들", "아리비", 14, "서울시 구로구"));
-        adapter.addItem(new ClubItem(R.drawable.testimage, "아리비 자전거 회원들", "아리비", 14, "서울시 구로구"));
-        adapter.addItem(new ClubItem(R.drawable.testimage, "아리비 자전거 회원들", "아리비", 14, "서울시 구로구"));
-        adapter.addItem(new ClubItem(R.drawable.testimage, "아리비 자전거 회원들", "아리비", 14, "서울시 구로구"));
-        adapter.addItem(new ClubItem(R.drawable.testimage, "아리비 자전거 회원들", "아리비", 14, "서울시 구로구"));
+        adapter.addItem(new ClubItem("https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/bike1.png?alt=media&token=1c7546ce-043f-4db6-81d2-6e152219d20e", "아리비 자전거 회원들", 14, "서울시 구로구"));
 
         listClub.setAdapter(adapter);
 

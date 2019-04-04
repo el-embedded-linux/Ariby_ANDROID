@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.el.ariby.R;
 
 public class CustomClub extends LinearLayout {
@@ -26,8 +27,8 @@ public class CustomClub extends LinearLayout {
         init(context);
     }
 
-    public void setImgNickMain(int resId) {
-        imgNickMain.setImageResource(resId);
+    public void setImgNickMain(String url) {
+        Glide.with(this).load(url).into(imgNickMain);
     }
 
     public void setTxtTitle(String title) {
@@ -47,14 +48,12 @@ public class CustomClub extends LinearLayout {
     }
 
     private void init(Context context) {
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.custom_club,this,true);
-        imgNickMain=findViewById(R.id.img_main);
-        txtTitle=findViewById(R.id.txt_title);
-        txtNickname=findViewById(R.id.txt_nickname);
-        txtNumber=findViewById(R.id.txt_number);
-        txtMap=findViewById(R.id.txt_map);
-
-
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.custom_club, this, true);
+        imgNickMain = findViewById(R.id.img_main);
+        txtTitle = findViewById(R.id.txt_title);
+        txtNickname = findViewById(R.id.txt_nickname);
+        txtNumber = findViewById(R.id.txt_number);
+        txtMap = findViewById(R.id.txt_map);
     }
 }
