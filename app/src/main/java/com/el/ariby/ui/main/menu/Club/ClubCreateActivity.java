@@ -1,22 +1,19 @@
 package com.el.ariby.ui.main.menu.Club;
 
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
-import com.el.ariby.MainActivity;
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityClubCreateBinding;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -27,7 +24,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -74,13 +70,7 @@ public class ClubCreateActivity extends AppCompatActivity {
         mBinding.btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               /* String name=mBinding.etName.getText().toString();
-                String commend = mBinding.etIntro.getText().toString();
-                String location = mBinding.etLocation.getText().toString();
-                ClubModel model = new ClubModel(commend,location);
-                ref.child("club").child(name).setValue(model);
-                */
-                UploadImageFileToFirebaseStorage();
+                UploadClubInfoToFirebase();
             }
         });
     }
@@ -106,34 +96,31 @@ public class ClubCreateActivity extends AppCompatActivity {
         ContentResolver contentResolver = getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
         return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
-
     }
 
-    public void UploadImageFileToFirebaseStorage() {
+    public void UploadClubInfoToFirebase() {
         if (FilePathUri != null) {
             final StorageReference storageReference2nd = storageReference.child(Storage_Path + System.currentTimeMillis() + "." + GetFileExtension(FilePathUri));
+            FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+            final String name = mBinding.etName.getText().toString();
+            String commend = mBinding.etIntro.getText().toString();
+            String location = mBinding.etLocation.getText().toString();
 
+            ref.child("club").child(name).setValue(new ClubModel(commend, location));
+            ref.child("club").child(name).child("member").child("superVisor").setValue(mUser.getUid());
             storageReference2nd.putFile(FilePathUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
                     Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
                     while (!urlTask.isSuccessful()) ;
                     Uri downloadUrl = urlTask.getResult();
-                    String name = mBinding.etName.getText().toString();
-                    String commend = mBinding.etIntro.getText().toString();
-                    String location = mBinding.etLocation.getText().toString();
-                    ClubModel model = new ClubModel(downloadUrl.toString(), commend, location);
-                    ClubModel model2 = new ClubModel(mUser.getUid());
-                    ref.child("club").child(name).setValue(model);
-                    ref.child("club").child(name).child("member").setValue(model2);
+                    ref.child("club").child(name).child("clubImageURL").setValue(downloadUrl.toString());
 
                     Toast.makeText(getApplicationContext(), "클럽이 생성되었습니다.", Toast.LENGTH_LONG).show();
                     finish();
                     overridePendingTransition(R.anim.not_move_activity, R.anim.rightout_activity);
                 }
             })
-                    // If something goes wrong .
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
@@ -149,15 +136,8 @@ public class ClubCreateActivity extends AppCompatActivity {
 class ClubModel {
     String commend;
     String location;
-    String clubImageURL;
-    String superVisor;
 
-    public ClubModel(String superVisor) {
-        this.superVisor = superVisor;
-    }
-
-    public ClubModel(String clubImageURL, String commend, String location) {
-        this.clubImageURL = clubImageURL;
+    public ClubModel(String commend, String location) {
         this.commend = commend;
         this.location = location;
     }

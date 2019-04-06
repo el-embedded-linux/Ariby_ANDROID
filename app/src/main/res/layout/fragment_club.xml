@@ -50,14 +50,17 @@
         android:text="리스트"
         android:textColor="#fff"
         android:layout_below="@+id/layout_tab"/>
-    <ListView
-        android:id="@+id/list_club"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_list"
-        android:divider="#979797"
-        android:dividerHeight="2px">
-
-    </ListView>
-    
+        android:layout_height="match_parent"
+        android:layout_below="@+id/txt_list">
+        <ListView
+            android:id="@+id/list_club"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="#979797"
+            android:dividerHeight="2px">
+        </ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +14,6 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.el.ariby.R;
-import com.el.ariby.ui.login.LoginActivity;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,20 +23,22 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class ClubFragment extends Fragment {
-    Button btnCreat;
+    Button btnCreate;
     ListView listClub;
     ClubAdapter adapter;
+    DatabaseReference ref;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_club, container, false);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("club");
+        ref = database.getReference("club");
+        final SwipeRefreshLayout mSwipeRefreshLayout = v.findViewById(R.id.swipe_layout);
 
-        btnCreat = v.findViewById(R.id.btn_create);
+        btnCreate = v.findViewById(R.id.btn_create);
 
-        btnCreat.setOnClickListener(new View.OnClickListener() {
+        btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ClubCreateActivity.class);
@@ -64,14 +64,66 @@ public class ClubFragment extends Fragment {
 
             }
         });
+
+
         listClub = v.findViewById(R.id.list_club);
         adapter = new ClubAdapter();
 
-        adapter.addItem(new ClubItem("https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/bike1.png?alt=media&token=1c7546ce-043f-4db6-81d2-6e152219d20e", "아리비 자전거 회원들", 14, "서울시 구로구"));
-
         listClub.setAdapter(adapter);
 
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        adapter.clearItem();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String url = snapshot.child("clubImageURL").getValue().toString();
+                            String club = snapshot.getKey();
+                            long num = snapshot.child("member").getChildrenCount();
+                            String location = snapshot.child("location").getValue().toString();
+                            adapter.addItem(new ClubItem(url, club, num, location));
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                adapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                adapter.clearItem();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String url = snapshot.child("clubImageURL").getValue().toString();
+                    String club = snapshot.getKey();
+                    long num = snapshot.child("member").getChildrenCount();
+                    String location = snapshot.child("location").getValue().toString();
+                    adapter.addItem(new ClubItem(url, club, num, location));
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     class ClubAdapter extends BaseAdapter {
@@ -105,6 +157,10 @@ public class ClubFragment extends Fragment {
             view.setTxtNumber(String.valueOf(item.getNumber()));
             view.setTxtMap(item.getMap());
             return view;
+        }
+
+        public void clearItem() {
+            items.clear();
         }
     }
 }
