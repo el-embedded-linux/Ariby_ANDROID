@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context=".ui.main.menu.Club.ClubFragment">
+    tools:context=".ui.main.menu.club.ClubFragment">
 
     <TableLayout
         android:id="@+id/layout_tab"
@@ -27,6 +27,7 @@
                 android:textColor="#000"
                 android:text="만들기"/>
             <Button
+                android:id="@+id/btn_find"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00FF0000"

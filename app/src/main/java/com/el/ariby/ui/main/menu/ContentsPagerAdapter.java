@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.el.ariby.ui.main.menu.Club.ClubFragment;
+import com.el.ariby.ui.main.menu.club.ClubFragment;
 
 public class ContentsPagerAdapter extends FragmentStatePagerAdapter {
     private int mPageCount;
@@ -14,7 +14,7 @@ public class ContentsPagerAdapter extends FragmentStatePagerAdapter {
     private HealthFragment healthFragment=new HealthFragment();
     private ChallengeFragment challengeFragment=new ChallengeFragment();
 
-    public ContentsPagerAdapter(FragmentManager fm,int pageCount) {
+    public  ContentsPagerAdapter(FragmentManager fm,int pageCount) {
         super(fm);
         this.mPageCount=pageCount;
     }

@@ -1,4 +1,4 @@
-package com.el.ariby.ui.main.menu.Club;
+package com.el.ariby.ui.main.menu.club;
 
 public class ClubItem {
     String mainLogo; // 클럽 대표사진
@@ -47,23 +47,4 @@ public class ClubItem {
         return map;
     }
 
-    public void setMainLogo(String mainLogo) {
-        this.mainLogo = mainLogo;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setNick(String nick) {
-        this.nick = nick;
-    }
-
-    public void setNumber(long number) {
-        this.number = number;
-    }
-
-    public void setMap(String map) {
-        this.map = map;
-    }
 }

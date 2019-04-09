@@ -1,4 +1,4 @@
-package com.el.ariby.ui.main.menu.Club;
+package com.el.ariby.ui.main.menu.club;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -56,4 +56,5 @@ public class CustomClub extends LinearLayout {
         txtNumber = findViewById(R.id.txt_number);
         txtMap = findViewById(R.id.txt_map);
     }
+
 }

@@ -1,4 +1,4 @@
-package com.el.ariby.ui.main.menu.Club;
+package com.el.ariby.ui.main.menu.club;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 public class ClubFragment extends Fragment {
     Button btnCreate;
+    Button btnFind;
     ListView listClub;
     ClubAdapter adapter;
     DatabaseReference ref;
@@ -37,11 +38,20 @@ public class ClubFragment extends Fragment {
         final SwipeRefreshLayout mSwipeRefreshLayout = v.findViewById(R.id.swipe_layout);
 
         btnCreate = v.findViewById(R.id.btn_create);
+        btnFind = v.findViewById(R.id.btn_find);
 
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ClubCreateActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnFind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ClubSearchActivity.class);
                 startActivity(intent);
             }
         });
@@ -94,7 +104,6 @@ public class ClubFragment extends Fragment {
 
                     }
                 });
-                adapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });

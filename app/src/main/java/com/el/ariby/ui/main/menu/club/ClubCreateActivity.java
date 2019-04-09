@@ -1,4 +1,4 @@
-package com.el.ariby.ui.main.menu.Club;
+package com.el.ariby.ui.main.menu.club;
 
 import android.content.ContentResolver;
 import android.content.Intent;

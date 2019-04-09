@@ -13,7 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.main.menu.Club.CustomClub"></activity>
+        <activity android:name=".ui.main.menu.club.ClubSearchActivity">
+        </activity>
+        <activity android:name=".ui.main.menu.club.ClubCreateActivity" />
         <activity android:name=".ui.join.NicknameActivity" />
         <activity android:name=".ui.login.LoginActivity" />
         <activity android:name=".MainActivity" />
