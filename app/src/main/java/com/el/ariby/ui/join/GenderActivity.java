@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityGenderBinding;
@@ -17,6 +18,8 @@ public class GenderActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN); // 풀스크린으로 세팅(상단바, 메뉴바 없어짐)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_gender);
 
         mBinding.btnBack.setOnClickListener(new View.OnClickListener() {

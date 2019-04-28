@@ -43,14 +43,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="180dp">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="키가 얼마나 되나요?"
-                android:textStyle="bold"
                 android:padding="25dp"
+                android:text="키가 얼마나 되나요?"
                 android:textColor="@color/colorPrimary"
-                android:textSize="50dp"/>
+                android:textSize="50dp"
+                android:textStyle="bold" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/navigation_home"
+        android:enabled="true"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="HOME" />
+        android:title="HOME"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navigation_menu"
-        android:icon="@drawable/ic_menu_black_24dp"
-        android:title="MENU" />
+        android:enabled="false"
+        android:title="MENU"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/navigation_info"
+        android:enabled="true"
         android:icon="@drawable/ic_info_outline_black_24dp"
-        android:title="INFO" />
+        android:iconTint="@color/colorBlack"
+        android:title="INFO"
+        app:showAsAction="ifRoom" />
 </menu>

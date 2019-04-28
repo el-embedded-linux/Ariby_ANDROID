@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.el.ariby.databinding.ActivityMainBinding;
 import com.el.ariby.ui.main.HomeFragment;
@@ -25,17 +26,13 @@ public class MainActivity extends AppCompatActivity {
         MainViewPager mainViewPager = new MainViewPager(getSupportFragmentManager());
         mBinding.vpMain.setAdapter(mainViewPager);
 
-        mBinding.bottomNavigationView.setOnNavigationItemSelectedListener(
+        mBinding.customBottomBar.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.navigation_home: {
                                 mBinding.vpMain.setCurrentItem(0);
-                                break;
-                            }
-                            case R.id.navigation_menu: {
-                                mBinding.vpMain.setCurrentItem(1);
                                 break;
                             }
                             case R.id.navigation_info: {
@@ -46,6 +43,12 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+        mBinding.floating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBinding.vpMain.setCurrentItem(1);
+            }
+        });
     }
 
     @Override
