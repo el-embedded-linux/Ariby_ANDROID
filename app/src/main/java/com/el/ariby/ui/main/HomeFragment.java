@@ -186,10 +186,10 @@ public class HomeFragment extends Fragment {
                     if (repo != null) {
                         mBinding.pm10.append("미세먼지 " + repo.getList().get(0).getPm10Value() + "㎍/㎥ \r\n");
                         mBinding.pm10.append("초미세먼지 " + repo.getList().get(0).getPm25Value() + "㎍/㎥ \r\n");
-                        mBinding.pm10.append("이산화질소 " + repo.getList().get(0).getNo2Grade() + "ppm \r\n");
-                        mBinding.pm10.append("오존 " + repo.getList().get(0).getO3Grade() + "ppm\r\n");
-                        mBinding.pm10.append("일산화탄소 " + repo.getList().get(0).getCoGrade()  + "ppm\r\n");
-                        mBinding.pm10.append("아황산가스 " + repo.getList().get(0).getSo2Grade() + "ppm\r\n");
+                        mBinding.pm10.append("이산화질소 " + repo.getList().get(0).getNo2Value() + "ppm \r\n");
+                        mBinding.pm10.append("오존 " + repo.getList().get(0).getO3Value() + "ppm\r\n");
+                        mBinding.pm10.append("일산화탄소 " + repo.getList().get(0).getCoValue()  + "ppm\r\n");
+                        mBinding.pm10.append("아황산가스 " + repo.getList().get(0).getSo2Value() + "ppm\r\n");
                     }
                 }
             }
