@@ -1,6 +1,6 @@
 package com.el.ariby.ui.api;
 
-import com.el.ariby.ui.api.data.GeoRepoResponse;
+import com.el.ariby.ui.api.response.GeoRepoResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

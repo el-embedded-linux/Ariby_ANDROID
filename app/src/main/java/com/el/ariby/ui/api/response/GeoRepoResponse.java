@@ -1,4 +1,4 @@
-package com.el.ariby.ui.api.data;
+package com.el.ariby.ui.api.response;
 
 import java.util.List;
 

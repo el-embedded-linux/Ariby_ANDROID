@@ -2,11 +2,10 @@ package com.el.ariby.ui.main;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +23,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import java.io.InputStream;
 
 public class InfoFragment extends Fragment {
 
@@ -40,10 +36,11 @@ public class InfoFragment extends Fragment {
     Button add_friend;
     View v;
     FirebaseUser user;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_info, container,false);
+        v = inflater.inflate(R.layout.fragment_info, container, false);
         displayName = v.findViewById(R.id.fragment_info_profile_displayName);
         photo = v.findViewById(R.id.fragment_info_profile_photo);
         profile_more = v.findViewById(R.id.fragment_info_profile_more);
@@ -73,7 +70,7 @@ public class InfoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO 더보기 이벤트
-                Toast.makeText(getContext(),"클릭했습니다.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "클릭했습니다.", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -81,7 +78,7 @@ public class InfoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO 친구찾기 이벤트
-                Toast.makeText(getContext(),"클릭했습니다.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "클릭했습니다.", Toast.LENGTH_LONG).show();
             }
         });
 

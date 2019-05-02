@@ -3,7 +3,6 @@ package com.el.ariby.ui.main;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,26 +11,28 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.el.ariby.R;
 import com.el.ariby.BuildConfig;
+import com.el.ariby.R;
 import com.el.ariby.databinding.FragmentHomeBinding;
-import com.el.ariby.ui.api.Api;
+import com.el.ariby.ui.api.CoordApi;
+import com.el.ariby.ui.api.DustApi;
 import com.el.ariby.ui.api.GeoApi;
-import com.el.ariby.ui.api.data.CtprvnMesureLIstVo2Bean;
-import com.el.ariby.ui.api.data.GeoRepoResponse;
-import com.el.ariby.ui.api.data.RepoResponse;
+import com.el.ariby.ui.api.MeasureApi;
+import com.el.ariby.ui.api.response.CoordRepoResponse;
+import com.el.ariby.ui.api.response.DustRepoResponse;
+import com.el.ariby.ui.api.response.GeoRepoResponse;
+import com.el.ariby.ui.api.response.MeasureRepoResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -44,19 +45,25 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding mBinding;
-
+    String openKey = "vMgzVOM7K3D3t89QY%2F%2FtYxGc7fTDhMi3AkGC" +
+            "qakZut7sDmQCzfeWtcT9NDRbrR4dK8OBJsR5d4QwhZkn%2FeTZ3w%3D%3D";
+    String kakaoKey = "KakaoAK e880d656790ed7e10098f0742679154e";
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home,container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mBinding=FragmentHomeBinding.bind(getView());
+        mBinding = FragmentHomeBinding.bind(getView());
+
         startLocationService();
+
     }
 
     private static OkHttpClient createOkHttpClient() {
@@ -74,6 +81,38 @@ public class HomeFragment extends Fragment {
                 .build();
     }
 
+    private void getCoord(String x, String y) {
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .baseUrl(CoordApi.BASEURL)
+                .client(createOkHttpClient())
+                .build();
+
+        CoordApi apiService = retrofit.create(CoordApi.class);
+        Call<CoordRepoResponse> call = apiService.getCoord(kakaoKey, x, y, "WGS84", "TM");
+
+        call.enqueue(new Callback<CoordRepoResponse>() {
+            @Override
+            public void onResponse(Call<CoordRepoResponse> call, Response<CoordRepoResponse> response) {
+                if (response.isSuccessful()) {
+                    CoordRepoResponse repo = response.body();
+                    String x = Double.toString(repo.getDocuments().get(0).getX());
+                    String y = Double.toString(repo.getDocuments().get(0).getY());
+                    getMeasure(x, y, "json");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CoordRepoResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
     private void getGeo(String x, String y, String cord) {
         Gson gson = new GsonBuilder()
                 .setLenient()
@@ -86,7 +125,7 @@ public class HomeFragment extends Fragment {
                 .build();
 
         GeoApi apiService = retrofit.create(GeoApi.class);
-        Call<GeoRepoResponse> call = apiService.getGeo("KakaoAK e880d656790ed7e10098f0742679154e",x,y,cord);
+        Call<GeoRepoResponse> call = apiService.getGeo(kakaoKey, x, y, cord);
         Log.d("call : ", call.toString());
 
         call.enqueue(new Callback<GeoRepoResponse>() {
@@ -94,70 +133,109 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<GeoRepoResponse> call, Response<GeoRepoResponse> response) {
                 if (response.isSuccessful()) {
                     GeoRepoResponse repo = response.body();
-                    mBinding.weather.append(repo.getDocuments().get(0).getAddress().getRegion_1depth_name() + " ");
-                    mBinding.weather.append(repo.getDocuments().get(0).getAddress().getRegion_2depth_name() + " ");
-                    mBinding.weather.append(repo.getDocuments().get(0).getAddress().getRegion_3depth_name());
+                    ArrayList<String> Region = new ArrayList<>();
+                    Region.add(repo.getDocuments().get(0).getAddress().getRegion_1depth_name() + " ");
+                    Region.add(repo.getDocuments().get(0).getAddress().getRegion_2depth_name() + " ");
+                    Region.add(repo.getDocuments().get(0).getAddress().getRegion_3depth_name());
 
-                    //weather.setText(repo.getDocuments().get(0).get(0).getAddress_name());
+                    for (String name : Region) {
+                        mBinding.weather.append(name);
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<GeoRepoResponse> call, Throwable t) {
-                Log.d("123:", t.toString());
+                Log.d("getGeo Error:", t.toString());
             }
         });
     }
-    private void getWeather(int numOfRows, int pageNo, String umdName, String searchCondition, String returnType) {
+
+    private void getWeather(int numOfRows, int pageNo, String stationName,
+                            String dataTerm, String ver) { // 대기정보 받아옴
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl(Api.BASEURL)
+                .baseUrl(DustApi.BASEURL)
                 .client(createOkHttpClient())
                 .build();
 
-        Api apiService = retrofit.create(Api.class);
-        Call<RepoResponse> call = null;
+        DustApi apiService = retrofit.create(DustApi.class);
+        Call<DustRepoResponse> call = null;
         try {
             call = apiService.getWeather(
-                    URLDecoder.decode("vMgzVOM7K3D3t89QY%2F%2FtYxGc7fTDhMi3AkGCqakZut7sDmQCzfeWtcT9NDRbrR4dK8OBJsR5d4QwhZkn%2FeTZ3w%3D%3D", "utf-8"),
+                    URLDecoder.decode(openKey, "utf-8"),
                     numOfRows,
                     pageNo,
-                    umdName,
-                    searchCondition,
-                    returnType);
+                    stationName,
+                    dataTerm,
+                    ver,
+                    "json");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         Log.d("call : ", call.toString());
-        call.enqueue(new Callback<RepoResponse>() {
+        call.enqueue(new Callback<DustRepoResponse>() {
             @Override
-            public void onResponse(Call<RepoResponse> call, Response<RepoResponse> response) {
+            public void onResponse(Call<DustRepoResponse> call, Response<DustRepoResponse> response) {
                 if (response.isSuccessful()) {
-                    RepoResponse repo = response.body();
+                    DustRepoResponse repo = response.body();
                     if (repo != null) {
-                        mBinding.weather.setText("");
-                        String test = "최고좋음";
-                        for (CtprvnMesureLIstVo2Bean vo : repo.getList()) {
-                            if (!TextUtils.isEmpty(vo.getPm10Value()) && Integer.parseInt(vo.getPm10Value()) < 30) {
-                                test = "좋음";
-                            } else if (!TextUtils.isEmpty(vo.getPm10Value()) && Integer.parseInt(vo.getPm10Value()) < 50) {
-                                test = "양호";
-                            } else if (!TextUtils.isEmpty(vo.getPm10Value()) && Integer.parseInt(vo.getPm10Value()) < 80) {
-                                test = "보통";
-                            }
-                            mBinding.weather.append(vo.getCityName() + " " + vo.getCityNameEng() + test + "\r\n");
-                        }
+                        mBinding.pm10.append("미세먼지 " + repo.getList().get(0).getPm10Value() + "㎍/㎥ \r\n");
+                        mBinding.pm10.append("초미세먼지 " + repo.getList().get(0).getPm25Value() + "㎍/㎥ \r\n");
+                        mBinding.pm10.append("이산화질소 " + repo.getList().get(0).getNo2Grade() + "ppm \r\n");
+                        mBinding.pm10.append("오존 " + repo.getList().get(0).getO3Grade() + "ppm\r\n");
+                        mBinding.pm10.append("일산화탄소 " + repo.getList().get(0).getCoGrade()  + "ppm\r\n");
+                        mBinding.pm10.append("아황산가스 " + repo.getList().get(0).getSo2Grade() + "ppm\r\n");
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<RepoResponse> call, Throwable t) {
-                Log.d("123:", t.toString());
+            public void onFailure(Call<DustRepoResponse> call, Throwable t) {
+                Log.d("getWeather Error:", t.toString());
+            }
+        });
+    }
+
+    private void getMeasure(String x, String y, String returnType) { // 가까운 측정소 구해옴.
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .baseUrl(MeasureApi.BASEURL)
+                .client(createOkHttpClient())
+                .build();
+
+        MeasureApi apiService = retrofit.create(MeasureApi.class);
+        Call<MeasureRepoResponse> call = null;
+        try {
+            call = apiService.getMeasure(
+                    URLDecoder.decode(openKey, "utf-8"),
+                    x,
+                    y,
+                    returnType);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Log.d("call : ", call.toString());
+        call.enqueue(new Callback<MeasureRepoResponse>() {
+            @Override
+            public void onResponse(Call<MeasureRepoResponse> call, Response<MeasureRepoResponse> response) {
+                if (response.isSuccessful()) {
+                    MeasureRepoResponse repo = response.body();
+                    getWeather(10, 1, repo.getList().get(0).getStationName(), "DAILY", "1.3");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MeasureRepoResponse> call, Throwable t) {
+                Log.d("getMeasure Error:", t.toString());
             }
         });
     }
@@ -168,24 +246,31 @@ public class HomeFragment extends Fragment {
         float minDistance = 0;
 
         LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},1);
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
             return;
         }
         Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         Double latitude = location.getLatitude();
         Double longitude = location.getLongitude();
 
-        String msg="Last Known Location -> Latitude : " +
+        String msg = "Last Known Location -> Latitude : " +
                 location.getLatitude() +
                 "\nLongitude : " + location.getLongitude();
         Log.i("SampleLocation ", msg);
 
         manager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
-                minTime,minDistance,gpsListener);
-        getGeo(longitude.toString(),latitude.toString(),"WGS84");
+                minTime, minDistance, gpsListener);
+        getGeo(longitude.toString(), latitude.toString(), "WGS84");
+        getCoord(longitude.toString(), latitude.toString());
+
     }
+
     private class GPSListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
@@ -193,10 +278,7 @@ public class HomeFragment extends Fragment {
             Double longitude = location.getLongitude();
 
             String msg = "Latitude : " + latitude + "\nLongitude : " + longitude;
-            Log.i("GPSListener",msg);
-
-            mBinding.weather.append("내 위치 : " + latitude + ", " + longitude);
-            Toast.makeText(getActivity(),msg,Toast.LENGTH_SHORT).show();
+            Log.i("GPSListener", msg);
         }
 
         @Override
