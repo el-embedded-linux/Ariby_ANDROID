@@ -43,5 +43,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/menu_bottom"/>
+
     </android.support.constraint.ConstraintLayout>
 </layout>

@@ -3,6 +3,7 @@ package com.el.ariby.ui.main;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -93,7 +94,8 @@ public class HomeFragment extends Fragment {
                 .build();
 
         CoordApi apiService = retrofit.create(CoordApi.class);
-        Call<CoordRepoResponse> call = apiService.getCoord(kakaoKey, x, y, "WGS84", "TM");
+        Call<CoordRepoResponse> call =
+                apiService.getCoord(kakaoKey, x, y, "WGS84", "TM");
 
         call.enqueue(new Callback<CoordRepoResponse>() {
             @Override
@@ -134,6 +136,7 @@ public class HomeFragment extends Fragment {
                 if (response.isSuccessful()) {
                     GeoRepoResponse repo = response.body();
                     ArrayList<String> Region = new ArrayList<>();
+                    mBinding.weather.setText("");
                     Region.add(repo.getDocuments().get(0).getAddress().getRegion_1depth_name() + " ");
                     Region.add(repo.getDocuments().get(0).getAddress().getRegion_2depth_name() + " ");
                     Region.add(repo.getDocuments().get(0).getAddress().getRegion_3depth_name());
@@ -182,14 +185,80 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<DustRepoResponse> call, Response<DustRepoResponse> response) {
                 if (response.isSuccessful()) {
+                    String pm10Value;
+                    String khaiValue;
+                    String pm25Value;
+                    String no2Value;
+                    String coValue;
                     DustRepoResponse repo = response.body();
                     if (repo != null) {
-                        mBinding.pm10.append("미세먼지 " + repo.getList().get(0).getPm10Value() + "㎍/㎥ \r\n");
-                        mBinding.pm10.append("초미세먼지 " + repo.getList().get(0).getPm25Value() + "㎍/㎥ \r\n");
-                        mBinding.pm10.append("이산화질소 " + repo.getList().get(0).getNo2Value() + "ppm \r\n");
-                        mBinding.pm10.append("오존 " + repo.getList().get(0).getO3Value() + "ppm\r\n");
-                        mBinding.pm10.append("일산화탄소 " + repo.getList().get(0).getCoValue()  + "ppm\r\n");
-                        mBinding.pm10.append("아황산가스 " + repo.getList().get(0).getSo2Value() + "ppm\r\n");
+                        if (("-").equals(repo.getList().get(0).getPm10Value())) { //최근 측정값을 못 가져올 경우 한 시간 전 측정값을 가져온다.
+                            pm10Value = repo.getList().get(1).getPm10Value();
+                            khaiValue = repo.getList().get(1).getKhaiValue();
+                            pm25Value = repo.getList().get(1).getPm25Value();
+                            no2Value=repo.getList().get(1).getNo2Value();
+                            coValue=repo.getList().get(1).getCoValue();
+                            mBinding.txtKhai.setText(khaiValue);
+                            mBinding.txtDust1.setText(pm10Value + "㎍/㎥");
+                            mBinding.txtDust2.setText(pm25Value + " ㎍/㎥");
+                            mBinding.txtDust3.setText(no2Value + " ppm");
+                            mBinding.txtDust4.setText(coValue + " ppm");
+                        } else {
+                            pm10Value = repo.getList().get(0).getPm10Value();
+                            khaiValue = repo.getList().get(0).getKhaiValue();
+                            pm25Value = repo.getList().get(0).getPm25Value();
+                            no2Value=repo.getList().get(0).getNo2Value();
+                            coValue=repo.getList().get(0).getCoValue();
+                            mBinding.txtKhai.setText(khaiValue);
+                            mBinding.txtDust1.setText(pm10Value + "㎍/㎥");
+                            mBinding.txtDust2.setText(pm25Value + " ㎍/㎥");
+                            mBinding.txtDust3.setText(no2Value + " ppm");
+                            mBinding.txtDust4.setText(coValue + " ppm");
+                        }
+                        if (Integer.parseInt(khaiValue) < 16) {
+                            mBinding.layout.setBackgroundColor(Color.BLUE);
+                        } else if (Integer.parseInt(khaiValue) < 36) {
+                            mBinding.layout.setBackgroundColor(Color.GREEN);
+                        } else if (Integer.parseInt(khaiValue) < 76) {
+                            mBinding.layout.setBackgroundColor(Color.parseColor("#cc6600"));
+                        } else {
+                            mBinding.layout.setBackgroundColor(Color.RED);
+                        }
+                        if(Integer.parseInt(pm10Value)<16)
+                            mBinding.imgDust1.setImageResource(R.drawable.smile);
+                        else if(Integer.parseInt(pm10Value)<36)
+                            mBinding.imgDust1.setImageResource(R.drawable.normal);
+                        else if(Integer.parseInt(pm10Value)<76)
+                            mBinding.imgDust1.setImageResource(R.drawable.bad);
+                        else
+                            mBinding.imgDust1.setImageResource(R.drawable.worst);
+
+                        if(Integer.parseInt(pm25Value)<16)
+                            mBinding.imgDust2.setImageResource(R.drawable.smile);
+                        else if(Integer.parseInt(pm25Value)<36)
+                            mBinding.imgDust2.setImageResource(R.drawable.normal);
+                        else if(Integer.parseInt(pm25Value)<76)
+                            mBinding.imgDust2.setImageResource(R.drawable.bad);
+                        else
+                            mBinding.imgDust2.setImageResource(R.drawable.worst);
+
+                        if(Double.parseDouble(no2Value)<0.03)
+                            mBinding.imgDust3.setImageResource(R.drawable.smile);
+                        else if(Double.parseDouble(no2Value)<0.06)
+                            mBinding.imgDust3.setImageResource(R.drawable.normal);
+                        else if(Double.parseDouble(no2Value)<0.20)
+                            mBinding.imgDust3.setImageResource(R.drawable.bad);
+                        else
+                            mBinding.imgDust3.setImageResource(R.drawable.worst);
+
+                        if(Double.parseDouble(coValue)<5.5)
+                            mBinding.imgDust4.setImageResource(R.drawable.smile);
+                        else if(Double.parseDouble(coValue)<9.0)
+                            mBinding.imgDust4.setImageResource(R.drawable.normal);
+                        else if(Double.parseDouble(coValue)<12.0)
+                            mBinding.imgDust4.setImageResource(R.drawable.bad);
+                        else
+                            mBinding.imgDust4.setImageResource(R.drawable.worst);
                     }
                 }
             }
