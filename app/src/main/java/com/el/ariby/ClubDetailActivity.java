@@ -13,9 +13,5 @@ public class ClubDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mBinding= DataBindingUtil.setContentView(this,R.layout.activity_club_detail);
 
-        setSupportActionBar(mBinding.toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
     }
 }
