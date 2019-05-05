@@ -20,10 +20,19 @@ android {
     dataBinding {
         enabled = true
     }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'x86_64', 'armeabi-v7a', 'armeabi'
+            universalApk false
+        }
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation files('libs/libDaumMapAndroid.jar')
     implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.google.firebase:firebase-database:15.0.1'

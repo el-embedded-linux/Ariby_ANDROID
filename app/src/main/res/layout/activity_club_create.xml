@@ -106,7 +106,7 @@
                         android:layout_margin="15dp"
                         android:background="@null"
                         android:gravity="right"
-                        android:hint="입력"
+                        android:enabled="false"
                         android:textColor="#000"
                         android:textColorHint="#B55E5E5E"
                         android:textSize="20dp" />

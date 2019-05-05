@@ -7,25 +7,31 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ClubDetailActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="bcb5be527657eea3d6511a0c20cbb41b" />
+        <activity android:name=".NavigationActivity"></activity>
+        <activity android:name=".ClubDetailActivity" />
         <activity android:name=".ui.main.menu.club.ClubSearchActivity" />
         <activity android:name=".ui.main.menu.club.ClubCreateActivity" />
         <activity android:name=".ui.join.NicknameActivity" />
-        <activity android:name=".ui.login.LoginActivity" />
+        <activity android:name=".ui.login.LoginActivity" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity android:name=".MainActivity"/>
         <activity android:name=".SplashActivity" />
         <activity android:name=".FirstActivity" />

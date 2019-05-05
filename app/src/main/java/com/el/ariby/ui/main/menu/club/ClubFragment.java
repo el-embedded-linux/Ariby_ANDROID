@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.el.ariby.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,8 +37,8 @@ public class ClubFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_club, container, false);
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        ref = database.getReference("club");
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        ref = database.getReference("CLUB");
         final SwipeRefreshLayout mSwipeRefreshLayout = v.findViewById(R.id.swipe_layout);
 
         btnCreate = v.findViewById(R.id.btn_create);
@@ -64,9 +66,10 @@ public class ClubFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String url = snapshot.child("clubImageURL").getValue().toString();
                     String club = snapshot.getKey();
+                    String nick = snapshot.child("leaderNick").getValue().toString();
                     long num = snapshot.child("member").getChildrenCount();
                     String location = snapshot.child("location").getValue().toString();
-                    adapter.addItem(new ClubItem(url, club, num, location));
+                    adapter.addItem(new ClubItem(url, club, nick, num, location));
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -94,9 +97,10 @@ public class ClubFragment extends Fragment {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             String url = snapshot.child("clubImageURL").getValue().toString();
                             String club = snapshot.getKey();
+                            String nick = snapshot.child("leaderNick").getValue().toString();
                             long num = snapshot.child("member").getChildrenCount();
                             String location = snapshot.child("location").getValue().toString();
-                            adapter.addItem(new ClubItem(url, club, num, location));
+                            adapter.addItem(new ClubItem(url, club, nick, num, location));
                         }
                         adapter.notifyDataSetChanged();
                     }
@@ -123,9 +127,10 @@ public class ClubFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String url = snapshot.child("clubImageURL").getValue().toString();
                     String club = snapshot.getKey();
+                    String nick = snapshot.child("leaderNick").getValue().toString();
                     long num = snapshot.child("member").getChildrenCount();
                     String location = snapshot.child("location").getValue().toString();
-                    adapter.addItem(new ClubItem(url, club, num, location));
+                    adapter.addItem(new ClubItem(url, club, nick, num, location));
                 }
                 adapter.notifyDataSetChanged();
             }

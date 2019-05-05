@@ -27,6 +27,14 @@ public class ClubItem {
         this.map=map;
     }
 
+    public ClubItem(String mainLogo,String title,String nick, long num, String map){
+        this.mainLogo=mainLogo;
+        this.title = title;
+        this.nick = nick;
+        this.number = num;
+        this.map=map;
+    }
+
     public String getMainLogo() {
         return mainLogo;
     }

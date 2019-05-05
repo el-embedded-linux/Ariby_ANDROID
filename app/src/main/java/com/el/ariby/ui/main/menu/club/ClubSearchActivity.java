@@ -31,7 +31,7 @@ public class ClubSearchActivity extends AppCompatActivity {
         listview.setAdapter(adapter);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        ref = database.getReference("club");
+        ref = database.getReference("CLUB");
 
         adapter.addItem(new ClubItem("test",3,"test"));
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -40,9 +40,10 @@ public class ClubSearchActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String url = snapshot.child("clubImageURL").getValue().toString();
                     String club = snapshot.getKey();
+                    String nick = snapshot.child("leaderNick").getValue().toString();
                     long num = snapshot.child("member").getChildrenCount();
                     String location = snapshot.child("location").getValue().toString();
-                    adapter.addItem(new ClubItem(url, club, num, location));
+                    adapter.addItem(new ClubItem(url, club, nick, num, location));
                 }
                 adapter.notifyDataSetChanged();
             }
