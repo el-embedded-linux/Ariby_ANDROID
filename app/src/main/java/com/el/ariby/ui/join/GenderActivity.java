@@ -33,7 +33,11 @@ public class GenderActivity extends AppCompatActivity {
         mBinding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setPreference("gender", mBinding.grpGender.isSelected());
+                if(mBinding.radioMale.isSelected())
+                    setPreference("gender", "M");
+                else
+                    setPreference("gender", "F");
+
                 Intent intent = new Intent(getApplicationContext(), NicknameActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.anim_slide_out_left, R.anim.anim_slide_in_right);
@@ -50,10 +54,10 @@ public class GenderActivity extends AppCompatActivity {
         });
     }
 
-    public void setPreference(String key, boolean value) {
+    public void setPreference(String key, String value) {
         SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean(key, value);
+        editor.putString(key, value);
         editor.commit();
     }
 

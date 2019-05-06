@@ -1,9 +1,10 @@
-package com.el.ariby;
+package com.el.ariby.ui.main.menu.club;
 
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityClubDetailBinding;
 
 public class ClubDetailActivity extends AppCompatActivity {
@@ -11,7 +12,7 @@ public class ClubDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding= DataBindingUtil.setContentView(this,R.layout.activity_club_detail);
+        mBinding= DataBindingUtil.setContentView(this, R.layout.activity_club_detail);
 
     }
 }

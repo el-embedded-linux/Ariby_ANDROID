@@ -88,14 +88,6 @@ public class CurvedBottomNavigationView extends BottomNavigationView {
         mPath.moveTo(0, 0);
         mPath.lineTo(mFirstCurveStartPoint.x, mFirstCurveStartPoint.y);
 
-        mPath.cubicTo(mFirstCurveControlPoint1.x, mFirstCurveControlPoint1.y,
-                mFirstCurveControlPoint2.x, mFirstCurveControlPoint2.y,
-                mFirstCurveEndPoint.x, mFirstCurveEndPoint.y);
-
-        mPath.cubicTo(mSecondCurveControlPoint1.x, mSecondCurveControlPoint1.y,
-                mSecondCurveControlPoint2.x, mSecondCurveControlPoint2.y,
-                mSecondCurveEndPoint.x, mSecondCurveEndPoint.y);
-
         mPath.lineTo(mNavigationBarWidth, 0);
         mPath.lineTo(mNavigationBarWidth, mNavigationBarHeight);
         mPath.lineTo(0, mNavigationBarHeight);

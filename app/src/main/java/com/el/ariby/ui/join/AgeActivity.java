@@ -23,7 +23,7 @@ public class AgeActivity extends AppCompatActivity {
     public final String PREFERENCE = "com.el.ariby_joining";
     ActivityAgeBinding mBinding;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
-    String date, preference_date;
+    String date, preference_date="1995-01-01";//입력하지 않았을 경우 생년월일 기본값
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,7 @@ public class AgeActivity extends AppCompatActivity {
         mBinding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setPreference("age", preference_date);
+                setPreference("birth", preference_date);
                 Intent intent = new Intent(getApplicationContext(), HeightActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.anim_slide_out_left, R.anim.anim_slide_in_right);

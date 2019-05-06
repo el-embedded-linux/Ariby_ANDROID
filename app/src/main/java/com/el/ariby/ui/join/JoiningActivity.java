@@ -30,9 +30,9 @@ public class JoiningActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     ActivityJoiningBinding mBinding;
     int weight = 0;
-    boolean gender = true;
-    String age = "";
-    int tall = 0;
+    String gender = "M";
+    String birth = "";
+    int height = 0;
     String nickName = "";
 
     @Override
@@ -68,7 +68,7 @@ public class JoiningActivity extends AppCompatActivity {
                                     DatabaseReference myRef = database.getReference();
 
                                     if (email.isEmpty()) {
-                                        Toast.makeText(getApplicationContext(), "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "이메일를 입력해주세요.", Toast.LENGTH_SHORT).show();
                                     }
 
                                     if (password.isEmpty()) {
@@ -77,20 +77,19 @@ public class JoiningActivity extends AppCompatActivity {
 
                                     try {
                                         weight = getPreferenceInt("weight"); // 저장된 값 불러오기 (몸무게)
-                                        gender = getPreferenceBoolean("gender"); // 성별
-                                        age = getPreferenceString("age"); // 나이
-                                        tall = getPreferenceInt("tall"); // 키
+                                        gender = getPreferenceString("gender"); // 성별
+                                        birth = getPreferenceString("birth"); // 나이
+                                        height = getPreferenceInt("height"); // 키
                                         nickName = getPreferenceString("displayName");
                                     } catch (Exception e) { // 사용자가 정보(키,몸무게 등)를 입력하지 않았을 경우, 변수 값에 DEFAULT 값 설정해 두었기 때문에 비워둠
 
                                     }
 
-
-                                    UserModel userInfo = new UserModel(weight, age, tall, gender, nickName);
-                                    myRef.child("user").child(firebaseAuth.getUid()).setValue(userInfo);
+                                    UserModel userInfo = new UserModel(weight, birth, height, gender, nickName);
+                                    myRef.child("USER").child(firebaseAuth.getUid()).setValue(userInfo);
                                     Intent intent = new Intent(JoiningActivity.this, MainActivity.class);
                                     startActivity(intent);
-                                    //Toast.makeText(getApplicationContext(),"회원가입이 완료되었습니다.",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),"회원가입이 완료되었습니다.",Toast.LENGTH_SHORT).show();
                                     finish();
                                 } else {
                                     Toast.makeText(getApplicationContext(), "등록 에러", Toast.LENGTH_SHORT).show();
@@ -115,11 +114,6 @@ public class JoiningActivity extends AppCompatActivity {
         });
     }
 
-    public boolean getPreferenceBoolean(String key) {
-        SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
-        return pref.getBoolean(key, false);
-    }
-
     public String getPreferenceString(String key) {
         SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
         return pref.getString(key, "");
@@ -132,15 +126,18 @@ public class JoiningActivity extends AppCompatActivity {
 }
 
 class UserModel {
-    String age, nickname;
-    Boolean gender;
-    int weight, tall;
+    String birth, nickname;
+    String gender;
+    int weight, height;
+    int level, exp;
 
-    public UserModel(int weight, String age, int tall, Boolean gender, String nickname) {
+    public UserModel(int weight, String birth, int height, String gender, String nickname) {
         this.weight = weight;
-        this.age = age;
-        this.tall = tall;
+        this.birth = birth;
+        this.height = height;
         this.gender = gender;
         this.nickname = nickname;
+        this.level = 1;
+        this.exp = 0;
     }
 }

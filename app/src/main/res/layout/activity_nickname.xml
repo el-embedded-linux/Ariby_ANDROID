@@ -29,16 +29,6 @@
                 android:drawableStart="@drawable/ic_arrow_back_black_24dp"
                 android:drawableLeft="@drawable/ic_arrow_back_black_24dp" />
 
-            <Button
-                android:id="@+id/btn_jump"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:background="#00FF0000"
-                android:text="넘어가기"
-                android:textColor="@color/colorAccent"
-                android:textSize="14sp" />
         </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -54,7 +44,7 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="wrap_content">
             <EditText
                 android:id="@+id/et_nickname"
                 android:inputType="text"
@@ -70,6 +60,16 @@
                 android:focusableInTouchMode="false"
                 android:textColor="@color/colorAccent"
                 android:textSize="40dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/txt_alram"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="55dp"
+                android:textColor="#ff0000"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

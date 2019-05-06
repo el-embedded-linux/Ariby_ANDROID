@@ -20,21 +20,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="24dp"
-            android:src="@drawable/ic_room_black_24dp"
-            app:backgroundTint="#F9AA33"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/customBottomBar" />
-
-
         <com.el.ariby.custom.CurvedBottomNavigationView
             android:id="@+id/customBottomBar"
             android:layout_width="match_parent"
@@ -44,5 +29,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/menu_bottom"/>
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_room_black_24dp"
+            app:backgroundTint="#F9AA33"
+            app:fabCustomSize="60dp"
+            app:elevation="@android:dimen/app_icon_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.487"
+            app:layout_constraintStart_toStartOf="parent" />
     </android.support.constraint.ConstraintLayout>
 </layout>
