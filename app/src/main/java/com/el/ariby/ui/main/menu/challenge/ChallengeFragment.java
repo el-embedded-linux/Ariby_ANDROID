@@ -1,4 +1,4 @@
-package com.el.ariby.ui.main.menu;
+package com.el.ariby.ui.main.menu.challenge;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

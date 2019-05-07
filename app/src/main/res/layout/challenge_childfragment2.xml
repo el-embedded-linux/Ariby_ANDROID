@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".ui.main.menu.challenge.challenge_child.Challenge_ChildFragment2">
+
+    <TextView
+        android:id="@+id/txt_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#3F3737"
+        android:gravity="center"
+        android:text="도전 가능 과제"
+        android:textColor="#fff" />
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/txt_list">
+        <ListView
+            android:id="@+id/list_challenge2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="#979797"
+            android:dividerHeight="2px">
+        </ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</RelativeLayout>
