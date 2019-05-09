@@ -29,8 +29,8 @@ public class MenuFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mBinding = FragmentMenuBinding.bind(getView());
+        mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("대기정보"));
         mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("클럽"));
-        mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("친구"));
         mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("랭킹"));
         mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("헬스"));
         mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("도전과제"));

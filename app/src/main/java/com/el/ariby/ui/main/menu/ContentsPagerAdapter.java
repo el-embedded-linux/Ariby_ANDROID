@@ -8,8 +8,8 @@ import com.el.ariby.ui.main.menu.club.ClubFragment;
 
 public class ContentsPagerAdapter extends FragmentStatePagerAdapter {
     private int mPageCount;
+    private DustFragment dustFragment = new DustFragment();
     private ClubFragment clubFragment=new ClubFragment();
-    private FriendFragment friendFragment = new FriendFragment();
     private RankFragment rankFragment=new RankFragment();
     private HealthFragment healthFragment=new HealthFragment();
     private ChallengeFragment challengeFragment=new ChallengeFragment();
@@ -23,9 +23,9 @@ public class ContentsPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return clubFragment;
+                return dustFragment;
             case 1:
-                return friendFragment;
+                return clubFragment;
             case 2:
                 return rankFragment;
             case 3:

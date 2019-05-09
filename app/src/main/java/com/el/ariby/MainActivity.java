@@ -1,5 +1,9 @@
 package com.el.ariby;
 
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,13 +12,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.el.ariby.databinding.ActivityMainBinding;
-import com.el.ariby.ui.main.HomeFragment;
 import com.el.ariby.ui.main.InfoFragment;
 import com.el.ariby.ui.main.MenuFragment;
+import com.el.ariby.ui.main.NavigationActivity;
+
+import java.security.MessageDigest;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding mBinding;
@@ -23,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        getAppKeyHash();
         MainViewPager mainViewPager = new MainViewPager(getSupportFragmentManager());
         mBinding.vpMain.setAdapter(mainViewPager);
 
@@ -36,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             }
                             case R.id.navigation_info: {
-                                mBinding.vpMain.setCurrentItem(2);
+                                mBinding.vpMain.setCurrentItem(1);
                                 break;
                             }
                         }
@@ -46,9 +55,25 @@ public class MainActivity extends AppCompatActivity {
         mBinding.floating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBinding.vpMain.setCurrentItem(1);
+                Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
+                startActivity(intent);
             }
         });
+    }
+    private void getAppKeyHash() {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md;
+                md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                String something = new String(Base64.encode(md.digest(), 0));
+                Log.e("Hash key", something);
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            Log.e("name not found", e.toString());
+        }
     }
 
     @Override
@@ -61,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
      * 홈, 메뉴, 인포
      */
     class MainViewPager extends FragmentStatePagerAdapter {
-        private HomeFragment homeFragment = new HomeFragment();
         private MenuFragment menuFragment = new MenuFragment();
         private InfoFragment infoFragment = new InfoFragment();
 
@@ -73,8 +97,6 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return homeFragment;
-                case 1:
                     return menuFragment;
                 default:
                     return infoFragment;
@@ -83,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return 2;
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.el.ariby.ui.main;
+package com.el.ariby.ui.main.menu;
 
 import android.Manifest;
 import android.content.Context;
@@ -7,11 +7,11 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 
 import com.el.ariby.BuildConfig;
 import com.el.ariby.R;
-import com.el.ariby.databinding.FragmentHomeBinding;
+import com.el.ariby.databinding.FragmentDustBinding;
 import com.el.ariby.ui.api.CoordApi;
 import com.el.ariby.ui.api.DustApi;
 import com.el.ariby.ui.api.GeoApi;
@@ -43,9 +43,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HomeFragment extends Fragment {
+public class DustFragment extends Fragment {
 
-    private FragmentHomeBinding mBinding;
+
+
+    private FragmentDustBinding mBinding;
     String openKey = "vMgzVOM7K3D3t89QY%2F%2FtYxGc7fTDhMi3AkGC" +
             "qakZut7sDmQCzfeWtcT9NDRbrR4dK8OBJsR5d4QwhZkn%2FeTZ3w%3D%3D";
     String kakaoKey = "KakaoAK e880d656790ed7e10098f0742679154e";
@@ -55,13 +57,13 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        return inflater.inflate(R.layout.fragment_dust, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mBinding = FragmentHomeBinding.bind(getView());
+        mBinding = FragmentDustBinding.bind(getView());
 
         startLocationService();
 
@@ -318,7 +320,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void startLocationService() {
-        GPSListener gpsListener = new GPSListener();
+        DustFragment.GPSListener gpsListener = new DustFragment.GPSListener();
         long minTime = 10000;
         float minDistance = 0;
 

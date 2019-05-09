@@ -1,7 +1,8 @@
-package com.el.ariby;
+package com.el.ariby.ui.main;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -10,25 +11,30 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.el.ariby.R;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class NavigationActivity extends AppCompatActivity {
     MapView mapView;
     FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
-        fab=findViewById(R.id.fab_focus);
+
+        fab = findViewById(R.id.fab_focus);
 
         mapView = new MapView(this);
         ArrayList<Double> list = startLocationService();//list로 현재 위치 좌표를 받아옴.
@@ -48,7 +54,6 @@ public class NavigationActivity extends AppCompatActivity {
         mapView.setMapTilePersistentCacheEnabled(true);//다운한 지도 데이터를 단말의 영구 캐쉬 영역에 저장하는 기능
 
         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(list.get(0), list.get(1)), true);
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,6 +66,7 @@ public class NavigationActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     private ArrayList<Double> startLocationService() {
@@ -80,7 +86,7 @@ public class NavigationActivity extends AppCompatActivity {
         Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         Double latitude = location.getLatitude();
         Double longitude = location.getLongitude();
-        ArrayList<Double> list=new ArrayList<>();
+        ArrayList<Double> list = new ArrayList<>();
         list.add(latitude);
         list.add(longitude);
 
@@ -95,6 +101,7 @@ public class NavigationActivity extends AppCompatActivity {
 
         return list;
     }
+
 
     private class GPSListener implements LocationListener {
         @Override
