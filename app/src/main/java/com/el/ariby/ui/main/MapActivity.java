@@ -2,7 +2,7 @@ package com.el.ariby.ui.main;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageInfo;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,32 +11,39 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.el.ariby.NavigationActivity;
 import com.el.ariby.R;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
-import java.security.MessageDigest;
 import java.util.ArrayList;
 
-public class NavigationActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity {
     MapView mapView;
     FloatingActionButton fab;
-
+    ImageView img_navi;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigation);
-
+        setContentView(R.layout.activity_map);
+        img_navi=findViewById(R.id.img_navi);
         fab = findViewById(R.id.fab_focus);
 
         mapView = new MapView(this);
+        img_navi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getApplicationContext(), NavigationActivity.class);
+                startActivity(intent);
+            }
+        });
         ArrayList<Double> list = startLocationService();//list로 현재 위치 좌표를 받아옴.
         MapPoint MARKER_POINT = MapPoint.mapPointWithGeoCoord(list.get(0), list.get(1));
 

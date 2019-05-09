@@ -20,7 +20,7 @@ import android.view.View;
 import com.el.ariby.databinding.ActivityMainBinding;
 import com.el.ariby.ui.main.InfoFragment;
 import com.el.ariby.ui.main.MenuFragment;
-import com.el.ariby.ui.main.NavigationActivity;
+import com.el.ariby.ui.main.MapActivity;
 
 import java.security.MessageDigest;
 
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         mBinding.floating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MapActivity.class);
                 startActivity(intent);
             }
         });
