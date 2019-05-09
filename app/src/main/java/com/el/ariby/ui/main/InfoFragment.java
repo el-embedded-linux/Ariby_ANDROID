@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.el.ariby.R;
+import com.el.ariby.ui.main.menu.follow.FindFollow;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -78,7 +79,8 @@ public class InfoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO 친구찾기 이벤트
-                Toast.makeText(getContext(), "클릭했습니다.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getActivity(), FindFollow.class);
+                startActivity(intent);
             }
         });
 
