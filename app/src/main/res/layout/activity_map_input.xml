@@ -38,6 +38,7 @@
 
             <EditText
                 android:id="@+id/et_start"
+                android:focusable="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -58,6 +59,7 @@
 
             <EditText
                 android:id="@+id/et_end"
+                android:focusable="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
