@@ -32,24 +32,24 @@ public class MapSearchAdapter extends RecyclerView.Adapter<MapViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final MapViewHolder viewHolderTest, int i) {
-        viewHolderTest.mapname.setText(mList.get(i).getMapname());
+        viewHolderTest.mapName.setText(mList.get(i).getMapName());
         viewHolderTest.lat.setText(mList.get(i).getLat());
         viewHolderTest.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String[] str = new String[4];
                 int i=0;
-                Intent intent = ((MapInputActivity) v.getContext()).getIntent();
+                Intent intent = ((MapSearchActivity) v.getContext()).getIntent();
                 StringTokenizer token1= new StringTokenizer(viewHolderTest.lat.getText().toString()," ");
                 while (token1.hasMoreTokens()) {
                     str[i++]=token1.nextToken();
                 }
-                intent.putExtra("result_msg", viewHolderTest.mapname.getText().toString());
+                intent.putExtra("result_msg", viewHolderTest.mapName.getText().toString());
                 intent.putExtra("X", str[1]);
                 intent.putExtra("Y", str[3]);
-                ((MapInputActivity) v.getContext()).setResult(3000, intent);
-                ((MapInputActivity) v.getContext()).finish();
-                Toast.makeText(v.getContext(), viewHolderTest.mapname.getText().toString(), Toast.LENGTH_SHORT).show();
+                ((MapSearchActivity) v.getContext()).setResult(3000, intent);
+                ((MapSearchActivity) v.getContext()).finish();
+                Toast.makeText(v.getContext(), viewHolderTest.mapName.getText().toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }

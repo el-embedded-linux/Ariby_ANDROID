@@ -1,21 +1,21 @@
 package com.el.ariby.ui.main.menu.navigation;
 
 public class MapData {
-    String mapname;
+    String mapName;
     String lat;
 
 
-    public MapData(String mapname, String lat) {
-        this.mapname = mapname;
+    public MapData(String mapName, String lat) {
+        this.mapName = mapName;
         this.lat = lat;
     }
 
-    public String getMapname() {
-        return mapname;
+    public String getMapName() {
+        return mapName;
     }
 
-    public void setMapname(String mapname) {
-        this.mapname = mapname;
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
     }
 
     public String getLat() {

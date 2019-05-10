@@ -8,11 +8,11 @@ import android.widget.Toast;
 import com.el.ariby.R;
 
 public class MapViewHolder extends RecyclerView.ViewHolder {
-    TextView mapname;
+    TextView mapName;
     TextView lat;
     public MapViewHolder(View parent) {
         super(parent);
-        this.mapname=parent.findViewById(R.id.mapname);
+        this.mapName=parent.findViewById(R.id.mapName);
         this.lat = parent.findViewById(R.id.lat);
     }
 

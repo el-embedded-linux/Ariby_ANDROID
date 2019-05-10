@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        getAppKeyHash();
         MainViewPager mainViewPager = new MainViewPager(getSupportFragmentManager());
         mBinding.vpMain.setAdapter(mainViewPager);
 
@@ -59,21 +58,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
-    private void getAppKeyHash() {
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md;
-                md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String something = new String(Base64.encode(md.digest(), 0));
-                Log.e("Hash key", something);
-            }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            Log.e("name not found", e.toString());
-        }
     }
 
     @Override

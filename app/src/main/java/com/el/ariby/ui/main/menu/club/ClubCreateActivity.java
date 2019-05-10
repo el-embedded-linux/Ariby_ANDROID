@@ -9,7 +9,6 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +24,7 @@ import android.widget.Toast;
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityClubCreateBinding;
 import com.el.ariby.ui.api.GeoApi;
+import com.el.ariby.ui.api.SelfCall;
 import com.el.ariby.ui.api.response.GeoRepoResponse;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,8 +39,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -49,7 +47,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ClubCreateActivity extends AppCompatActivity {
     ActivityClubCreateBinding mBinding;
@@ -171,14 +168,7 @@ public class ClubCreateActivity extends AppCompatActivity {
     }
 
     private void getGeo(String x, String y, String cord) {
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl(GeoApi.BASEURL)
-                .build();
+        Retrofit retrofit = SelfCall.createRetrofit(GeoApi.BASEURL);
 
         GeoApi apiService = retrofit.create(GeoApi.class);
         Call<GeoRepoResponse> call = apiService.getGeo("KakaoAK e880d656790ed7e10098f0742679154e", x, y, cord);

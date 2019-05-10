@@ -17,31 +17,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.el.ariby.BuildConfig;
 import com.el.ariby.R;
 import com.el.ariby.databinding.FragmentDustBinding;
 import com.el.ariby.ui.api.CoordApi;
 import com.el.ariby.ui.api.DustApi;
 import com.el.ariby.ui.api.GeoApi;
 import com.el.ariby.ui.api.MeasureApi;
+import com.el.ariby.ui.api.SelfCall;
 import com.el.ariby.ui.api.response.CoordRepoResponse;
 import com.el.ariby.ui.api.response.DustRepoResponse;
 import com.el.ariby.ui.api.response.GeoRepoResponse;
 import com.el.ariby.ui.api.response.MeasureRepoResponse;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DustFragment extends Fragment {
     private FragmentDustBinding mBinding;
@@ -66,31 +61,8 @@ public class DustFragment extends Fragment {
 
     }
 
-    private static OkHttpClient createOkHttpClient() {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        if (BuildConfig.DEBUG) {
-            // 디버그 버전은 로그 보여주고
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        } else {
-            // 출시된 앱은 로그를 가리고
-            interceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
-        }
-
-        return new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build();
-    }
-
     private void getCoord(String x, String y) {
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl(CoordApi.BASEURL)
-                .client(createOkHttpClient())
-                .build();
+        Retrofit retrofit = SelfCall.createRetrofit(CoordApi.BASEURL);
 
         CoordApi apiService = retrofit.create(CoordApi.class);
         Call<CoordRepoResponse> call =
@@ -116,15 +88,7 @@ public class DustFragment extends Fragment {
     }
 
     private void getGeo(String x, String y, String cord) {
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl(GeoApi.BASEURL)
-                .client(createOkHttpClient())
-                .build();
+        Retrofit retrofit = SelfCall.createRetrofit(GeoApi.BASEURL);
 
         GeoApi apiService = retrofit.create(GeoApi.class);
         Call<GeoRepoResponse> call = apiService.getGeo(kakaoKey, x, y, cord);
@@ -157,15 +121,7 @@ public class DustFragment extends Fragment {
 
     private void getWeather(int numOfRows, int pageNo, String stationName,
                             String dataTerm, String ver) { // 대기정보 받아옴
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl(DustApi.BASEURL)
-                .client(createOkHttpClient())
-                .build();
+        Retrofit retrofit = SelfCall.createRetrofit(DustApi.BASEURL);
 
         DustApi apiService = retrofit.create(DustApi.class);
         Call<DustRepoResponse> call = null;
@@ -277,15 +233,7 @@ public class DustFragment extends Fragment {
     }
 
     private void getMeasure(String x, String y, String returnType) { // 가까운 측정소 구해옴.
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl(MeasureApi.BASEURL)
-                .client(createOkHttpClient())
-                .build();
+        Retrofit retrofit = SelfCall.createRetrofit(MeasureApi.BASEURL);
 
         MeasureApi apiService = retrofit.create(MeasureApi.class);
         Call<MeasureRepoResponse> call = null;

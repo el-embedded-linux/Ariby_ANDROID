@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.menu.navigation.FindLocationActivity">
+    tools:context=".ui.main.menu.navigation.MapFindLocationActivity">
     <RelativeLayout
         android:id="@+id/map_view"
         android:layout_width="match_parent"
