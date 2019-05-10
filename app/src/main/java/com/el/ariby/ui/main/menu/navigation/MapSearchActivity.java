@@ -61,34 +61,35 @@ public class MapSearchActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                runOnUiThread(new Runnable() {
+                String str = etMapName.getText().toString();
+
+                tmapdata.findAllPOI(str, new TMapData.FindAllPOIListenerCallback() {
                     @Override
-                    public void run() { // POI검색은 쓰레드를 사용해야 나옴.
-                        String str = etMapName.getText().toString();
-
-
-                        tmapdata.findAllPOI(str, new TMapData.FindAllPOIListenerCallback() {
-                            @Override
-                            public void onFindAllPOI(ArrayList<TMapPOIItem> poiItem) {
-                                mArrayListTest.clear();
+                    public void onFindAllPOI(ArrayList<TMapPOIItem> poiItem) {
+                        mArrayListTest.clear();
                                 /*
                                  java.lang.IndexOutOfBoundsException: Inconsistency detected
                                 너무 빠른 요청은 에러를 발생시키기 때문에 새로운 ArrayList를 만들어서
                                 목록을 받고 기존 ArrayList에 추가시키는 방식으로 하면 해결된다.
                                  */
-                                for (int i = 0; i < poiItem.size(); i++) {
-                                    TMapPOIItem item = (TMapPOIItem) poiItem.get(i);
-                                    //if(!(item.getPOIAddress().length()<0))
-                                    mArrayListTest.add(new MapData(item.getPOIName(),item.getPOIPoint().toString()));
-                                }
+                        for (int i = 0; i < poiItem.size(); i++) {
+                            TMapPOIItem item = (TMapPOIItem) poiItem.get(i);
+                            //if(!(item.getPOIAddress().length()<0))
+                            mArrayListTest.add(new MapData(item.getPOIName(),item.getPOIPoint().toString()));
+                        }
 
+                        mArrayList.clear();
+                        mArrayList.addAll(mArrayListTest);
+
+                        // ui 접근
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter.notifyDataSetChanged();
                             }
                         });
                     }
                 });
-                mArrayList.clear();
-                mArrayList.addAll(mArrayListTest);
-                mAdapter.notifyDataSetChanged();
             }
 
             @Override
