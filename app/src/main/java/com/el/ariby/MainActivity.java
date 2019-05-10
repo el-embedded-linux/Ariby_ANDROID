@@ -1,5 +1,6 @@
 package com.el.ariby;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -23,6 +24,9 @@ import com.el.ariby.ui.main.MenuFragment;
 import com.el.ariby.ui.main.MapActivity;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import static com.kakao.util.maps.helper.Utility.getPackageInfo;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding mBinding;
@@ -33,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         MainViewPager mainViewPager = new MainViewPager(getSupportFragmentManager());
         mBinding.vpMain.setAdapter(mainViewPager);
+
+        // 해시키를 저장
+        String hash = getKeyHash(this);
+        Log.e("MainActivity", "hashKey : " + hash);
 
         mBinding.customBottomBar.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -59,6 +67,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * 카카오 api 사용시  저장해야 하는 해시키를 가져온다
+     * @param context context
+     * @return hash key
+     */
+    public static String getKeyHash(final Context context) {
+        PackageInfo packageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES);
+        if (packageInfo == null)
+            return null;
+
+        for (Signature signature : packageInfo.signatures) {
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                return Base64.encodeToString(md.digest(), Base64.NO_WRAP);
+            } catch (NoSuchAlgorithmException e) {
+                Log.w("", "Unable to get MessageDigest. signature=" + signature, e);
+            }
+        }
+        return null;
+    }
+
 
     @Override
     protected void onResume() {
