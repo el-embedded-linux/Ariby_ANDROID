@@ -16,6 +16,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -108,6 +109,17 @@ public class MapSearchActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 키보드 띄우기
+        etMapName.requestFocus();
+        InputMethodManager inputMethodManager =
+                ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
+        inputMethodManager.showSoftInput(etMapName, InputMethodManager.SHOW_IMPLICIT);
+    }
+
 
     private ArrayList<Double> startLocationService() {
         MapSearchActivity.GPSListener gpsListener = new MapSearchActivity.GPSListener();
