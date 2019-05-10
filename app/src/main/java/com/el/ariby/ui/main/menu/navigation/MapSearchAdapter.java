@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.el.ariby.MapInputActivity;
 import com.el.ariby.R;
 
 import java.util.ArrayList;

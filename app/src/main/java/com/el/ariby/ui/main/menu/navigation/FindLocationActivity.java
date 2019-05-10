@@ -1,4 +1,4 @@
-package com.el.ariby;
+package com.el.ariby.ui.main.menu.navigation;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.el.ariby.BuildConfig;
+import com.el.ariby.R;
 import com.el.ariby.ui.api.CoordApi;
 import com.el.ariby.ui.api.MapFindApi;
 import com.el.ariby.ui.api.response.CoordRepoResponse;
@@ -59,13 +61,12 @@ public class FindLocationActivity extends AppCompatActivity {
         endY=intent.getStringExtra("endY");
         Log.d("Map : ", startX+startY+endX+endY);
         getMapFind(startY,startX,endY,endX);
-        //ArrayList<Double> list = startLocationService();//list로 현재 위치 좌표를 받아옴.
-        //MapPoint MARKER_POINT = MapPoint.mapPointWithGeoCoord(list.get(0), list.get(1));
-
+        MapPoint MARKER_POINT = MapPoint.mapPointWithGeoCoord(Double.parseDouble(startX), Double.parseDouble(startY));
+        mapView.setMapCenterPoint(MARKER_POINT, true);
         MapPOIItem marker = new MapPOIItem(); // 마커 생성
         marker.setItemName("Dafault Market");
         marker.setTag(0);
-        //marker.setMapPoint(MARKER_POINT);
+        marker.setMapPoint(MARKER_POINT);
         marker.setMarkerType(MapPOIItem.MarkerType.BluePin);
         marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
 
@@ -74,8 +75,6 @@ public class FindLocationActivity extends AppCompatActivity {
         mapView.addPOIItem(marker);
         mapView.setHDMapTileEnabled(true); // HD 타일 사용여부
         mapView.setMapTilePersistentCacheEnabled(true);//다운한 지도 데이터를 단말의 영구 캐쉬 영역에 저장하는 기능
-
-        //mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(list.get(0), list.get(1)), true);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,16 +122,13 @@ public class FindLocationActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<MapFindRepoResponse> call,
                                    Response<MapFindRepoResponse> response) {
-                if (response.isSuccessful()) {
                     MapFindRepoResponse repo = response.body();
-                    Log.d("길안내 : ", Integer.toString(repo.getFeatures().get(0).getProperties().getTotalDistance()));
-                    Toast.makeText(getApplicationContext(),Integer.toString(repo.getFeatures().get(0).getProperties().getTotalDistance()),Toast.LENGTH_SHORT).show();
-                }
+                    Log.d("TEST : ", repo.getFeatures().get(0).getProperties().getDescription());
             }
 
             @Override
             public void onFailure(Call<MapFindRepoResponse> call, Throwable t) {
-
+                Log.d("TEST : ",t.getMessage());
             }
         });
     }

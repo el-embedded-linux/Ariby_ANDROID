@@ -15,10 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".FindLocationActivity"></activity>
+        <activity android:name=".ui.main.menu.navigation.FindLocationActivity"></activity>
         <activity android:name=".ui.main.menu.follow.FindFollow"></activity>
-        <activity android:name=".MapInputActivity" />
-        <activity android:name=".NavigationActivity">
+        <activity android:name=".ui.main.menu.navigation.MapInputActivity" />
+        <activity android:name=".ui.main.menu.navigation.NavigationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

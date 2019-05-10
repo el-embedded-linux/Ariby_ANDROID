@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MapInputActivity">
+    tools:context=".ui.main.menu.navigation.MapInputActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -19,6 +19,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="검색"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="현위치"/>
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/my_recycler_view"

@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.el.ariby.NavigationActivity;
+import com.el.ariby.ui.main.menu.navigation.NavigationActivity;
 import com.el.ariby.R;
 
 import net.daum.mf.map.api.MapPOIItem;
