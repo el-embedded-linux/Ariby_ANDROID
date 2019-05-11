@@ -16,8 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.el.ariby.ui.main.menu.navigation.MapInputActivity;
 import com.el.ariby.R;
+import com.el.ariby.ui.main.menu.navigation.MapInputActivity;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -29,28 +29,29 @@ public class MapActivity extends AppCompatActivity {
     MapView mapView;
     FloatingActionButton fab;
     ImageView img_navi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        img_navi=findViewById(R.id.img_navi);
+        img_navi = findViewById(R.id.img_navi);
         fab = findViewById(R.id.fab_focus);
 
         mapView = new MapView(this);
         img_navi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getApplicationContext(), MapInputActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MapInputActivity.class);
                 startActivity(intent);
             }
         });
         ArrayList<Double> list = startLocationService();//list로 현재 위치 좌표를 받아옴.
-        MapPoint MARKER_POINT = MapPoint.mapPointWithGeoCoord(list.get(0), list.get(1));
+        MapPoint markerPoint = MapPoint.mapPointWithGeoCoord(list.get(0), list.get(1));
 
         MapPOIItem marker = new MapPOIItem(); // 마커 생성
         marker.setItemName("Dafault Market");
         marker.setTag(0);
-        marker.setMapPoint(MARKER_POINT);
+        marker.setMapPoint(markerPoint);
         marker.setMarkerType(MapPOIItem.MarkerType.BluePin);
         marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
 
@@ -64,11 +65,11 @@ public class MapActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOff) {
+                if (mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOff) {
                     mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
-            } else if(mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading) {
+                } else if (mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading) {
                     mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
-                } else if(mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading) {
+                } else if (mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading) {
                     mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
                 }
             }
