@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.el.ariby.R;
 import com.skt.Tmap.TMapData;
@@ -27,7 +28,12 @@ import com.skt.Tmap.TMapTapi;
 
 import java.util.ArrayList;
 
-public class MapSearchActivity extends AppCompatActivity {
+/**
+ * 출발지, 도착지 검색 액티비티
+ */
+public class MapSearchActivity extends AppCompatActivity implements
+        MapSearchAdapter.MapDataOnClickListener {
+
     EditText etMapName;
     RecyclerView mRecycle;
     MapSearchAdapter mAdapter;
@@ -47,7 +53,7 @@ public class MapSearchActivity extends AppCompatActivity {
         mRecycle.setLayoutManager(mLayout);
         mArrayList=new ArrayList<>();
         mArrayListTest=new ArrayList<>();
-        mAdapter=new MapSearchAdapter();
+        mAdapter=new MapSearchAdapter(this);
         mRecycle.setAdapter(mAdapter);
 
         TMapTapi tMapTapi = new TMapTapi(this);
@@ -103,7 +109,7 @@ public class MapSearchActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 intent.putExtra("X",Double.toString(list.get(0)));
                 intent.putExtra("Y",Double.toString(list.get(1)));
-                setResult(5000,intent);
+                setResult(MapInputActivity.CODE_MAP_CURRENT_SEARCH, intent);
                 finish();
             }
         });
@@ -152,6 +158,24 @@ public class MapSearchActivity extends AppCompatActivity {
                 minTime, minDistance, gpsListener);
 
         return list;
+    }
+
+    /**
+     * MapSearchAdapter 리스너 구현
+     * @param mapData MapData
+     */
+    @Override
+    public void onClickAdapterItem(MapData mapData) {
+
+        Intent intent = getIntent();
+        String[] str = mapData.lat.split(" ");
+
+        intent.putExtra("result_msg", mapData.mapName);
+        intent.putExtra("X", str[1]);
+        intent.putExtra("Y", str[3]);
+        setResult(RESULT_OK, intent);
+        Toast.makeText(MapSearchActivity.this, mapData.mapName, Toast.LENGTH_SHORT).show();
+        finish();
     }
 
 
