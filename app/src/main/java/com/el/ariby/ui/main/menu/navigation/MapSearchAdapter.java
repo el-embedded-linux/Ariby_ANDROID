@@ -11,14 +11,15 @@ import android.widget.Toast;
 import com.el.ariby.R;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class MapSearchAdapter extends RecyclerView.Adapter<MapViewHolder> {
-    private ArrayList<MapData> mList;
 
-    public MapSearchAdapter(ArrayList<MapData> list) {
+    private ArrayList<MapData> mList = new ArrayList<>();
+
+    public MapSearchAdapter() {
         super();
-        this.mList = list;
     }
 
     @NonNull
@@ -26,8 +27,7 @@ public class MapSearchAdapter extends RecyclerView.Adapter<MapViewHolder> {
     public MapViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_map_name, viewGroup, false);
 
-        MapViewHolder viewHolder = new MapViewHolder(view);
-        return viewHolder;
+        return new MapViewHolder(view);
     }
 
     @Override
@@ -57,5 +57,11 @@ public class MapSearchAdapter extends RecyclerView.Adapter<MapViewHolder> {
     @Override
     public int getItemCount() {
         return (null != mList ? mList.size() : 0);
+    }
+
+    public void replaceAll(List<MapData> mArrayListTest) {
+        mList.clear();
+        mList.addAll(mArrayListTest);
+        notifyDataSetChanged();
     }
 }

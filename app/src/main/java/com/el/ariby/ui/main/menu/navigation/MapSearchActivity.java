@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class MapSearchActivity extends AppCompatActivity {
     EditText etMapName;
     RecyclerView mRecycle;
-    RecyclerView.Adapter mAdapter;
+    MapSearchAdapter mAdapter;
     RecyclerView.LayoutManager mLayout;
     ArrayList<MapData> mArrayList;
     ArrayList<MapData> mArrayListTest;
@@ -47,12 +47,13 @@ public class MapSearchActivity extends AppCompatActivity {
         mRecycle.setLayoutManager(mLayout);
         mArrayList=new ArrayList<>();
         mArrayListTest=new ArrayList<>();
-        mAdapter=new MapSearchAdapter(mArrayList);
+        mAdapter=new MapSearchAdapter();
         mRecycle.setAdapter(mAdapter);
 
         TMapTapi tMapTapi = new TMapTapi(this);
         tMapTapi.setSKTMapAuthentication("d7673b71-bc89-416a-9ac6-019e5d8f327a");
         final TMapData tmapdata = new TMapData();
+
         etMapName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -78,14 +79,13 @@ public class MapSearchActivity extends AppCompatActivity {
                             mArrayListTest.add(new MapData(item.getPOIName(),item.getPOIPoint().toString()));
                         }
 
-                        mArrayList.clear();
-                        mArrayList.addAll(mArrayListTest);
-
                         // ui 접근
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mAdapter.notifyDataSetChanged();
+                                mArrayList.clear();
+                                mArrayList.addAll(mArrayListTest);
+                                mAdapter.replaceAll(mArrayListTest);
                             }
                         });
                     }
@@ -94,7 +94,6 @@ public class MapSearchActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                mAdapter.notifyDataSetChanged();
             }
         });
         btnLocation.setOnClickListener(new View.OnClickListener() {
