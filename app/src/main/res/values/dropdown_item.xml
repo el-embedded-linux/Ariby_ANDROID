@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sort">
+        <item>오늘의 랭킹</item>
+        <item>이번 달의 랭킹</item>
+    </string-array>
+    </resources>

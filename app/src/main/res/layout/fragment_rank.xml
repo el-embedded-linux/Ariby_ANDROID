@@ -1,23 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.menu.RankFragment">
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+    android:orientation="horizontal"
+    tools:context=".ui.main.menu.ranking.RankFragment">
+
+    <TableLayout
+        android:id="@+id/layout_tab_rank"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="RANK"
-        android:textColor="#ff0000"
-        android:textSize="50sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</android.support.constraint.ConstraintLayout>
+        android:stretchColumns="0,1,2,3">
+
+        <TableRow>
+            <Button
+                android:id="@+id/btn_ridingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FF0000"
+                android:textColor="#000"
+                android:text="주행시간"/>
+
+            <Button
+                android:id="@+id/btn_ridingDis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FF0000"
+                android:textColor="#000"
+                android:text="주행거리"/>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <Spinner
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_tab_rank"
+        android:id="@+id/dropDown">
+    </Spinner>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_layout_rank"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/dropDown">
+        <ListView
+            android:id="@+id/list_rank"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="#979797"
+            android:dividerHeight="2px">
+        </ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+</RelativeLayout>
