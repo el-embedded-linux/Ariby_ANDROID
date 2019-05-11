@@ -14,6 +14,10 @@ import android.widget.Toast;
 import com.el.ariby.R;
 
 public class MapInputActivity extends AppCompatActivity {
+    public static final int CODE_MAP_START_SEARCH = 3000;           // 출발지 인텐트 코드
+    public static final int CODE_MAP_END_SEARCH = 4000;             // 도착지 인텐트 코드
+    public static final int CODE_MAP_CURRENT_SEARCH = 5000;         // 도착지 인텐트 코드
+
     EditText edtStart;
     EditText edtEnd;
     Button btnFind;
@@ -33,14 +37,14 @@ public class MapInputActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MapSearchActivity.class);
-                startActivityForResult(intent, 3000);
+                startActivityForResult(intent, CODE_MAP_START_SEARCH);
             }
         });
         edtEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MapSearchActivity.class);
-                startActivityForResult(intent, 4000);
+                startActivityForResult(intent, CODE_MAP_END_SEARCH);
             }
         });
         btnFind.setOnClickListener(new View.OnClickListener() {
@@ -63,29 +67,47 @@ public class MapInputActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == 3000 && resultCode == 3000) { // 출발지를 누르고 리스트를 선택 시
-            String a = data.getStringExtra("result_msg");
-            startX = data.getStringExtra("X");
-            startY = data.getStringExtra("Y");
-            edtStart.setText(a);
-        } else if (requestCode == 4000 && resultCode == 3000) { // 도착지를 누르고 리스트를 선택 시
-            String a = data.getStringExtra("result_msg");
-            endX = data.getStringExtra("X");
-            endY = data.getStringExtra("Y");
-            edtEnd.setText(a);
-        } else if (resultCode == 5000) { // 출발지 또는 도착지를 누르고 현 위치를 선택 시
-
-            if (requestCode == 3000) {
-                startX = data.getStringExtra("X");
-                startY = data.getStringExtra("Y");
-                Log.d("startX", startX);
-                Log.d("startY", startY);
-                edtStart.setText("현위치");
-            } else {
-                endX = data.getStringExtra("X");
-                endY = data.getStringExtra("Y");
-                edtEnd.setText("현위치");
-            }
+        switch (requestCode) {
+            case CODE_MAP_START_SEARCH:                                 // 출발지 결과
+                if (resultCode == RESULT_OK) {                          // 출발지를 누르고 리스트를 선택 시
+                    setStartCoords(data);
+                    edtStart.setText(data.getStringExtra("result_msg"));
+                } else if (resultCode == CODE_MAP_CURRENT_SEARCH) {     // 출발지 누르고 현 위치를 선택 시
+                    setStartCoords(data);
+                    edtStart.setText("현위치");
+                }
+                break;
+            case CODE_MAP_END_SEARCH:                                   // 도착지 결과
+                if (resultCode == RESULT_OK) {                          // 도착지를 누르고 리스트를 선택 시
+                    setEndCoords(data);
+                    edtEnd.setText(data.getStringExtra("result_msg"));
+                } else if (resultCode == CODE_MAP_CURRENT_SEARCH) {     // 도착지 누르고 현 위치를 선택 시
+                    setEndCoords(data);
+                    edtEnd.setText("현위치");
+                }
+                break;
         }
+    }
+
+    /**
+     * 출발지 좌표 저장
+     * @param data intent
+     */
+    private void setStartCoords(@Nullable Intent data) {
+        startX = data.getStringExtra("X");
+        startY = data.getStringExtra("Y");
+        Log.d("startX", startX);
+        Log.d("startY", startY);
+    }
+
+    /**
+     * 도착지 좌표 저장
+     * @param data intent
+     */
+    private void setEndCoords(@Nullable Intent data) {
+        endX = data.getStringExtra("X");
+        endY = data.getStringExtra("Y");
+        Log.d("startX", endX);
+        Log.d("startY", endY);
     }
 }
