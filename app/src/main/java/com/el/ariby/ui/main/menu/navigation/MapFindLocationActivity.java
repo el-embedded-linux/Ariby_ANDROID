@@ -30,7 +30,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class MapFindLocationActivity extends AppCompatActivity {
+public class MapFindLocationActivity extends AppCompatActivity implements
+        MapView.CurrentLocationEventListener {
     MapView mapView;
     FloatingActionButton fab;
     String startX;
@@ -82,6 +83,7 @@ public class MapFindLocationActivity extends AppCompatActivity {
         mapView.addPOIItem(marker2);
         mapView.setHDMapTileEnabled(true); // HD 타일 사용여부
         mapView.setMapTilePersistentCacheEnabled(true);//다운한 지도 데이터를 단말의 영구 캐쉬 영역에 저장하는 기능
+        mapView.setCurrentLocationEventListener(this);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,5 +165,31 @@ public class MapFindLocationActivity extends AppCompatActivity {
                 Log.d("TEST : ", t.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
+        MapPoint.GeoCoordinate mapPointGeo = mapPoint.getMapPointGeoCoord();
+        Log.d("currentLocation", String.format("MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)", mapPointGeo.latitude, mapPointGeo.longitude, v));
+    }
+
+    @Override
+    public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
+
+    }
+
+    @Override
+    public void onCurrentLocationUpdateFailed(MapView mapView) {
+
+    }
+
+    @Override
+    public void onCurrentLocationUpdateCancelled(MapView mapView) {
+
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
     }
 }
