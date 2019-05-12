@@ -170,8 +170,45 @@ public class MapFindLocationActivity extends AppCompatActivity implements
     @Override
     public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
         MapPoint.GeoCoordinate mapPointGeo = mapPoint.getMapPointGeoCoord();
-        Log.d("currentLocation", String.format("MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)", mapPointGeo.latitude, mapPointGeo.longitude, v));
+        // 킬로미터(Kilo Meter) 단위
+        double distanceKiloMeter =
+                distance(mapPointGeo.latitude, mapPointGeo.longitude,
+                        37.47356391969749,126.89078163446104, "meter");
+
+        Log.d("currentDistance",String.valueOf(distanceKiloMeter));
+        Log.d("currentLocation",
+                String.format("MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)",
+                        mapPointGeo.latitude, mapPointGeo.longitude, v));
     }
+
+    private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
+
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+
+        if (unit == "kilometer") {
+            dist = dist * 1.609344;
+        } else if(unit == "meter"){
+            dist = dist * 1609.344;
+        }
+
+        return (dist);
+    }
+
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    // This function converts radians to decimal degrees
+    private static double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
+    }
+
 
     @Override
     public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
