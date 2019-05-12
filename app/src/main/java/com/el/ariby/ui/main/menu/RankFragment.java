@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,24 +20,25 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.el.ariby.ui.main.menu.ranking.RankingAdapter;
+import com.el.ariby.ui.main.menu.ranking.CustomRanking;
 import com.el.ariby.ui.main.menu.ranking.RankingItem;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.el.ariby.R;
-import org.w3c.dom.Text;
 
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 public class RankFragment extends Fragment {
 
@@ -54,7 +54,8 @@ public class RankFragment extends Fragment {
     List<String> dropDownItems = new ArrayList<String>();
     DatabaseReference ref;
     RankingAdapter adapter;
-
+    ArrayList<RankingItem> rankingItems = new ArrayList<RankingItem>();
+    ArrayList<String> setRank = new ArrayList<String>();
     int sortFlag=0;
 
     @Override
@@ -138,6 +139,8 @@ public class RankFragment extends Fragment {
         Log.d("Rank_timeStamp : ", String.valueOf(timestamp));
         Log.d("getYear, month, day : ", thisYear+", "+thisMonth+", "+thisDay);
 
+        final String check = "dailyData/1557360000000/";
+
         btnTime.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -147,6 +150,101 @@ public class RankFragment extends Fragment {
         btnDistance.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        adapter.clearItem();
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                String dailyTotalDis;
+                                String dailyRank;
+                                String dailyTotalTime;
+                                String dailyRankCheck;
+                                String nickname;
+                                String profile;
+                                try {
+                                    dailyRankCheck = snapshot.child(check).getValue().toString();
+                                    if (dailyRankCheck.isEmpty()) {
+                                        continue;
+                                    } else {
+                                        Log.d("거리별", dailyRankCheck);
+                                        nickname = snapshot.child("userInfo/nickname").getValue().toString();
+                                        profile = snapshot.child("userInfo/profile").getValue().toString();
+                                        dailyRank = snapshot.child(check).child("dailyRank").getValue().toString();
+                                        dailyTotalDis = snapshot.child(check).child("dailyTotalDis").getValue().toString();
+                                        dailyTotalTime = snapshot.child(check).child("dailyTotalTime").getValue().toString();
+                                        Log.e("거리별 랭킹", dailyRank);
+
+                                        adapter.addItem(new RankingItem(profile, nickname, dailyTotalDis, dailyTotalTime, dailyRank));
+                                    }
+                                } catch (Exception e) {
+                                    e.getStackTrace();
+                                }
+                            }
+                        }
+                        Collections.sort(rankingItems, adapter.sortByDis);
+                        Log.d("sortByDis완료됨","done");
+                        //
+                            ref.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for (int i = 0; i < rankingItems.size(); i++) {
+                                        Log.d("출력 : ", rankingItems.get(i).getRank() + ",  " + rankingItems.get(i).getRidingDis());
+                                        //Todo. 나중에 데이터베이스의 기존 순위 읽어와서 바뀐 순위와의 변동 구하기
+                                        final int rank = i + 1;
+
+                                        String getRank = rankingItems.get(i).getRank();
+                                        rankingItems.get(i).setRank(String.valueOf(rank));
+                                        final String getDis = rankingItems.get(i).getRidingDis();
+                                        Log.e("받아온 디스턴스 : ", getDis);
+
+                                        if (dataSnapshot.exists()) {
+                                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                String dailyTotalDis;
+                                                String putRank;
+                                                String dailyRankCheck;
+                                                String uid;
+                                                try {
+                                                    dailyRankCheck = snapshot.child(check).getValue().toString();
+                                                    Log.d("RankCheck2222 : ", dailyRankCheck);
+                                                    if (dailyRankCheck.isEmpty()) {
+                                                        continue;
+                                                    } else {
+                                                        dailyTotalDis = snapshot.child("dailyData/1557360000000/").child("dailyTotalDis").getValue().toString();
+                                                        Log.d("TotalDis2222 : ", dailyTotalDis);
+                                                        if (getDis.equals(dailyTotalDis)) {
+                                                            uid = snapshot.getKey();
+                                                            Log.e("MainUid : ", uid);
+                                                            ref.child(uid).child("/dailyData/1557360000000/").child("dailyRank").setValue(String.valueOf(rank));
+                                                            putRank = snapshot.child(check).child("dailyRank").getValue().toString();
+
+                                                            rankingItems.get(i).setRank(String.valueOf(putRank));
+                                                            Log.d("addition end","done");
+                                                            break;
+                                                        }
+                                                    }
+                                                } catch (Exception e) {
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+                        adapter.notifyDataSetChanged();
+                        }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
             }
         });
@@ -169,41 +267,104 @@ public class RankFragment extends Fragment {
                         Log.e("check : ",check);
                         try {
                             dailyRankCheck = snapshot.child(check).getValue().toString();
-
                             if(dailyRankCheck.isEmpty())
                             {
                                 Log.d("오늘 날짜에 대한 데이터는 없음",dailyRankCheck);
                                 continue;
                             }else {
-
                                 nickname = snapshot.child("userInfo/nickname").getValue().toString();
                                 Log.e("nickname22: ", nickname);
                                 profile = snapshot.child("userInfo/profile").getValue().toString();
                                 Log.e("profile22 : ", profile);
-
                                 Log.e("dailyRankCheck : ", dailyRankCheck);
                                 dailyRank = snapshot.child(check).child("dailyRank").getValue().toString();
                                 dailyTotalDis = snapshot.child(check).child("dailyTotalDis").getValue().toString();
                                 dailyTotalTime = snapshot.child(check).child("dailyTotalTime").getValue().toString();
                                 Log.e("dailyRank : ",dailyRank);
-
                                 adapter.addItem(new RankingItem(profile, nickname, dailyTotalDis, dailyTotalTime, dailyRank));
-
                             }
                         }catch (Exception e){
                             e.getStackTrace();
                         }
                     }
                 }
+                Collections.sort(rankingItems, adapter.rankComparator);
                 adapter.notifyDataSetChanged();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
         adapter = new RankingAdapter();
         listRank.setAdapter(adapter);
         return v;
+    }
+
+
+    public class RankingAdapter extends BaseAdapter {
+
+
+        @Override
+        public int getCount() { return rankingItems.size(); }
+        @Override
+        public Object getItem(int position) { return rankingItems.get(position);}
+        @Override
+        public long getItemId(int position) { return position; }
+        public void addItem(RankingItem item){ rankingItems.add(item); }
+
+        Comparator<RankingItem> rankComparator = new Comparator<RankingItem>() {
+            @Override
+            public int compare(RankingItem item1, RankingItem item2) {
+                int ret;
+                int item1Rank = Integer.parseInt(item1.getRank());
+                int item2Rank = Integer.parseInt(item2.getRank());
+                if (item1Rank < item2Rank) {
+                    ret = -1;
+                } else if (item1Rank == item2Rank) {
+                    ret = 0;
+                } else {
+                    ret = 1;
+                }
+                return ret;
+            }
+        };
+
+        Comparator<RankingItem> sortByDis = new Comparator<RankingItem>() {
+            @Override
+            public int compare(RankingItem item1, RankingItem item2) {
+                int ret=0;
+                final float item1Dis = Float.parseFloat(item1.getRidingDis());
+                float item2Dis = Float.parseFloat(item2.getRidingDis());
+
+                if(item1Dis < item2Dis){
+                    ret = 1;
+                }else if(item1Dis == item2Dis){
+                    ret = 0;
+                }else {
+                    ret = -1;
+                }
+                return ret;
+            }
+        };
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final Context context = parent.getContext();
+            CustomRanking view = new CustomRanking(context);
+            RankingItem item = rankingItems.get(position);
+            view.setTxtRankNick(item.getNickname());
+            view.setTxtRidingTime(item.getRidingTime());
+            Log.d("getRidingTime : ", item.getRidingTime());
+            view.setTxtRank(item.getRank());
+            view.setImgRankProfile(item.getImgProfile());
+            view.setTxtRidingDis(item.getRidingDis());
+
+            //ToDo. RankingItem  채우고 마저 하기.
+            return view;
+        }
+
+        public void clearItem(){rankingItems.clear();}
     }
 
 }

@@ -27,10 +27,16 @@ public class RankingItem {
         this.nickname = nickname;
     }
 
+
     String imgProfile; //랭킹 프로필 사진
     String nickname; //닉네임
     String ridingDis; //주행거리
     String ridingTime; //주행시간
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
     String rank; //등수
 
 }
