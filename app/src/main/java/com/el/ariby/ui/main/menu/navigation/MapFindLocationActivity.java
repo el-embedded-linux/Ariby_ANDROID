@@ -124,10 +124,12 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                     String type = repo.getFeatures().get(i).getGeometry().getType();
                     Double x;
                     Double y;
+                    PointDouble points;
                     if (type.equals("Point")) {
-                        x = (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0);
-                        y = (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1);
-                        MapPoint marketPoint3 = MapPoint.mapPointWithGeoCoord(y, x);
+                        points = new PointDouble(
+                                (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0),
+                                (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1));
+                        MapPoint marketPoint3 = MapPoint.mapPointWithGeoCoord(points.getY(), points.getX());
 
                         MapPOIItem marker3 = new MapPOIItem(); // 마커 생성
                         marker3.setItemName("Dafault Market");
@@ -137,16 +139,16 @@ public class MapFindLocationActivity extends AppCompatActivity implements
 
                         mapView.addPOIItem(marker3);
 
-                        polyline.addPoint(MapPoint.mapPointWithGeoCoord(y, x));
+                        polyline.addPoint(MapPoint.mapPointWithGeoCoord(points.getY(), points.getX()));
 
-                        Log.d("testx" + i, ((Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0)).toString());
-                        Log.d("testy" + i, ((Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1)).toString());
+                        Log.d("testX" + i, points.getX().toString());
+                        Log.d("testY" + i, points.getY().toString());
                     } else if (type.equals("LineString")) {
                         List<Object> list = repo.getFeatures().get(i).getGeometry().getCoordinates();
                         for (int k = 0; k < list.size(); k++) { // k
                             String[] lit = String.valueOf(list.get(k)).split(" ");
-                            Double lineX = Double.parseDouble(lit[0].substring(1, lit[0].length()-1));
-                            Double lineY = Double.parseDouble(lit[1].substring(0, lit[1].length()-1));
+                            Double lineX = Double.parseDouble(lit[0].substring(1, lit[0].length() - 1));
+                            Double lineY = Double.parseDouble(lit[1].substring(0, lit[1].length() - 1));
                             polyline.addPoint(MapPoint.mapPointWithGeoCoord(lineY, lineX));
                         }
                         Log.d("listtest", String.valueOf(list));
@@ -173,9 +175,9 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         // 킬로미터(Kilo Meter) 단위
         double distanceKiloMeter =
                 distance(mapPointGeo.latitude, mapPointGeo.longitude,
-                        37.47356391969749,126.89078163446104, "meter");
+                        37.47356391969749, 126.89078163446104, "meter");
 
-        Log.d("currentDistance",String.valueOf(distanceKiloMeter));
+        Log.d("currentDistance", String.valueOf(distanceKiloMeter));
         Log.d("currentLocation",
                 String.format("MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)",
                         mapPointGeo.latitude, mapPointGeo.longitude, v));
@@ -193,7 +195,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
 
         if (unit == "kilometer") {
             dist = dist * 1.609344;
-        } else if(unit == "meter"){
+        } else if (unit == "meter") {
             dist = dist * 1609.344;
         }
 
