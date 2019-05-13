@@ -20,6 +20,7 @@
                 android:layout_height="wrap_content"
                 android:background="#00FF0000"
                 android:textColor="#000"
+
                 android:text="주행시간"/>
 
             <Button
