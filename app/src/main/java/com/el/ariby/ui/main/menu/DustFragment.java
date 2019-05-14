@@ -121,8 +121,8 @@ public class DustFragment extends Fragment {
 
     private void getWeather(int numOfRows, int pageNo, String stationName,
                             String dataTerm, String ver) { // 대기정보 받아옴
+        final ArrayList<DustHourData> dustHourData = new ArrayList<>();
         Retrofit retrofit = SelfCall.createRetrofit(DustApi.BASEURL);
-
         DustApi apiService = retrofit.create(DustApi.class);
         Call<DustRepoResponse> call = null;
         try {
@@ -143,84 +143,35 @@ public class DustFragment extends Fragment {
             public void onResponse(Call<DustRepoResponse> call,
                                    Response<DustRepoResponse> response) {
                 if (response.isSuccessful()) {
-                    String pm10Value;
-                    String khaiValue;
-                    String pm25Value;
-                    String no2Value;
-                    String coValue;
                     DustRepoResponse repo = response.body();
                     if (repo != null) {
-                        if (("-").equals(repo.getList().get(0).getPm10Value())) { //최근 측정값을 못 가져올 경우 한 시간 전 측정값을 가져온다.
-                            pm10Value = repo.getList().get(1).getPm10Value();
-                            khaiValue = repo.getList().get(1).getKhaiValue();
-                            pm25Value = repo.getList().get(1).getPm25Value();
-                            no2Value = repo.getList().get(1).getNo2Value();
-                            coValue = repo.getList().get(1).getCoValue();
-                            mBinding.txtKhai.setText(khaiValue);
-                            mBinding.txtDust1.setText(pm10Value + "㎍/㎥");
-                            mBinding.txtDust2.setText(pm25Value + " ㎍/㎥");
-                            mBinding.txtDust3.setText(no2Value + " ppm");
-                            mBinding.txtDust4.setText(coValue + " ppm");
-                        } else {
-                            pm10Value = repo.getList().get(0).getPm10Value();
-                            khaiValue = repo.getList().get(0).getKhaiValue();
-                            pm25Value = repo.getList().get(0).getPm25Value();
-                            no2Value = repo.getList().get(0).getNo2Value();
-                            coValue = repo.getList().get(0).getCoValue();
-                            mBinding.txtKhai.setText(khaiValue);
-                            mBinding.txtDust1.setText(pm10Value + "㎍/㎥");
-                            mBinding.txtDust2.setText(pm25Value + " ㎍/㎥");
-                            mBinding.txtDust3.setText(no2Value + " ppm");
-                            mBinding.txtDust4.setText(coValue + " ppm");
+                        Log.d("getList", String.valueOf(repo.getList().size()));
+                        for (int i = 0; i < repo.getList().size(); i++) { // 시간 별 대기정보를 저장함.
+                            DustHourData dustData = new DustHourData();
+                            dustData.setKhaiValue(repo.getList().get(i).getKhaiValue());
+                            dustData.setPm10Value(repo.getList().get(i).getPm10Value());
+                            dustData.setPm25Value(repo.getList().get(i).getPm25Value());
+                            dustData.setNo2Value(repo.getList().get(i).getNo2Value());
+                            dustData.setCoValue(repo.getList().get(i).getCoValue());
+                            dustHourData.add(dustData);
                         }
-                        if (Integer.parseInt(khaiValue) < 16) {
-                            mBinding.layout.setBackgroundColor(Color.BLUE);
-                            mBinding.txtKhaiText.setText("통합지수 : 매우좋음");
-                        } else if (Integer.parseInt(khaiValue) < 36) {
-                            mBinding.layout.setBackgroundColor(Color.GREEN);
-                            mBinding.txtKhaiText.setText("통합지수 : 보통");
-                        } else if (Integer.parseInt(khaiValue) < 76) {
-                            mBinding.layout.setBackgroundColor(Color.parseColor("#cc6600"));
-                            mBinding.txtKhaiText.setText("통합지수 : 나쁨");
-                        } else {
-                            mBinding.layout.setBackgroundColor(Color.RED);
-                            mBinding.txtKhaiText.setText("통합지수 : 매우나쁨");
+                        Log.d("nullCheckSize", String.valueOf(dustHourData.size()));
+                        for (int i = 0; i < dustHourData.size(); i++) {
+                            if (checkNull(dustHourData.get(i))) {
+                                DustHourData list = dustHourData.get(i);
+                                mBinding.txtKhai.setText(list.getKhaiValue());
+                                mBinding.txtDust1.setText(list.getPm10Value().concat("㎍/㎥"));
+                                mBinding.txtDust2.setText(list.getPm25Value().concat(" ㎍/㎥"));
+                                mBinding.txtDust3.setText(list.getNo2Value().concat(" ppm"));
+                                mBinding.txtDust4.setText(list.getCoValue().concat("ppm"));
+                                setDustView(Integer.parseInt(list.getKhaiValue()),
+                                        Integer.parseInt(list.getPm10Value()),
+                                        Integer.parseInt(list.getPm25Value()),
+                                        Double.parseDouble(list.getNo2Value()),
+                                        Double.parseDouble(list.getCoValue()));
+                                break;
+                            }
                         }
-                        if (Integer.parseInt(pm10Value) < 16)
-                            mBinding.imgDust1.setImageResource(R.drawable.smile);
-                        else if (Integer.parseInt(pm10Value) < 36)
-                            mBinding.imgDust1.setImageResource(R.drawable.normal);
-                        else if (Integer.parseInt(pm10Value) < 76)
-                            mBinding.imgDust1.setImageResource(R.drawable.bad);
-                        else
-                            mBinding.imgDust1.setImageResource(R.drawable.worst);
-
-                        if (Integer.parseInt(pm25Value) < 16)
-                            mBinding.imgDust2.setImageResource(R.drawable.smile);
-                        else if (Integer.parseInt(pm25Value) < 36)
-                            mBinding.imgDust2.setImageResource(R.drawable.normal);
-                        else if (Integer.parseInt(pm25Value) < 76)
-                            mBinding.imgDust2.setImageResource(R.drawable.bad);
-                        else
-                            mBinding.imgDust2.setImageResource(R.drawable.worst);
-
-                        if (Double.parseDouble(no2Value) < 0.03)
-                            mBinding.imgDust3.setImageResource(R.drawable.smile);
-                        else if (Double.parseDouble(no2Value) < 0.06)
-                            mBinding.imgDust3.setImageResource(R.drawable.normal);
-                        else if (Double.parseDouble(no2Value) < 0.20)
-                            mBinding.imgDust3.setImageResource(R.drawable.bad);
-                        else
-                            mBinding.imgDust3.setImageResource(R.drawable.worst);
-
-                        if (Double.parseDouble(coValue) < 5.5)
-                            mBinding.imgDust4.setImageResource(R.drawable.smile);
-                        else if (Double.parseDouble(coValue) < 9.0)
-                            mBinding.imgDust4.setImageResource(R.drawable.normal);
-                        else if (Double.parseDouble(coValue) < 12.0)
-                            mBinding.imgDust4.setImageResource(R.drawable.bad);
-                        else
-                            mBinding.imgDust4.setImageResource(R.drawable.worst);
                     }
                 }
             }
@@ -318,6 +269,120 @@ public class DustFragment extends Fragment {
         @Override
         public void onProviderDisabled(String provider) {
 
+        }
+    }
+
+    public boolean checkNull(DustHourData data) { // 필드 중 null 이거나 비어있으면 false 반환.
+        if (data.getKhaiValue().isEmpty()
+                || data.getKhaiValue().equals("-")
+                || data.getPm10Value().isEmpty()
+                || data.getPm10Value().equals("-")
+                || data.getPm25Value().isEmpty()
+                || data.getPm25Value().equals("-")
+                || data.getCoValue().isEmpty()
+                || data.getNo2Value().isEmpty()) // 최소 통합,미세,초미세가 "-" 이면 안된다.
+            return false;
+        else return true;
+    }
+
+    public void setDustView(int khaiValue, int pm10Value,
+                            int pm25Value, Double no2Value, Double coValue) {
+        if (khaiValue < 16) {
+            mBinding.layout.setBackgroundColor(Color.BLUE);
+            mBinding.txtKhaiText.setText("통합지수 : 매우좋음");
+        } else if (khaiValue < 36) {
+            mBinding.layout.setBackgroundColor(Color.GREEN);
+            mBinding.txtKhaiText.setText("통합지수 : 보통");
+        } else if (khaiValue < 76) {
+            mBinding.layout.setBackgroundColor(Color.parseColor("#cc6600"));
+            mBinding.txtKhaiText.setText("통합지수 : 나쁨");
+        } else {
+            mBinding.layout.setBackgroundColor(Color.RED);
+            mBinding.txtKhaiText.setText("통합지수 : 매우나쁨");
+        }
+
+        if (pm10Value < 16)
+            mBinding.imgDust1.setImageResource(R.drawable.smile);
+        else if (pm10Value < 36)
+            mBinding.imgDust1.setImageResource(R.drawable.normal);
+        else if (pm10Value < 76)
+            mBinding.imgDust1.setImageResource(R.drawable.bad);
+        else
+            mBinding.imgDust1.setImageResource(R.drawable.worst);
+
+        if (pm25Value < 16)
+            mBinding.imgDust2.setImageResource(R.drawable.smile);
+        else if (pm25Value < 36)
+            mBinding.imgDust2.setImageResource(R.drawable.normal);
+        else if (pm25Value < 76)
+            mBinding.imgDust2.setImageResource(R.drawable.bad);
+        else
+            mBinding.imgDust2.setImageResource(R.drawable.worst);
+
+        if (no2Value < 0.03)
+            mBinding.imgDust3.setImageResource(R.drawable.smile);
+        else if (no2Value < 0.06)
+            mBinding.imgDust3.setImageResource(R.drawable.normal);
+        else if (no2Value < 0.20)
+            mBinding.imgDust3.setImageResource(R.drawable.bad);
+        else
+            mBinding.imgDust3.setImageResource(R.drawable.worst);
+
+        if (coValue < 5.5)
+            mBinding.imgDust4.setImageResource(R.drawable.smile);
+        else if (coValue < 9.0)
+            mBinding.imgDust4.setImageResource(R.drawable.normal);
+        else if (coValue < 12.0)
+            mBinding.imgDust4.setImageResource(R.drawable.bad);
+        else
+            mBinding.imgDust4.setImageResource(R.drawable.worst);
+    }
+
+    class DustHourData {
+        String pm10Value; // 미세먼지
+        String khaiValue; // 통합지수
+        String pm25Value; // 초미세먼지
+        String no2Value;
+        String coValue;
+
+        public String getPm10Value() {
+            return pm10Value;
+        }
+
+        public void setPm10Value(String pm10Value) {
+            this.pm10Value = pm10Value;
+        }
+
+        public String getKhaiValue() {
+            return khaiValue;
+        }
+
+        public void setKhaiValue(String khaiValue) {
+            this.khaiValue = khaiValue;
+        }
+
+        public String getPm25Value() {
+            return pm25Value;
+        }
+
+        public void setPm25Value(String pm25Value) {
+            this.pm25Value = pm25Value;
+        }
+
+        public String getNo2Value() {
+            return no2Value;
+        }
+
+        public void setNo2Value(String no2Value) {
+            this.no2Value = no2Value;
+        }
+
+        public String getCoValue() {
+            return coValue;
+        }
+
+        public void setCoValue(String coValue) {
+            this.coValue = coValue;
         }
     }
 }

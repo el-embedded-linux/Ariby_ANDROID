@@ -9,10 +9,11 @@ import retrofit2.http.Query;
 
 public interface CoordApi {
     String BASEURL = "https://dapi.kakao.com/";
+
     @GET("/v2/local/geo/transcoord.json")
-    Call<CoordRepoResponse> getCoord (@Header("Authorization")String key,
-                                      @Query("x") String x,
-                                      @Query("y")String y,
-                                      @Query("input_coord")String input_coord,
-                                      @Query("output_coord")String output_coord);
+    Call<CoordRepoResponse> getCoord(@Header("Authorization") String key,
+                                     @Query("x") String x,
+                                     @Query("y") String y,
+                                     @Query("input_coord") String input_coord,
+                                     @Query("output_coord") String output_coord);
 }

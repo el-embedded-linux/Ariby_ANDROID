@@ -39,6 +39,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
     String endX;
     String endY;
     ArrayList<Point> points;
+    ArrayList<PointDouble> naviPoints = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +84,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         mapView.addPOIItem(marker2);
         mapView.setHDMapTileEnabled(true); // HD 타일 사용여부
         mapView.setMapTilePersistentCacheEnabled(true);//다운한 지도 데이터를 단말의 영구 캐쉬 영역에 저장하는 기능
+        Log.d("size", String.valueOf(naviPoints.size()));
         mapView.setCurrentLocationEventListener(this);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,9 +132,9 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0),
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1));
                         MapPoint marketPoint3 = MapPoint.mapPointWithGeoCoord(points.getY(), points.getX());
-
+                        naviPoints.add(points);
                         MapPOIItem marker3 = new MapPOIItem(); // 마커 생성
-                        marker3.setItemName("Dafault Market");
+                        marker3.setItemName(repo.getFeatures().get(i).getProperties().getDescription());
                         marker3.setTag(3);
                         marker3.setMapPoint(marketPoint3);
                         marker3.setMarkerType(MapPOIItem.MarkerType.RedPin);
