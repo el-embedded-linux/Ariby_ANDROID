@@ -2,6 +2,7 @@ package com.el.ariby.ui.main.menu;
 
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -57,7 +58,7 @@ public class RankFragment extends Fragment {
     ArrayList<RankingItem> rankingItems = new ArrayList<RankingItem>();
     ArrayList<String> setRank = new ArrayList<String>();
     int setTimeFlag=0; //0이면 오늘, 1이면 이번달
-    int setStandardFlag = 0; //0이면 거리, 1이면 시간
+    int setStandardFlag = 0; //0이면 거리(default), 1이면 거리, 2이면 시간
 
     @Override
     public void onAttach(Context context) {
@@ -89,24 +90,7 @@ public class RankFragment extends Fragment {
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dropDown.setAdapter(sortAdapter);
         dropDown.setPopupBackgroundResource(R.color.colorPrimary);
-        dropDown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(dropDown.getSelectedItem().equals("오늘의 랭킹")){
-                    setTimeFlag = 0;
-                    Toast.makeText(mcontext, "sortFlag = "+setTimeFlag, Toast.LENGTH_SHORT).show();
 
-                }
-                if(dropDown.getSelectedItem().equals("이번 달의 랭킹")) {
-                    setTimeFlag = 1;
-                    Toast.makeText(mcontext, "sortFlag = "+setTimeFlag, Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                setTimeFlag = 0;
-            }
-        });
 
         //현재 날짜/시간 가져오기
         long currentTime = System.currentTimeMillis();
@@ -146,14 +130,201 @@ public class RankFragment extends Fragment {
         String monthStr = Long.toString(monthOutput);
         final long monthTimestamp = Long.parseLong(monthStr) * 1000;
         final String check = "dailyData/1557360000000/";
+        final String check2 = "/dailyData/1557360000000/";
         final String monthCheck = "monthlyData/"+String.valueOf(monthTimestamp)+"/";
         //final String monthCheck = "monthlyData/1556636400000";
+
+
+        dropDown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(dropDown.getSelectedItem().equals("오늘의 랭킹")){
+                    setTimeFlag = 0;
+                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            adapter.clearItem();
+                            if(dataSnapshot.exists()){
+                                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                    String dataCheck = null;
+                                    String nickname, profile, runningDistance, runningTime, rank;
+                                    try{
+                                        dataCheck = snapshot.child(check).getValue().toString();
+                                        if(dataCheck.isEmpty()){
+                                            continue;
+                                        }else{
+                                            nickname = snapshot.child("userInfo/nickname").getValue().toString();
+                                            profile = snapshot.child("userInfo/profile").getValue().toString();
+                                                rank = snapshot.child(check).child("dailyRank").getValue().toString();
+                                                runningDistance = snapshot.child(check).child("dailyTotalDis").getValue().toString();
+                                                runningTime = snapshot.child(check).child("dailyTotalTime").getValue().toString();
+                                                Log.d("RankFragment : ",nickname+",  "+rank+",  "+runningDistance+",  "+runningTime);
+                                                adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank));
+                                        }
+                                    }catch (Exception e2){
+
+                                    }
+                                }
+                            }
+                            if(setStandardFlag ==0 || setStandardFlag==1){
+                                Collections.sort(rankingItems, adapter.sortByDis);
+                                Log.e("거리 순 정렬","done");
+                            }else if(setStandardFlag==2){
+                                Collections.sort(rankingItems, adapter.sortByTime);
+                                Log.e("시간 순 정렬","done");
+                            }
+                            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for(int i=0; i<rankingItems.size(); i++){
+                                        int rank = i+1;
+                                        String getDis = rankingItems.get(i).getRidingDis();
+
+                                        if(dataSnapshot.exists()){
+                                            for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                                String dailyTotalDis;
+                                                String dailyTotalTime;
+                                                String uid;
+                                                String putRank;
+                                                String dailyRankCheck;
+                                                try{
+                                                    dailyRankCheck = snapshot.child(check).getValue().toString();
+                                                    if(dailyRankCheck.isEmpty()){
+                                                        continue;
+                                                    }else {
+                                                        dailyTotalDis = snapshot.child(check).child("dailyTotalDis").getValue().toString();
+                                                        if(getDis.equals(dailyTotalDis)){
+                                                            uid = snapshot.getKey();
+                                                            ref.child(uid).child(check2).child("dailyRank").setValue(String.valueOf(rank));
+                                                            putRank = snapshot.child(check).child("dailyRank").getValue().toString();
+                                                            rankingItems.get(i).setRank(putRank);
+                                                            break;
+                                                        }
+                                                    }
+                                                }catch (Exception e3){
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                            adapter.notifyDataSetChanged();
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+
+                if(dropDown.getSelectedItem().equals("이번 달의 랭킹")) {
+                    setTimeFlag = 1;
+                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            adapter.clearItem();
+                            if(dataSnapshot.exists()){
+                                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                    String dataCheck = null;
+                                    String nickname, profile, runningDistance, runningTime, rank;
+                                    try{
+                                        dataCheck = snapshot.child(monthCheck).getValue().toString();
+                                        if(dataCheck.isEmpty()){
+                                            continue;
+                                        }else{
+                                            nickname = snapshot.child("userInfo/nickname").getValue().toString();
+                                            profile = snapshot.child("userInfo/profile").getValue().toString();
+                                            rank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
+                                            runningDistance = snapshot.child(monthCheck).child("monthlyDis").getValue().toString();
+                                            runningTime = snapshot.child(monthCheck).child("monthlyTime").getValue().toString();
+                                            Log.d("RankFragment : ",nickname+",  "+rank+",  "+runningDistance+",  "+runningTime);
+                                            adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank));
+                                        }
+                                    }catch (Exception e4){
+
+                                    }
+                                }
+                            }
+                            if(setStandardFlag ==0 || setStandardFlag==1){
+                                Collections.sort(rankingItems, adapter.sortByDis);
+                            }else if(setStandardFlag == 2){
+                                Collections.sort(rankingItems, adapter.sortByTime);
+                            }
+                            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for(int i=0; i<rankingItems.size(); i++){
+                                        int rank = i+1;
+                                        String getDis = rankingItems.get(i).getRidingDis();
+
+                                        if(dataSnapshot.exists()){
+                                            for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                                String dailyTotalDis;
+                                                String dailyTotalTime;
+                                                String uid;
+                                                String putRank;
+                                                String dailyRankCheck;
+                                                try{
+                                                    dailyRankCheck = snapshot.child(monthCheck).getValue().toString();
+                                                    if(dailyRankCheck.isEmpty()){
+                                                        continue;
+                                                    }else {
+                                                        dailyTotalDis = snapshot.child(monthCheck).child("monthlyDis").getValue().toString();
+                                                        if(getDis.equals(dailyTotalDis)){
+                                                            uid = snapshot.getKey();
+                                                            ref.child(uid).child("/"+monthCheck).child("monthlyRank").setValue(String.valueOf(rank));
+                                                            putRank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
+                                                            rankingItems.get(i).setRank(putRank);
+                                                            break;
+                                                        }
+                                                    }
+                                                }catch (Exception e3){
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                            adapter.notifyDataSetChanged();
+                        }
+
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                setTimeFlag = 0;
+            }
+        });
+
 
 
         btnTime.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-            setStandardFlag = 1;
+            setStandardFlag = 2;
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -194,6 +365,7 @@ public class RankFragment extends Fragment {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for (int i = 0; i < rankingItems.size(); i++) {
                                     //Todo. 나중에 데이터베이스의 기존 순위 읽어와서 바뀐 순위와의 변동 구하기
+
                                     final int rank = i + 1;
 
                                     String getRank = rankingItems.get(i).getRank();
@@ -264,23 +436,18 @@ public class RankFragment extends Fragment {
         btnDistance.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                setStandardFlag = 0;
+                setStandardFlag = 1;
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         adapter.clearItem();
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                String dailyTotalDis;
                                 String dailyRank;
-                                String dailyTotalTime;
                                 String dailyRankCheck;
                                 String nickname;
                                 String profile;
-                                String monthlyDis;
-                                String monthlyTime;
                                 String monthlyRank;
-
                                 String runningDistance;
                                 String runningTime;
 
