@@ -29,9 +29,9 @@
                 android:layout_weight="2"
                 android:layout_marginLeft="15dp"/>
             <Button
-                android:id="@+id/cancle_follow"
+                android:id="@+id/add_friend"
                 android:textSize="18dp"
-                android:text="팔로우 끊기"
+                android:text="팔로우"
                 android:textColor="@color/colorPrimary"
                 android:drawableLeft="@drawable/ic_person_black_24dp"
                 android:background="@drawable/friend_add_button_border"
@@ -55,10 +55,9 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="10dp"/>
             <TextView
-                android:id="@+id/following_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="11"
                 android:textSize="16dp"
                 android:textColor="#666666"
                 android:layout_marginRight="30dp"/>
@@ -70,10 +69,9 @@
                 android:textColor="#666666"
                 android:layout_marginRight="10dp"/>
             <TextView
-                android:id="@+id/followers_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="11"
                 android:textSize="16dp"
                 android:textColor="#666666" />
         </LinearLayout>

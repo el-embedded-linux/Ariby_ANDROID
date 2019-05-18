@@ -14,6 +14,7 @@ public class CustomFollow extends LinearLayout {
     ImageView imgProfile;
     TextView Nickname;
     String descStr;
+    String follwingNum, followerNum;
 
     public CustomFollow(Context context) {
         super(context);
@@ -37,9 +38,17 @@ public class CustomFollow extends LinearLayout {
         this.descStr = descStr;
     }
 
+    public void setFollwingNum(String follwingNum) {
+        this.follwingNum = follwingNum;
+    }
+
+    public void setFollowerNum(String followerNum) {
+        this.followerNum = followerNum;
+    }
+
     private void init(Context context){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.custom_follow_list,this,true);
+        inflater.inflate(R.layout.custom_user_list,this,true);
         imgProfile = findViewById(R.id.imageView1);
         Nickname = findViewById(R.id.textView1);
     }

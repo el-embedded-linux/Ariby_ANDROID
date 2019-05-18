@@ -87,6 +87,8 @@ public class JoiningActivity extends AppCompatActivity {
 
                                     UserModel userInfo = new UserModel(weight, birth, height, gender, nickName);
                                     myRef.child("USER").child(firebaseAuth.getUid()).setValue(userInfo);
+                                    myRef.child("FRIEND").child("following").child(firebaseAuth.getUid()).setValue("false");
+                                    myRef.child("FRIEND").child("follower").child(firebaseAuth.getUid()).setValue("false");
                                     Intent intent = new Intent(JoiningActivity.this, MainActivity.class);
                                     startActivity(intent);
                                     Toast.makeText(getApplicationContext(),"회원가입이 완료되었습니다.",Toast.LENGTH_SHORT).show();
@@ -127,7 +129,7 @@ public class JoiningActivity extends AppCompatActivity {
 
 class UserModel {
     String birth, nickname;
-    String gender;
+    String gender, userImageURL;
     int weight, height;
     int level, exp;
 
@@ -139,5 +141,6 @@ class UserModel {
         this.nickname = nickname;
         this.level = 1;
         this.exp = 0;
+        this.userImageURL = "https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/displayImage.png?alt=media&token=210079dc-d9af-43b4-a364-d7b5deb47a05";
     }
 }

@@ -1,15 +1,10 @@
 package com.el.ariby.ui.main.menu.follow;
 
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import com.el.ariby.R;
@@ -21,11 +16,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class FindFollow extends AppCompatActivity {
+public class FindFollowActivity extends AppCompatActivity {
     DatabaseReference ref;
     FirebaseDatabase database;
     EditText editTextFilter;
-    FollowAdapter adapter;
+    FindFollowAdapter adapter;
     ListView listView;
     FirebaseUser user;
     @Override
@@ -33,7 +28,7 @@ public class FindFollow extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_follow);
 
-        adapter = new FollowAdapter();
+        adapter = new FindFollowAdapter();
         editTextFilter = findViewById(R.id.find);
         listView = findViewById(R.id.listview1);
         listView.setAdapter(adapter);
@@ -48,6 +43,8 @@ public class FindFollow extends AppCompatActivity {
                     String nickname = snapshot.child("nickname").getValue().toString();
                     user = FirebaseAuth.getInstance().getCurrentUser();
                     String uid = snapshot.getKey();
+
+
                     Log.d("nickname",nickname+uid);
                     adapter.addItem(new FollowItem(url,nickname));
                 }
@@ -75,7 +72,7 @@ public class FindFollow extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 String filterText = s.toString();
-                ((FollowAdapter)listView.getAdapter()).getFilter().filter(filterText) ;
+                ((FindFollowAdapter)listView.getAdapter()).getFilter().filter(filterText) ;
             }
         });
 
