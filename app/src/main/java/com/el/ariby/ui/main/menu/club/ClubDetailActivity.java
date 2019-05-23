@@ -1,9 +1,12 @@
 package com.el.ariby.ui.main.menu.club;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityClubDetailBinding;
 
@@ -12,7 +15,23 @@ public class ClubDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding= DataBindingUtil.setContentView(this, R.layout.activity_club_detail);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_club_detail);
+        Intent intent = getIntent();
+        Glide.with(this)
+                .load(intent.getStringExtra("logo"))
+                .centerCrop()
+                .into(mBinding.imgLogo);
+        mBinding.txtClubName.setText(intent.getStringExtra("title"));
+        mBinding.txtLocation.setText(intent.getStringExtra("map"));
+        mBinding.txtMaster.setText(intent.getStringExtra("nick"));
+        mBinding.txtMember.setText(String.valueOf(intent.getLongExtra("num",0) + "명"));
+        mBinding.btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
 
     }
 }

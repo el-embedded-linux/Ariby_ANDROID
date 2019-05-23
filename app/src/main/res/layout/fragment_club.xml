@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context=".ui.main.menu.club.ClubFragment">
+    tools:context=".ui.main.menu.ClubFragment">
 
     <TableLayout
         android:id="@+id/layout_tab"

@@ -1,21 +1,27 @@
-package com.el.ariby.ui.main.menu.club;
+package com.el.ariby.ui.main.menu;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
 import com.el.ariby.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.el.ariby.ui.main.menu.club.ClubCreateActivity;
+import com.el.ariby.ui.main.menu.club.ClubDetailActivity;
+import com.el.ariby.ui.main.menu.club.ClubItem;
+import com.el.ariby.ui.main.menu.club.ClubSearchActivity;
+import com.el.ariby.ui.main.menu.club.CustomClub;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,7 +39,7 @@ public class ClubFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
+    public View onCreateView(@NonNull final LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_club, container, false);
@@ -85,6 +91,25 @@ public class ClubFragment extends Fragment {
         adapter = new ClubAdapter();
 
         listClub.setAdapter(adapter);
+
+        listClub.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String title=((ClubItem)adapter.getItem(position)).getTitle();
+                String nick=((ClubItem)adapter.getItem(position)).getNick();
+                String logo=((ClubItem)adapter.getItem(position)).getMainLogo();
+                long num=((ClubItem)adapter.getItem(position)).getNumber();
+                String map=((ClubItem)adapter.getItem(position)).getMap();
+                Intent intent = new Intent(getActivity(), ClubDetailActivity.class);
+                intent.putExtra("title", title);
+                intent.putExtra("nick", nick);
+                intent.putExtra("logo", logo);
+                intent.putExtra("num", num);
+                intent.putExtra("map", map);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.anim_slide_out_left, R.anim.anim_slide_in_right);
+            }
+        });
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
