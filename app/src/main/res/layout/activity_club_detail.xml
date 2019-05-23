@@ -6,6 +6,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#fff"
         tools:context="com.el.ariby.ui.main.menu.club.ClubDetailActivity">
 
         <LinearLayout
@@ -39,11 +40,12 @@
             android:id="@+id/img_back_logo"
             android:layout_width="match_parent"
             android:layout_height="139dp"
-            android:src="@color/colorPrimary"
+            android:src="#4CCABC"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
         <ImageView
             android:id="@+id/img_logo"
+            android:background="@drawable/border_all"
             android:layout_width="164dp"
             android:layout_height="147dp"
             android:layout_marginStart="140dp"
@@ -68,14 +70,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:textColor="#000"
                 android:text="다람이"
-                android:textSize="32dp"
+                android:textSize="48dp"
                 android:textStyle="bold" />
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:background="@drawable/border_bottom"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp">
 
                 <LinearLayout
                     android:id="@+id/linearLayout2"
@@ -92,7 +98,7 @@
                         android:layout_height="wrap_content"
                         android:text="가입자"
                         android:textColor="#000"
-                        android:textSize="22dp"
+                        android:textSize="24dp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -102,7 +108,7 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="5dp"
                         android:text="5명"
-                        android:textSize="16dp" />
+                        android:textSize="18dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -123,7 +129,7 @@
                         android:gravity="center"
                         android:text="지역"
                         android:textColor="#000"
-                        android:textSize="22dp"
+                        android:textSize="24dp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -133,7 +139,7 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="5dp"
                         android:text="서울시 구로구"
-                        android:textSize="16dp" />
+                        android:textSize="18dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -152,7 +158,7 @@
                         android:gravity="center"
                         android:text="클럽장"
                         android:textColor="#000"
-                        android:textSize="22dp"
+                        android:textSize="24dp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -162,9 +168,20 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="5dp"
                         android:text="다람이"
-                        android:textSize="16dp" />
+                        android:textSize="18dp" />
                 </LinearLayout>
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_join"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/ic_add_white_24dp"
+            app:backgroundTint="#283593"
+            app:fabCustomSize="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </android.support.constraint.ConstraintLayout>
 </layout>
