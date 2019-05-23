@@ -91,7 +91,7 @@ public class JoiningActivity extends AppCompatActivity {
                                     myRef.child("FRIEND").child("follower").child(firebaseAuth.getUid()).setValue("false");
                                     Intent intent = new Intent(JoiningActivity.this, MainActivity.class);
                                     startActivity(intent);
-                                    Toast.makeText(getApplicationContext(),"회원가입이 완료되었습니다.",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
                                     finish();
                                 } else {
                                     Toast.makeText(getApplicationContext(), "등록 에러", Toast.LENGTH_SHORT).show();

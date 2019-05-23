@@ -121,7 +121,7 @@ public class ClubCreateActivity extends AppCompatActivity {
             final StorageReference storageReference2nd = storageReference.child(Storage_Path +
                     System.currentTimeMillis() + "." + GetFileExtension(FilePathUri));
             FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-            userRef = database.getReference("user").child(mUser.getUid());
+            userRef = database.getReference("USER").child(mUser.getUid());
 
             final String name = mBinding.etName.getText().toString();
             String commend = mBinding.etIntro.getText().toString();
