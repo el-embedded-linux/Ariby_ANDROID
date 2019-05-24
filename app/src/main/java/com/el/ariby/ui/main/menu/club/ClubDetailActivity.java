@@ -94,7 +94,15 @@ public class ClubDetailActivity extends AppCompatActivity {
                             builder.setIcon(R.drawable.ic_account_circle_black_24dp);
                             builder.setTitle("클럽 가입");
                             builder.setMessage("가입하시겠습니까?");
-                            builder.setPositiveButton("YES", dialogListener);
+                            builder.setPositiveButton("YES", joinDialogListener);
+                            builder.setNegativeButton("NO", null);
+                            builder.show();
+                        } else if(flag==1) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                            builder.setIcon(R.drawable.ic_account_circle_black_24dp);
+                            builder.setTitle("클럽 탈퇴");
+                            builder.setMessage("탈퇴하시겠습니까?");
+                            builder.setPositiveButton("YES", exitDialogListener);
                             builder.setNegativeButton("NO", null);
                             builder.show();
                         }
@@ -111,11 +119,20 @@ public class ClubDetailActivity extends AppCompatActivity {
 
     }
 
-    DialogInterface.OnClickListener dialogListener = new DialogInterface.OnClickListener() {
+    DialogInterface.OnClickListener joinDialogListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             int resultNum = memberNum + 1;
             clubRef.child(nickname).setValue(mUser.getUid());
+            mBinding.txtMember.setText(String.valueOf(resultNum + "명"));
+        }
+    };
+
+    DialogInterface.OnClickListener exitDialogListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            int resultNum = memberNum - 1;
+            clubRef.child(nickname).removeValue();
             mBinding.txtMember.setText(String.valueOf(resultNum + "명"));
         }
     };
