@@ -42,7 +42,7 @@ public class ClubDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         userRef = database.getReference("USER").child(mUser.getUid());
-        clubRef = database.getReference("CLUB").child(intent.getStringExtra("title")).child("member");
+        clubRef = database.getReference("CLUB").child(intent.getStringExtra("title"));
 
         Glide.with(this)
                 .load(intent.getStringExtra("logo"))
@@ -81,15 +81,20 @@ public class ClubDetailActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         int flag = 0;
-                        Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
+                        String leader = dataSnapshot.child("leaderNick").getValue().toString();
+                        Iterator<DataSnapshot> child =
+                                dataSnapshot.child("member").
+                                getChildren().
+                                iterator();
                         while (child.hasNext()) {
                             String nick = child.next().getValue().toString();
                             if (nick.equals(mUser.getUid())) {
-                                Toast.makeText(ClubDetailActivity.this, "이미 가입되어 있습니다.", Toast.LENGTH_SHORT).show();
                                 flag = 1;
-                            }
                         }
-                        if(flag==0) {
+                        if (leader.equals(nickname))
+                                flag = 2;
+                        }
+                        if (flag == 0) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                             builder.setIcon(R.drawable.ic_account_circle_black_24dp);
                             builder.setTitle("클럽 가입");
@@ -97,7 +102,7 @@ public class ClubDetailActivity extends AppCompatActivity {
                             builder.setPositiveButton("YES", joinDialogListener);
                             builder.setNegativeButton("NO", null);
                             builder.show();
-                        } else if(flag==1) {
+                        } else if (flag == 1) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                             builder.setIcon(R.drawable.ic_account_circle_black_24dp);
                             builder.setTitle("클럽 탈퇴");
@@ -105,7 +110,9 @@ public class ClubDetailActivity extends AppCompatActivity {
                             builder.setPositiveButton("YES", exitDialogListener);
                             builder.setNegativeButton("NO", null);
                             builder.show();
-                        }
+                        } else if (flag==2)
+                            Toast.makeText(getApplicationContext(),
+                                    "운영자는 가입이나 탈퇴가 불가능합니다.", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -122,18 +129,16 @@ public class ClubDetailActivity extends AppCompatActivity {
     DialogInterface.OnClickListener joinDialogListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            int resultNum = memberNum + 1;
-            clubRef.child(nickname).setValue(mUser.getUid());
-            mBinding.txtMember.setText(String.valueOf(resultNum + "명"));
+            clubRef.child("member").child(nickname).setValue(mUser.getUid());
+            mBinding.txtMember.setText(String.valueOf((++memberNum)+ "명"));
         }
     };
 
     DialogInterface.OnClickListener exitDialogListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            int resultNum = memberNum - 1;
-            clubRef.child(nickname).removeValue();
-            mBinding.txtMember.setText(String.valueOf(resultNum + "명"));
+            clubRef.child("member").child(nickname).removeValue();
+            mBinding.txtMember.setText(String.valueOf((--memberNum) + "명"));
         }
     };
 }

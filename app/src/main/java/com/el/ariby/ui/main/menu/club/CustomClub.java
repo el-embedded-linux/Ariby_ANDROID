@@ -28,7 +28,11 @@ public class CustomClub extends LinearLayout {
     }
 
     public void setImgNickMain(String url) {
-        Glide.with(this).load(url).into(imgNickMain);
+        Glide.
+                with(this).
+                load(url).
+                centerCrop().
+                into(imgNickMain);
     }
 
     public void setTxtTitle(String title) {
