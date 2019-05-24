@@ -1,11 +1,15 @@
 package com.el.ariby.ui.main.menu.club;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.el.ariby.R;
 import com.google.firebase.database.DataSnapshot;
@@ -19,6 +23,7 @@ public class ClubSearchActivity extends AppCompatActivity {
     EditText edittext;
     ClubSearchAdapter adapter;
     DatabaseReference ref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,13 +32,12 @@ public class ClubSearchActivity extends AppCompatActivity {
         adapter = new ClubSearchAdapter();
 
         listview = findViewById(R.id.listview);
-        edittext=findViewById(R.id.find);
+        edittext = findViewById(R.id.find);
         listview.setAdapter(adapter);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         ref = database.getReference("CLUB");
 
-        adapter.addItem(new ClubItem("test",3,"test"));
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -67,10 +71,28 @@ public class ClubSearchActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String filterText = s.toString() ;
-                ((ClubSearchAdapter)listview.getAdapter()).getFilter().filter(filterText) ;
+                String filterText = s.toString();
+                ((ClubSearchAdapter) listview.getAdapter()).getFilter().filter(filterText);
             }
         });
 
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String title=((ClubItem)adapter.getItem(position)).getTitle();
+                String nick=((ClubItem)adapter.getItem(position)).getNick();
+                String logo=((ClubItem)adapter.getItem(position)).getMainLogo();
+                long num=((ClubItem)adapter.getItem(position)).getNumber();
+                String map=((ClubItem)adapter.getItem(position)).getMap();
+                Intent intent = new Intent(getApplicationContext(), ClubDetailActivity.class);
+                intent.putExtra("title", title);
+                intent.putExtra("nick", nick);
+                intent.putExtra("logo", logo);
+                intent.putExtra("num", num);
+                intent.putExtra("map", map);
+                startActivity(intent);
+                overridePendingTransition(R.anim.anim_slide_out_left, R.anim.anim_slide_in_right);
+            }
+        });
     }
 }

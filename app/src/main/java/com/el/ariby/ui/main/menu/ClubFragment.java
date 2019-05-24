@@ -168,7 +168,7 @@ public class ClubFragment extends Fragment {
     }
 
     class ClubAdapter extends BaseAdapter {
-        ArrayList<ClubItem> items = new ArrayList<ClubItem>();
+        ArrayList<ClubItem> items = new ArrayList<>();
 
         @Override
         public int getCount() {
