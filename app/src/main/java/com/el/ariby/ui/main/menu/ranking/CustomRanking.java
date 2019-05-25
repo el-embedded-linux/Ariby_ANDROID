@@ -17,6 +17,13 @@ public class CustomRanking extends LinearLayout {
     TextView txtRankNick;
     TextView txtRidingDis;
     TextView txtRidingTime;
+    TextView txtUpDown;
+
+
+
+
+
+    ImageView imgUpDown;
 
     public CustomRanking(Context context){
         super(context);
@@ -36,6 +43,22 @@ public class CustomRanking extends LinearLayout {
         txtRank = findViewById(R.id.txt_rank);
         txtRidingTime = findViewById(R.id.txt_ridingTime);
         txtRidingDis = findViewById(R.id.txt_ridingDis);
+        txtUpDown = findViewById(R.id.changed);
+        imgUpDown = findViewById(R.id.up_down);
+    }
+
+    public void setTxtUpDown(String txtUpDown) {
+        this.txtUpDown.setText(txtUpDown);
+    }
+
+    public void setImgUpDown(String img) {
+        if(Integer.parseInt(img)==1){
+            this.imgUpDown.setImageResource(R.drawable.up);
+        }else if(Integer.parseInt(img)==0){
+            this.imgUpDown.setImageResource(R.drawable.substract);
+        }else if(Integer.parseInt(img)==-1){
+            this.imgUpDown.setImageResource(R.drawable.down);
+        }
     }
 
     public void setImgRankProfile(String url) {
@@ -47,11 +70,9 @@ public class CustomRanking extends LinearLayout {
 
         if(Integer.parseInt(txtRank) == 1){
             this.txtRank.setTextColor(Color.RED);
-        }
-        if(Integer.parseInt(txtRank)==2){
+        }else if(Integer.parseInt(txtRank)==2){
             this.txtRank.setTextColor(Color.BLUE);
-        }
-        if(Integer.parseInt(txtRank)==3){
+        }else if(Integer.parseInt(txtRank)==3){
             this.txtRank.setTextColor(Color.YELLOW);
         }
         this.txtRank.setText(rankStr);
@@ -64,9 +85,11 @@ public class CustomRanking extends LinearLayout {
     }
 
     public void setTxtRidingDis(String txtRidingDis) {
-        String disStr = txtRidingDis+"km";
+        String disStr = "거리 : "+txtRidingDis+"km";
         this.txtRidingDis.setText(disStr); }
 
-    public void setTxtRidingTime(String txtRidingTime) { this.txtRidingTime.setText(txtRidingTime); }
+    public void setTxtRidingTime(String txtRidingTime) {
+        String timeStr = "시간 : "+txtRidingTime;
+        this.txtRidingTime.setText(timeStr); }
 
 }

@@ -14,13 +14,16 @@ public class RankingItem {
     public String getRank() { return rank; }
 
 
-    public RankingItem(String imgProfile, String nickname, String ridingDis, String ridingTime, String rank) {
+    public RankingItem(String imgProfile, String nickname, String ridingDis, String ridingTime, String rank, String changed, String imgChanged) {
         this.imgProfile = imgProfile;
         this.nickname = nickname;
         this.ridingDis = ridingDis;
         Log.e("RankItem_Distance : ",this.ridingDis);
         this.ridingTime = ridingTime;
-        this.rank = rank;
+       this.rank = rank;
+        this.txtUpDown = changed;
+        this.imgUpDown = imgChanged;
+
     }
 
     public RankingItem(String nickname){
@@ -33,6 +36,32 @@ public class RankingItem {
     String ridingDis; //주행거리
     String ridingTime; //주행시간
 
+
+
+    public String getImgUpDown() {
+        return imgUpDown;
+    }
+
+    public String getTxtUpDown() {
+        return txtUpDown;
+    }
+
+    /*public RankingItem(String txtUpDown, String imgUpDown) {
+        this.txtUpDown = txtUpDown;
+        this.imgUpDown = imgUpDown;
+    }*/
+
+    String txtUpDown;
+
+    public void setTxtUpDown(String txtUpDown) {
+        this.txtUpDown = txtUpDown;
+    }
+
+    public void setImgUpDown(String imgUpDown) {
+        this.imgUpDown = imgUpDown;
+    }
+
+    String imgUpDown;
     public void setRank(String rank) {
         this.rank = rank;
     }

@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import com.el.ariby.ui.main.menu.ranking.CustomRanking;
 import com.el.ariby.ui.main.menu.ranking.RankingItem;
+import com.el.ariby.ui.main.menu.ranking.RankingUpDown;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,6 +57,8 @@ public class RankFragment extends Fragment {
     List<String> dropDownItems = new ArrayList<String>();
     DatabaseReference ref;
     RankingAdapter adapter;
+    TextView txtUpDown;
+    ImageView imgUpDown;
     ArrayList<RankingItem> rankingItems = new ArrayList<RankingItem>();
     ArrayList<String> setRank = new ArrayList<String>();
     int setTimeFlag=0; //0이면 오늘, 1이면 이번달
@@ -82,7 +86,8 @@ public class RankFragment extends Fragment {
         txtRidingDis = v.findViewById(R.id.txt_ridingDis);
         txtRidingTime = v.findViewById(R.id.txt_ridingTime);
         txtRank = v.findViewById(R.id.txt_rank);
-
+        txtUpDown = v.findViewById(R.id.changed);
+        imgUpDown = v.findViewById(R.id.up_down);
 
         Date date1=null;
 
@@ -96,6 +101,7 @@ public class RankFragment extends Fragment {
         long currentTime = System.currentTimeMillis();
         final Date date = new Date(currentTime);
         Date month = new Date(currentTime);
+        Date rightNow = new Date(currentTime);
         SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
         SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
         SimpleDateFormat sdfDay = new SimpleDateFormat("dd");
@@ -111,20 +117,30 @@ public class RankFragment extends Fragment {
         String thisMin = sdfMin.format(date);
         String thisSec = sdfSec.format(date);
         String monthCheckStr = thisMonth+"-01-"+thisYear+" 00:00:00";
-
+        final String now = thisYear+thisMonth+thisDay+thisHour;
+        String rightNowStr = thisMonth+"-"+thisDay+"-"+thisYear+" "+thisHour+":"+thisMin+":"+thisSec;
+        Log.e("right now : ",rightNowStr);
 
         //TODO. 나중에 아랫줄 지우고 this~이용한 스트링 만들기
         String dailyCheckStr = "05-09-2019 09:00:00";
+
         DateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
         try {
             date1 = (Date)format.parse(dailyCheckStr);
             month = (Date)format.parse(monthCheckStr);
+            rightNow = (Date)format.parse(rightNowStr);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         long output = date1.getTime()/1000L;
         String str = Long.toString(output);
         final long timestamp = Long.parseLong(str) * 1000;
+
+        long nowOutPut = rightNow.getTime()/1000L;
+        String nowStr = Long.toString(nowOutPut);
+        final long nowTimestamp = Long.parseLong(nowStr) * 1000;
+
+        Log.e("rightNow? : ",String.valueOf(nowTimestamp));
 
         long monthOutput = month.getTime()/1000L;
         String monthStr = Long.toString(monthOutput);
@@ -133,7 +149,6 @@ public class RankFragment extends Fragment {
         final String check2 = "/dailyData/1557360000000/";
         final String monthCheck = "monthlyData/"+String.valueOf(monthTimestamp)+"/";
         //final String monthCheck = "monthlyData/1556636400000";
-
 
         dropDown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -146,20 +161,27 @@ public class RankFragment extends Fragment {
                             adapter.clearItem();
                             if(dataSnapshot.exists()){
                                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                    String dataCheck = null;
-                                    String nickname, profile, runningDistance, runningTime, rank;
+                                    String dataCheck, rank = null;
+                                    String nickname, profile, runningDistance, runningTime, changed, imgUpDown;
                                     try{
                                         dataCheck = snapshot.child(check).getValue().toString();
                                         if(dataCheck.isEmpty()){
                                             continue;
                                         }else{
-                                            nickname = snapshot.child("userInfo/nickname").getValue().toString();
-                                            profile = snapshot.child("userInfo/profile").getValue().toString();
-                                                rank = snapshot.child(check).child("dailyRank").getValue().toString();
+                                                nickname = snapshot.child("userInfo/nickname").getValue().toString();
+                                                profile = snapshot.child("userInfo/profile").getValue().toString();
+                                                //rank = snapshot.child(check).child("dailyRank").getValue().toString();
                                                 runningDistance = snapshot.child(check).child("dailyTotalDis").getValue().toString();
                                                 runningTime = snapshot.child(check).child("dailyTotalTime").getValue().toString();
-                                                Log.d("RankFragment : ",nickname+",  "+rank+",  "+runningDistance+",  "+runningTime);
-                                                adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank));
+                                                changed = snapshot.child("userInfo/upDownTxt").getValue().toString(); //Todo. 나중에 필요 없어짐...?
+                                                imgUpDown = snapshot.child("userInfo/upDownImg").getValue().toString();
+                                            if(setStandardFlag ==0 || setStandardFlag==1){
+                                                rank = snapshot.child(check).child("daily_dis_rank").getValue().toString(); //데일리 거리순
+
+                                            }else if(setStandardFlag==2){
+                                                rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                            }
+                                                adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                                         }
                                     }catch (Exception e2){
 
@@ -168,7 +190,7 @@ public class RankFragment extends Fragment {
                             }
                             if(setStandardFlag ==0 || setStandardFlag==1){
                                 Collections.sort(rankingItems, adapter.sortByDis);
-                                Log.e("거리 순 정렬","done");
+                                Log.e("거리 순 정렬--","done");
                             }else if(setStandardFlag==2){
                                 Collections.sort(rankingItems, adapter.sortByTime);
                                 Log.e("시간 순 정렬","done");
@@ -176,6 +198,13 @@ public class RankFragment extends Fragment {
                             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    String lastSort_dailyDis, lastSort_dailyTime;
+                                    lastSort_dailyDis = String.valueOf(dataSnapshot.child("lastSort").child("daily_dis").getValue()); //데일리 거리순
+                                    lastSort_dailyTime = String.valueOf(dataSnapshot.child("lastSort").child("daily_time").getValue()); //데일리 시간
+                                    Log.i("lastSortTime",lastSort_dailyDis);
+                                    Log.i("rightNow : ", String.valueOf(nowTimestamp));
+                                    RankingUpDown upDownDuration = new RankingUpDown();
+
                                     for(int i=0; i<rankingItems.size(); i++){
                                         int rank = i+1;
                                         String getDis = rankingItems.get(i).getRidingDis();
@@ -187,6 +216,12 @@ public class RankFragment extends Fragment {
                                                 String uid;
                                                 String putRank;
                                                 String dailyRankCheck;
+                                                String daily_dis_rank;
+                                                String daily_time_rank;
+                                                String getPreRank;
+                                                String dailyRank;
+                                                int changedRank = 0;
+
                                                 try{
                                                     dailyRankCheck = snapshot.child(check).getValue().toString();
                                                     if(dailyRankCheck.isEmpty()){
@@ -195,12 +230,93 @@ public class RankFragment extends Fragment {
                                                         dailyTotalDis = snapshot.child(check).child("dailyTotalDis").getValue().toString();
                                                         if(getDis.equals(dailyTotalDis)){
                                                             uid = snapshot.getKey();
-                                                            ref.child(uid).child(check2).child("dailyRank").setValue(String.valueOf(rank));
-                                                            putRank = snapshot.child(check).child("dailyRank").getValue().toString();
-                                                            rankingItems.get(i).setRank(putRank);
-                                                            break;
+                                                            Log.e("setStandardFlag : ",String.valueOf(setStandardFlag));
+                                                            if(setStandardFlag ==0 || setStandardFlag ==1){//거리순 정렬
+                                                                long upDownCheck = upDownDuration.calTimeDiff(lastSort_dailyDis, now);
+                                                                Log.i("return 받은 값 : ", String.valueOf(upDownCheck));
+                                                                daily_dis_rank = snapshot.child(check).child("daily_dis_rank").getValue().toString();
+                                                               // dailyRank = snapshot.child(check).child("dailyRank").getValue().toString();
+                                                               // Log.e("현재 총 등수 : ",dailyRank);
+                                                                if(Integer.parseInt(daily_dis_rank)==0) {////정렬이 안된 상태이면 다시 정렬해서 랭킹 매기기
+                                                                    ref.child(uid).child(check2).child("daily_dis_rank").setValue(String.valueOf(rank));
+                                                                    putRank = snapshot.child(check).child("daily_dis_rank").getValue().toString();
+                                                                    rankingItems.get(i).setRank(putRank);
+                                                                    rankingItems.get(i).setImgUpDown("0");
+                                                                    rankingItems.get(i).setTxtUpDown("0");
+                                                                    break;
+                                                                }else if(Integer.parseInt(daily_dis_rank)!=0) { //Todo. 숫자 조정하기. 5시간 이내는 업다운 변동 없도록.
+                                                                    if (upDownCheck >= 50) { //업데이트
+                                                                        getPreRank = snapshot.child(check).child("daily_dis_rank").getValue().toString();
+                                                                        Log.e("기존 랭킹 : ",getPreRank);
+                                                                        Log.e("현재 랭킹: ", String.valueOf(rank));
+                                                                        changedRank = Integer.parseInt(getPreRank) - rank;
+
+                                                                        Log.e("UpDownCheck >= 10", String.valueOf(changedRank));
+                                                                        ref.child(uid).child("/dailyData/upDown").child("upDownDis").setValue(changedRank);
+                                                                        ref.child("lastSort").child("daily_dis").setValue(now);
+                                                                    }else if(upDownCheck < 50) { //업데이트 안하고 데이터베이스에서 불러옴
+                                                                        changedRank = Integer.parseInt(snapshot.child("dailyData/upDown").child("upDownDis").getValue().toString());
+                                                                        Log.e("업데이트 안하고 불러옴 : ", String.valueOf(changedRank));
+                                                                    }
+                                                                        Log.d("등수변동 ㅣ ", String.valueOf(changedRank));
+                                                                        if (changedRank > 0) {
+                                                                            Log.e("changedRank : ", String.valueOf(changedRank));
+                                                                            rankingItems.get(i).setImgUpDown("1");
+                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                        } else if (changedRank == 0) {
+                                                                            rankingItems.get(i).setImgUpDown("0");
+                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                        } else if (changedRank < 0) {
+                                                                            rankingItems.get(i).setImgUpDown("-1");
+                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                        }
+                                                                        ref.child(uid).child(check2).child("daily_dis_rank").setValue(String.valueOf(rank));
+                                                                        putRank = snapshot.child(check2).child("daily_dis_rank").getValue().toString();
+                                                                        rankingItems.get(i).setRank(putRank);
+                                                                    if(upDownCheck >=750){//Todo. 이건 지워도 되려나....
+
+                                                                    }
+                                                                }
+                                                                }else if(setStandardFlag == 2){ //시간 순 정렬
+                                                                long upDownCheck = upDownDuration.calTimeDiff(lastSort_dailyTime, now);
+                                                                Log.i("return 받은 값 : ", String.valueOf(upDownCheck));
+
+                                                                daily_time_rank = snapshot.child(check).child("daily_time_rank").getValue().toString();
+                                                                if(Integer.parseInt(daily_time_rank)==0 ){ //정렬이 아직 안된 데이터이면 정렬해서 랭킹 매기기
+                                                                    ref.child(uid).child(check2).child("daily_time_rank").setValue(String.valueOf(rank));
+                                                                    putRank = snapshot.child(check).child("daily_time_rank").getValue().toString();
+                                                                    rankingItems.get(i).setRank(putRank);
+                                                                    imgUpDown.setImageResource(R.drawable.substract);
+                                                                    txtUpDown.setText("0");
+                                                                    break;
+                                                                }else if(Integer.parseInt(daily_time_rank)!=0 ){ //0이 아닐때
+                                                                    if(upDownCheck>=10) {
+                                                                        getPreRank = snapshot.child(check).child("daily_time_rank").getValue().toString();
+                                                                        changedRank = rank - Integer.valueOf(getPreRank);
+                                                                    }else if(upDownCheck<10){
+                                                                        changedRank = Integer.parseInt(snapshot.child("dailyData/upDown").child("upDownTime").getValue().toString());
+                                                                    }
+
+                                                                    if(changedRank > 0){
+                                                                        rankingItems.get(i).setImgUpDown("1");
+                                                                        rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                    }else if(changedRank == 0){
+                                                                        rankingItems.get(i).setImgUpDown("0");
+                                                                        rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                    }else if(changedRank < 0){
+                                                                        rankingItems.get(i).setImgUpDown("-1");
+                                                                        rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                    }
+                                                                    ref.child(uid).child(check2).child("daily_time_rank").setValue(String.valueOf(rank));
+
+                                                                    if(upDownCheck >=10){
+                                                                        ref.child(uid).child("dailyData/upDown").child("upDownTime").setValue(changedRank);
+                                                                    }
+                                                                }
+                                                            }
+                                                            }
                                                         }
-                                                    }
+
                                                 }catch (Exception e3){
 
                                                 }
@@ -235,8 +351,8 @@ public class RankFragment extends Fragment {
                             adapter.clearItem();
                             if(dataSnapshot.exists()){
                                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                    String dataCheck = null;
-                                    String nickname, profile, runningDistance, runningTime, rank;
+                                    String dataCheck,rank = null;
+                                    String nickname, profile, runningDistance, runningTime, changed, imgUpDown;
                                     try{
                                         dataCheck = snapshot.child(monthCheck).getValue().toString();
                                         if(dataCheck.isEmpty()){
@@ -244,11 +360,20 @@ public class RankFragment extends Fragment {
                                         }else{
                                             nickname = snapshot.child("userInfo/nickname").getValue().toString();
                                             profile = snapshot.child("userInfo/profile").getValue().toString();
-                                            rank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
+                                            //rank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
                                             runningDistance = snapshot.child(monthCheck).child("monthlyDis").getValue().toString();
                                             runningTime = snapshot.child(monthCheck).child("monthlyTime").getValue().toString();
-                                            Log.d("RankFragment : ",nickname+",  "+rank+",  "+runningDistance+",  "+runningTime);
-                                            adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank));
+                                            changed = snapshot.child("userInfo/upDownImg").getValue().toString();
+                                            imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
+                                            //Log.d("RankFragment : ",nickname+",  "+rank+",  "+runningDistance+",  "+runningTime);
+                                            //TODO. 나중에 monthly로 바꾸기!!
+                                            if(setStandardFlag ==0 || setStandardFlag==1){
+                                                rank = snapshot.child(check).child("daily_dis_rank").getValue().toString(); //데일리 거리순
+
+                                            }else if(setStandardFlag==2){
+                                                rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                            }
+                                            adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                                         }
                                     }catch (Exception e4){
 
@@ -333,7 +458,7 @@ public class RankFragment extends Fragment {
                         for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                         int[] time;
                         String dataCheck = null;
-                        String nickname, profile, runningDistance, runningTime, rank;
+                        String nickname, profile, runningDistance, runningTime, rank, changed, imgUpDown;
                         try {
                             dataCheck = snapshot.child(check).getValue().toString();
                             if (dataCheck.isEmpty()) {
@@ -343,15 +468,22 @@ public class RankFragment extends Fragment {
                                 nickname = snapshot.child("userInfo/nickname").getValue().toString();
                                 profile = snapshot.child("userInfo/profile").getValue().toString();
                                 if(setTimeFlag == 0) {
-                                    rank = snapshot.child(check).child("dailyRank").getValue().toString();
+                                    //rank = snapshot.child(check).child("dailyRank").getValue().toString();
                                     runningDistance = snapshot.child(check).child("dailyTotalDis").getValue().toString();
                                     runningTime = snapshot.child(check).child("dailyTotalTime").getValue().toString();
-                                    adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank));
+                                    changed = snapshot.child("userInfo/upDownImg").getValue().toString();
+                                    imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
+                                    rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                    adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                                 }else if(setTimeFlag == 1) {
-                                    rank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
+                                    //rank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
                                     runningDistance = snapshot.child(monthCheck).child("monthlyDis").getValue().toString();
                                     runningTime = snapshot.child(monthCheck).child("monthlyTime").getValue().toString();
-                                    adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank));
+                                    changed = snapshot.child("userInfo/upDownImg").getValue().toString();
+                                    imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
+                                    //TODO. 나중에 먼슬리 타임 랭크 불러오는걸로 바꾸기.
+                                    rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                    adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                                 }
                             }
                         } catch (Exception e1) {
@@ -443,13 +575,13 @@ public class RankFragment extends Fragment {
                         adapter.clearItem();
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                String dailyRank;
+                                String rank;
                                 String dailyRankCheck;
                                 String nickname;
                                 String profile;
                                 String monthlyRank;
                                 String runningDistance;
-                                String runningTime;
+                                String runningTime, changed, imgUpDown;
 
                                 try {
                                     dailyRankCheck = snapshot.child(check).getValue().toString();
@@ -459,15 +591,23 @@ public class RankFragment extends Fragment {
                                         nickname = snapshot.child("userInfo/nickname").getValue().toString();
                                         profile = snapshot.child("userInfo/profile").getValue().toString();
                                         if(setTimeFlag == 0) { //당일데이터
-                                            dailyRank = snapshot.child(check).child("dailyRank").getValue().toString();
+                                            //dailyRank = snapshot.child(check).child("dailyRank").getValue().toString();
                                             runningDistance = snapshot.child(check).child("dailyTotalDis").getValue().toString();
                                             runningTime = snapshot.child(check).child("dailyTotalTime").getValue().toString();
-                                            adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, dailyRank));
+                                            changed = snapshot.child("userInfo/upDownImg").getValue().toString();
+                                            imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
+                                            //TODO. 나중에 바꾸기
+                                            rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                            adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                                         }else if(setTimeFlag == 1){ //이번달 데이터
-                                            monthlyRank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
+                                            //monthlyRank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
                                             runningDistance = snapshot.child(monthCheck).child("monthlyDis").getValue().toString();
                                             runningTime = snapshot.child(monthCheck).child("monthlyTime").getValue().toString();
-                                            adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, monthlyRank));
+                                            changed = snapshot.child("userInfo/upDownImg").getValue().toString();
+                                            imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
+                                            //TODO. 나중에 바꾸기.
+                                            rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                            adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                                         }
 
                                     }
@@ -558,11 +698,11 @@ public class RankFragment extends Fragment {
                     for(DataSnapshot snapshot : snapshot1.getChildren()) {
 
                         String dailyTotalDis;
-                        String dailyRank;
+                        String rank;
                         String dailyTotalTime;
                         String dailyRankCheck;
                         String nickname;
-                        String profile ;
+                        String profile,changed, imgUpDown ;
 
                         //String check = "dailyData/"+timestamp+"/";
                         String check = "dailyData/1557360000000/";
@@ -574,10 +714,14 @@ public class RankFragment extends Fragment {
                             }else {
                                 nickname = snapshot.child("userInfo/nickname").getValue().toString();
                                 profile = snapshot.child("userInfo/profile").getValue().toString();
-                                dailyRank = snapshot.child(check).child("dailyRank").getValue().toString();
+                                //dailyRank = snapshot.child(check).child("dailyRank").getValue().toString();
                                 dailyTotalDis = snapshot.child(check).child("dailyTotalDis").getValue().toString();
                                 dailyTotalTime = snapshot.child(check).child("dailyTotalTime").getValue().toString();
-                                adapter.addItem(new RankingItem(profile, nickname, dailyTotalDis, dailyTotalTime, dailyRank));
+                                changed = snapshot.child("userInfo/upDownImg").getValue().toString();
+                                imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
+                                //TODO 나중에 바꾸기
+                                rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                adapter.addItem(new RankingItem(profile, nickname, dailyTotalDis, dailyTotalTime, rank, changed, imgUpDown));
                             }
                         }catch (Exception e){
                             e.getStackTrace();
@@ -608,7 +752,7 @@ public class RankFragment extends Fragment {
         @Override
         public long getItemId(int position) { return position; }
         public void addItem(RankingItem item){ rankingItems.add(item); }
-
+        public void addRankChanged (RankingItem items){rankingItems.add(items);}
         Comparator<RankingItem> rankComparator = new Comparator<RankingItem>() {
             @Override
             public int compare(RankingItem item1, RankingItem item2) {
@@ -694,6 +838,8 @@ public class RankFragment extends Fragment {
             view.setTxtRank(item.getRank());
             view.setImgRankProfile(item.getImgProfile());
             view.setTxtRidingDis(item.getRidingDis());
+            view.setTxtUpDown(item.getTxtUpDown());
+            view.setImgUpDown(item.getImgUpDown());
 
             //ToDo. RankingItem  채우고 마저 하기.
             return view;
