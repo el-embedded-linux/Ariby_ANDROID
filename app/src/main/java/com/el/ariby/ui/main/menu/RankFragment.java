@@ -219,7 +219,7 @@ public class RankFragment extends Fragment {
                                                 String daily_dis_rank;
                                                 String daily_time_rank;
                                                 String getPreRank;
-                                                String dailyRank;
+                                                String dailyRank, upDownDis = null;
                                                 int changedRank = 0;
 
                                                 try{
@@ -232,8 +232,8 @@ public class RankFragment extends Fragment {
                                                             uid = snapshot.getKey();
                                                             Log.e("setStandardFlag : ",String.valueOf(setStandardFlag));
                                                             if(setStandardFlag ==0 || setStandardFlag ==1){//거리순 정렬
-                                                                long upDownCheck = upDownDuration.calTimeDiff(lastSort_dailyDis, now);
-                                                                Log.i("return 받은 값 : ", String.valueOf(upDownCheck));
+                                                                //long upDownCheck = upDownDuration.calTimeDiff(lastSort_dailyDis, now);
+                                                                //Log.i("return 받은 값 : ", String.valueOf(upDownCheck));
                                                                 daily_dis_rank = snapshot.child(check).child("daily_dis_rank").getValue().toString();
                                                                // dailyRank = snapshot.child(check).child("dailyRank").getValue().toString();
                                                                // Log.e("현재 총 등수 : ",dailyRank);
@@ -243,40 +243,59 @@ public class RankFragment extends Fragment {
                                                                     rankingItems.get(i).setRank(putRank);
                                                                     rankingItems.get(i).setImgUpDown("0");
                                                                     rankingItems.get(i).setTxtUpDown("0");
-                                                                    break;
                                                                 }else if(Integer.parseInt(daily_dis_rank)!=0) { //Todo. 숫자 조정하기. 5시간 이내는 업다운 변동 없도록.
-                                                                    if (upDownCheck >= 50) { //업데이트
+                                                                   // if (upDownCheck >= 50) { //업데이트
+
                                                                         getPreRank = snapshot.child(check).child("daily_dis_rank").getValue().toString();
-                                                                        Log.e("기존 랭킹 : ",getPreRank);
-                                                                        Log.e("현재 랭킹: ", String.valueOf(rank));
-                                                                        changedRank = Integer.parseInt(getPreRank) - rank;
+                                                               
+                                                                        if(getPreRank.equals(rank)){
+                                                                            Log.d("순위 변동 없음 : ","done" );
+                                                                            upDownDis = snapshot.child("dailyData/upDown").child("upDownDis").getValue().toString();
+                                                                            if ( Integer.valueOf(upDownDis) > 0) {
+                                                                                Log.e("변동x changedRank : ", String.valueOf(changedRank));
+                                                                                rankingItems.get(i).setImgUpDown("1");
+                                                                            } else if (Integer.valueOf(upDownDis)== 0) {
+                                                                                rankingItems.get(i).setImgUpDown("0");
+                                                                            } else if (Integer.valueOf(upDownDis) < 0) {
+                                                                                rankingItems.get(i).setImgUpDown("-1");
+                                                                            }
 
-                                                                        Log.e("UpDownCheck >= 10", String.valueOf(changedRank));
-                                                                        ref.child(uid).child("/dailyData/upDown").child("upDownDis").setValue(changedRank);
-                                                                        ref.child("lastSort").child("daily_dis").setValue(now);
-                                                                    }else if(upDownCheck < 50) { //업데이트 안하고 데이터베이스에서 불러옴
-                                                                        changedRank = Integer.parseInt(snapshot.child("dailyData/upDown").child("upDownDis").getValue().toString());
-                                                                        Log.e("업데이트 안하고 불러옴 : ", String.valueOf(changedRank));
-                                                                    }
-                                                                        Log.d("등수변동 ㅣ ", String.valueOf(changedRank));
-                                                                        if (changedRank > 0) {
+                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(upDownDis));
+                                                                        }else if(!getPreRank.equals(rank)){
+                                                                            Log.e("순위 변동 있음 : ","done");
+                                                                            changedRank = Integer.parseInt(getPreRank)-rank;
                                                                             Log.e("changedRank : ", String.valueOf(changedRank));
-                                                                            rankingItems.get(i).setImgUpDown("1");
-                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
-                                                                        } else if (changedRank == 0) {
-                                                                            rankingItems.get(i).setImgUpDown("0");
-                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
-                                                                        } else if (changedRank < 0) {
-                                                                            rankingItems.get(i).setImgUpDown("-1");
-                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
-                                                                        }
-                                                                        ref.child(uid).child(check2).child("daily_dis_rank").setValue(String.valueOf(rank));
-                                                                        putRank = snapshot.child(check2).child("daily_dis_rank").getValue().toString();
-                                                                        rankingItems.get(i).setRank(putRank);
-                                                                    if(upDownCheck >=750){//Todo. 이건 지워도 되려나....
+                                                                            upDownDis = snapshot.child("dailyData/upDown").child("upDownDis").getValue().toString();
+                                                                            Log.d("upDownDis : ",upDownDis);
+                                                                            changedRank = changedRank + Integer.parseInt(upDownDis);
 
-                                                                    }
+                                                                            Log.d("changedRank + upDown ", String.valueOf(changedRank));
+                                                                            if (changedRank > 0) {
+                                                                                Log.e("changedRank : ", String.valueOf(changedRank));
+                                                                                rankingItems.get(i).setImgUpDown("1");
+                                                                                rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                            } else if (changedRank == 0) {
+                                                                                rankingItems.get(i).setImgUpDown("0");
+                                                                                rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                            } else if (changedRank < 0) {
+                                                                                rankingItems.get(i).setImgUpDown("-1");
+                                                                                rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                            }
+                                                                            ref.child(uid).child("/dailyData/upDown").child("upDownDis").setValue(changedRank);
+                                                                        }
+
+
+                                                                   // if(upDownCheck >=750){//Todo. 이건 지워도 되려나....
+
+                                                                   // }
+
                                                                 }
+
+                                                                ref.child(uid).child(check2).child("daily_dis_rank").setValue(String.valueOf(rank));
+                                                                //putRank = snapshot.child(check).child("daily_dis_rank").getValue().toString();
+                                                                //Log.d("putRank : ",putRank);
+                                                                rankingItems.get(i).setRank(String.valueOf(rank));
+
                                                                 }else if(setStandardFlag == 2){ //시간 순 정렬
                                                                 long upDownCheck = upDownDuration.calTimeDiff(lastSort_dailyTime, now);
                                                                 Log.i("return 받은 값 : ", String.valueOf(upDownCheck));
