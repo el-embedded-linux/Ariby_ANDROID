@@ -1,8 +1,12 @@
 package com.el.ariby.ui.main.menu;
 
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.provider.ContactsContract;
+import android.service.notification.NotificationListenerService;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -23,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.el.ariby.ui.main.menu.ranking.CustomRanking;
+import com.el.ariby.ui.main.menu.ranking.RankingAlarm;
 import com.el.ariby.ui.main.menu.ranking.RankingItem;
 import com.el.ariby.ui.main.menu.ranking.RankingUpDown;
 import com.google.firebase.database.DataSnapshot;
@@ -37,6 +42,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -63,6 +69,9 @@ public class RankFragment extends Fragment {
     ArrayList<String> setRank = new ArrayList<String>();
     int setTimeFlag=0; //0이면 오늘, 1이면 이번달
     int setStandardFlag = 0; //0이면 거리(default), 1이면 거리, 2이면 시간
+    private PendingIntent alarmIntent;
+    private AlarmManager alarmManager;
+    int reset=0;
 
     @Override
     public void onAttach(Context context) {
@@ -96,6 +105,11 @@ public class RankFragment extends Fragment {
         dropDown.setAdapter(sortAdapter);
         dropDown.setPopupBackgroundResource(R.color.colorPrimary);
 
+        //알람 설정
+        alarmManager = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(mcontext, RankingAlarm.class);
+        alarmIntent = PendingIntent.getBroadcast(mcontext, 0,intent, 0);
+        startAlarm(getView());
 
         //현재 날짜/시간 가져오기
         long currentTime = System.currentTimeMillis();
@@ -230,13 +244,11 @@ public class RankFragment extends Fragment {
                                                         dailyTotalDis = snapshot.child(check).child("dailyTotalDis").getValue().toString();
                                                         if(getDis.equals(dailyTotalDis)){
                                                             uid = snapshot.getKey();
+
                                                             Log.e("setStandardFlag : ",String.valueOf(setStandardFlag));
                                                             if(setStandardFlag ==0 || setStandardFlag ==1){//거리순 정렬
-                                                                //long upDownCheck = upDownDuration.calTimeDiff(lastSort_dailyDis, now);
-                                                                //Log.i("return 받은 값 : ", String.valueOf(upDownCheck));
                                                                 daily_dis_rank = snapshot.child(check).child("daily_dis_rank").getValue().toString();
-                                                               // dailyRank = snapshot.child(check).child("dailyRank").getValue().toString();
-                                                               // Log.e("현재 총 등수 : ",dailyRank);
+
                                                                 if(Integer.parseInt(daily_dis_rank)==0) {////정렬이 안된 상태이면 다시 정렬해서 랭킹 매기기
                                                                     ref.child(uid).child(check2).child("daily_dis_rank").setValue(String.valueOf(rank));
                                                                     putRank = snapshot.child(check).child("daily_dis_rank").getValue().toString();
@@ -281,13 +293,15 @@ public class RankFragment extends Fragment {
                                                                                 rankingItems.get(i).setImgUpDown("-1");
                                                                                 rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
                                                                             }
-                                                                            ref.child(uid).child("/dailyData/upDown").child("upDownDis").setValue(changedRank);
+
+                                                                            if(reset == 1){
+                                                                            ref.child(uid).child("/dailyData/upDown").child("upDownDis").setValue("0");
+                                                                            reset =0;
+                                                                            }else if(reset == 0) {
+                                                                                ref.child(uid).child("/dailyData/upDown").child("upDownDis").setValue(changedRank);
+                                                                            }
                                                                         }
 
-
-                                                                   // if(upDownCheck >=750){//Todo. 이건 지워도 되려나....
-
-                                                                   // }
 
                                                                 }
 
@@ -759,6 +773,27 @@ public class RankFragment extends Fragment {
         listRank.setAdapter(adapter);
         return v;
     }
+
+    public void startAlarm(View view){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        //TODO. TEST. 나중에 자정으로 시간 바꾸기.
+        calendar.set(Calendar.HOUR_OF_DAY, 14);
+        calendar.set(calendar.MINUTE, 28);
+
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
+
+        RankingAlarm rankingAlarm = new RankingAlarm();
+        reset = rankingAlarm.returnSit();
+    }
+
+    public void cancelAlarm(View view){
+        if(alarmManager!=null){
+            alarmManager.cancel(alarmIntent);
+        }
+    }
+
+
 
 
     public class RankingAdapter extends BaseAdapter {
