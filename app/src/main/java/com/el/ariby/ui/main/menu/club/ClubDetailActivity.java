@@ -60,6 +60,14 @@ public class ClubDetailActivity extends AppCompatActivity {
         });
         memberNum = (int) intent.getLongExtra("num", 0);
 
+        mBinding.linearLayout2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent1 = new Intent(getApplicationContext(),ClubMemberActivity.class);
+                intent1.putExtra("clubTitle",mBinding.txtClubName.getText().toString());
+                startActivity(intent1);
+            }
+        });
         mBinding.fabJoin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
