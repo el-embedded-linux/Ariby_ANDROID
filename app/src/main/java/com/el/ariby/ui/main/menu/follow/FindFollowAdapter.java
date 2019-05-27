@@ -76,7 +76,10 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
 
         FollowItem item = filteredItemList.get(position);
         // 아이템 내 각 위젯에 데이터 반영
-        Glide.with(convertView).load(item.getIconDrawable()).into(iconImageView);
+        Glide.with(convertView).
+                load(item.getIconDrawable()).
+                fitCenter().
+                into(iconImageView);
         titleTextView.setText(item.getNick());
         addfollow.setTag(position);
         //descTextView.setText(item.getDescStr());
