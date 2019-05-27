@@ -34,6 +34,20 @@
                 android:text="클럽상세"
                 android:textColor="@color/colorAccent"
                 android:textSize="18dp" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+            <Button
+                android:id="@+id/btn_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FF0000"
+                android:textColor="#FF0000"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                android:text="관리"
+                android:textSize="18dp"/>
         </LinearLayout>
 
         <ImageView

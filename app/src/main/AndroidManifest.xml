@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,12 +16,14 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.main.menu.follow.FollowListActivity"></activity>
+        <activity android:name=".ClubSettingActivity"></activity>
+        <activity android:name=".ui.main.menu.follow.FollowListActivity" />
         <activity android:name=".ui.main.menu.navigation.MapFindLocationActivity" />
         <activity android:name=".ui.main.menu.follow.FindFollowActivity" />
         <activity android:name=".ui.main.menu.navigation.MapSearchActivity" />
         <activity android:name=".ui.main.menu.navigation.MapInputActivity" />
-        <receiver android:name=".ui.main.menu.ranking.RankingAlarm"></receiver>
+
+        <receiver android:name=".ui.main.menu.ranking.RankingAlarm" />
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -33,20 +34,20 @@
             android:value="bcb5be527657eea3d6511a0c20cbb41b" />
 
         <activity android:name=".ui.main.MapActivity" />
-        <activity android:name=".ui.main.menu.club.ClubMemberActivity"/>
-        <activity android:name=".ui.main.menu.club.ClubDetailActivity"/>
+        <activity android:name=".ui.main.menu.club.ClubMemberActivity" />
+        <activity android:name=".ui.main.menu.club.ClubDetailActivity" />
         <activity android:name=".ui.main.menu.club.ClubSearchActivity" />
         <activity android:name=".ui.main.menu.club.ClubCreateActivity" />
         <activity android:name=".ui.join.NicknameActivity" />
-        <activity android:name=".ui.login.LoginActivity" >
+        <activity android:name=".ui.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".SplashActivity"/>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".SplashActivity" />
         <activity android:name=".FirstActivity" />
         <activity android:name=".ui.join.HeightActivity" />
         <activity android:name=".ui.join.WeightActivity" />

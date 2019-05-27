@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.el.ariby.ClubSettingActivity;
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityClubDetailBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,6 +32,7 @@ public class ClubDetailActivity extends AppCompatActivity {
     FirebaseUser mUser;
     String nickname;
     int memberNum;
+    public static ClubDetailActivity clubDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,7 @@ public class ClubDetailActivity extends AppCompatActivity {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_club_detail);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
+        clubDetail=ClubDetailActivity.this;
 
         Intent intent = getIntent();
 
@@ -52,9 +55,35 @@ public class ClubDetailActivity extends AppCompatActivity {
         mBinding.txtLocation.setText(intent.getStringExtra("map"));
         mBinding.txtMaster.setText(intent.getStringExtra("nick"));
         mBinding.txtMember.setText(String.valueOf(intent.getLongExtra("num", 0) + "명"));
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String nick = dataSnapshot.child("nickname").getValue().toString();
+                if(mBinding.txtMaster.getText().equals(nick)) {
+                    mBinding.btnSetting.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        mBinding.btnSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent1 = new Intent(getApplicationContext(), ClubSettingActivity.class);
+                intent1.putExtra("title", mBinding.txtClubName.getText().toString());
+                startActivity(intent1);
+            }
+        });
+
         mBinding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                finish();
                 finish();
             }
         });
