@@ -83,7 +83,7 @@ public class RankFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+                             @Nullable final Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_rank, container,false);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         ref = database.getReference("RECORD");
@@ -106,10 +106,7 @@ public class RankFragment extends Fragment {
         dropDown.setPopupBackgroundResource(R.color.colorPrimary);
 
         //알람 설정
-        alarmManager = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(mcontext, RankingAlarm.class);
-        alarmIntent = PendingIntent.getBroadcast(mcontext, 0,intent, 0);
-        startAlarm(getView());
+
 
         //현재 날짜/시간 가져오기
         long currentTime = System.currentTimeMillis();
@@ -234,6 +231,7 @@ public class RankFragment extends Fragment {
                                                 String daily_time_rank;
                                                 String getPreRank;
                                                 String dailyRank, upDownDis = null;
+                                                String upDownTime=null;
                                                 int changedRank = 0;
 
                                                 try{
@@ -294,12 +292,8 @@ public class RankFragment extends Fragment {
                                                                                 rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
                                                                             }
 
-                                                                            if(reset == 1){
-                                                                            ref.child(uid).child("/dailyData/upDown").child("upDownDis").setValue("0");
-                                                                            reset =0;
-                                                                            }else if(reset == 0) {
-                                                                                ref.child(uid).child("/dailyData/upDown").child("upDownDis").setValue(changedRank);
-                                                                            }
+                                                                            ref.child(uid).child("/dailyData/upDown").child("upDownDis").setValue(changedRank);
+
                                                                         }
 
 
@@ -311,40 +305,46 @@ public class RankFragment extends Fragment {
                                                                 rankingItems.get(i).setRank(String.valueOf(rank));
 
                                                                 }else if(setStandardFlag == 2){ //시간 순 정렬
-                                                                long upDownCheck = upDownDuration.calTimeDiff(lastSort_dailyTime, now);
-                                                                Log.i("return 받은 값 : ", String.valueOf(upDownCheck));
 
                                                                 daily_time_rank = snapshot.child(check).child("daily_time_rank").getValue().toString();
+
                                                                 if(Integer.parseInt(daily_time_rank)==0 ){ //정렬이 아직 안된 데이터이면 정렬해서 랭킹 매기기
                                                                     ref.child(uid).child(check2).child("daily_time_rank").setValue(String.valueOf(rank));
                                                                     putRank = snapshot.child(check).child("daily_time_rank").getValue().toString();
                                                                     rankingItems.get(i).setRank(putRank);
-                                                                    imgUpDown.setImageResource(R.drawable.substract);
-                                                                    txtUpDown.setText("0");
-                                                                    break;
+                                                                    rankingItems.get(i).setImgUpDown("0");
+                                                                    rankingItems.get(i).setTxtUpDown("0");
                                                                 }else if(Integer.parseInt(daily_time_rank)!=0 ){ //0이 아닐때
-                                                                    if(upDownCheck>=10) {
+
                                                                         getPreRank = snapshot.child(check).child("daily_time_rank").getValue().toString();
-                                                                        changedRank = rank - Integer.valueOf(getPreRank);
-                                                                    }else if(upDownCheck<10){
-                                                                        changedRank = Integer.parseInt(snapshot.child("dailyData/upDown").child("upDownTime").getValue().toString());
-                                                                    }
+                                                                        if(getPreRank.equals(rank)){
+                                                                            Log.d("데일리 시간 순 정렬", "순위 변동 없음");
+                                                                            upDownDis = snapshot.child("dailyData/upDown").child("upDownTime").getValue().toString();
+                                                                            if(Integer.valueOf(upDownDis)>0){
+                                                                                rankingItems.get(i).setImgUpDown("1");
+                                                                            }else if(Integer.valueOf(upDownDis) ==0){
+                                                                                rankingItems.get(i).setImgUpDown("0");
+                                                                            }else if(Integer.valueOf(upDownDis)<0){
+                                                                                rankingItems.get(i).setImgUpDown("-1");
+                                                                            }
+                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(upDownDis));
+                                                                        }else if(!getPreRank.equals(rank)){
+                                                                            changedRank = Integer.parseInt(getPreRank)-rank;
+                                                                            upDownDis = snapshot.child("dailyData/upDown").child("upDownTime").getValue().toString();
+                                                                            changedRank = changedRank+Integer.parseInt(upDownDis);
+                                                                            if(changedRank > 0){
+                                                                                rankingItems.get(i).setImgUpDown("1");
+                                                                                rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                            }else if(changedRank == 0){
+                                                                                rankingItems.get(i).setImgUpDown("0");
+                                                                                rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                            }else if(changedRank <0){
+                                                                                rankingItems.get(i).setImgUpDown("-1");
+                                                                                rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                            }
+                                                                            ref.child(uid).child("/dailyData/upDown").child("upDownTime").setValue(changedRank);
+                                                                        }
 
-                                                                    if(changedRank > 0){
-                                                                        rankingItems.get(i).setImgUpDown("1");
-                                                                        rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
-                                                                    }else if(changedRank == 0){
-                                                                        rankingItems.get(i).setImgUpDown("0");
-                                                                        rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
-                                                                    }else if(changedRank < 0){
-                                                                        rankingItems.get(i).setImgUpDown("-1");
-                                                                        rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
-                                                                    }
-                                                                    ref.child(uid).child(check2).child("daily_time_rank").setValue(String.valueOf(rank));
-
-                                                                    if(upDownCheck >=10){
-                                                                        ref.child(uid).child("dailyData/upDown").child("upDownTime").setValue(changedRank);
-                                                                    }
                                                                 }
                                                             }
                                                             }
@@ -386,6 +386,7 @@ public class RankFragment extends Fragment {
                                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                                     String dataCheck,rank = null;
                                     String nickname, profile, runningDistance, runningTime, changed, imgUpDown;
+
                                     try{
                                         dataCheck = snapshot.child(monthCheck).getValue().toString();
                                         if(dataCheck.isEmpty()){
@@ -401,10 +402,10 @@ public class RankFragment extends Fragment {
                                             //Log.d("RankFragment : ",nickname+",  "+rank+",  "+runningDistance+",  "+runningTime);
                                             //TODO. 나중에 monthly로 바꾸기!!
                                             if(setStandardFlag ==0 || setStandardFlag==1){
-                                                rank = snapshot.child(check).child("daily_dis_rank").getValue().toString(); //데일리 거리순
+                                                rank = snapshot.child(monthCheck).child("month_dis_rank").getValue().toString(); //데일리 거리순
 
                                             }else if(setStandardFlag==2){
-                                                rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                                rank= snapshot.child(monthCheck).child("month_time_rank").getValue().toString(); //데일리 시간
                                             }
                                             adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                                         }
@@ -427,23 +428,106 @@ public class RankFragment extends Fragment {
 
                                         if(dataSnapshot.exists()){
                                             for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                                String dailyTotalDis;
-                                                String dailyTotalTime;
+                                                String monthlyTotalDis;
+                                                String monthlyTotalTime;
                                                 String uid;
                                                 String putRank;
-                                                String dailyRankCheck;
+                                                String monthlyRankCheck;
+                                                String month_dis_rank;
+                                                String month_time_rank;
+                                                String getPreRank;
+                                                String upDownDis = null;
+                                                String upDownTime = null;
+                                                int changedRank = 0;
+
                                                 try{
-                                                    dailyRankCheck = snapshot.child(monthCheck).getValue().toString();
-                                                    if(dailyRankCheck.isEmpty()){
+                                                    monthlyRankCheck = snapshot.child(monthCheck).getValue().toString();
+                                                    if(monthlyRankCheck.isEmpty()){
                                                         continue;
                                                     }else {
-                                                        dailyTotalDis = snapshot.child(monthCheck).child("monthlyDis").getValue().toString();
-                                                        if(getDis.equals(dailyTotalDis)){
+                                                        monthlyTotalDis = snapshot.child(monthCheck).child("monthlyDis").getValue().toString();
+                                                        if(getDis.equals(monthlyTotalDis)){
                                                             uid = snapshot.getKey();
-                                                            ref.child(uid).child("/"+monthCheck).child("monthlyRank").setValue(String.valueOf(rank));
-                                                            putRank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
-                                                            rankingItems.get(i).setRank(putRank);
-                                                            break;
+                                                            if(setStandardFlag==0 || setStandardFlag==1){
+                                                                month_dis_rank = snapshot.child(uid).child(monthCheck).child("month_dis_rank").getValue().toString();
+                                                                if(Integer.parseInt(month_dis_rank)==0){
+                                                                    ref.child(uid).child("/"+monthCheck).child("month_dis_rank").setValue(String.valueOf(rank));
+                                                                    putRank = snapshot.child(monthCheck).child("month_dis_rank").getValue().toString();
+                                                                    rankingItems.get(i).setRank(putRank);
+                                                                    rankingItems.get(i).setImgUpDown("0");
+                                                                    rankingItems.get(i).setTxtUpDown("0");
+                                                                }else if(Integer.parseInt(month_dis_rank)!=0){
+                                                                    getPreRank = snapshot.child(monthCheck).child("month_dis_rank").getValue().toString();
+                                                                    if(getPreRank.equals(rank)){
+                                                                        upDownDis = snapshot.child("monthlyData/upDown").child("upDownDis").getValue().toString();
+                                                                        if(Integer.valueOf(upDownDis)>0){
+                                                                            rankingItems.get(i).setImgUpDown("1");
+                                                                        }else if(Integer.valueOf(upDownDis)==0){
+                                                                            rankingItems.get(i).setImgUpDown("0");
+                                                                        }else if(Integer.valueOf(upDownDis)<0){
+                                                                            rankingItems.get(i).setImgUpDown("-1");
+                                                                        }
+                                                                        rankingItems.get(i).setTxtUpDown(String.valueOf(upDownDis));
+                                                                    }else if(!getPreRank.equals(rank)){
+                                                                        changedRank = Integer.parseInt(getPreRank)-rank;
+                                                                        upDownDis = snapshot.child("monthlyData/upDown").child("upDownDis").getValue().toString();
+                                                                        changedRank = changedRank+Integer.parseInt(upDownDis);
+                                                                        if(changedRank > 0){
+                                                                            rankingItems.get(i).setImgUpDown("1");
+                                                                        }else if(changedRank == 0){
+                                                                            rankingItems.get(i).setImgUpDown("0");
+                                                                        }else if(changedRank <0){
+                                                                            rankingItems.get(i).setImgUpDown("-1");
+                                                                        }
+                                                                        rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                        ref.child(uid).child("/monthlyData/upDown").child("upDownDis").setValue(changedRank);
+                                                                    }
+                                                                    }
+                                                                    ref.child(uid).child("/"+monthCheck).child("month_dis_rank").setValue(String.valueOf(rank));
+                                                                rankingItems.get(i).setRank(String.valueOf(rank));
+                                                            }else if(setStandardFlag ==2){
+                                                                month_time_rank = snapshot.child(monthCheck).child("month_time_rank").getValue().toString();
+                                                                if(Integer.parseInt(month_time_rank)==0){
+                                                                    ref.child(uid).child("/"+monthCheck).child("month_time_rank").setValue(String.valueOf(rank));
+                                                                    putRank = snapshot.child(monthCheck).child("month_time_rank").getValue().toString();
+                                                                    rankingItems.get(i).setRank(putRank);
+                                                                    rankingItems.get(i).setImgUpDown("0");
+                                                                    rankingItems.get(i).setTxtUpDown("0");
+                                                                }else if(Integer.parseInt(month_time_rank)!=0){
+                                                                    getPreRank = snapshot.child(monthCheck).child("month_time_rank").getValue().toString();
+                                                                    if(getPreRank.equals(rank)){
+                                                                        upDownTime = snapshot.child("monthlyData/upDown").child("upDownTime").getValue().toString();
+                                                                        if(Integer.valueOf(upDownTime)>0){
+                                                                            rankingItems.get(i).setImgUpDown("1");
+                                                                        }else if(Integer.valueOf(upDownTime)==0){
+                                                                            rankingItems.get(i).setImgUpDown("0");
+                                                                        }else if(Integer.valueOf(upDownTime)<0){
+                                                                            rankingItems.get(i).setImgUpDown("-1");
+                                                                        }
+                                                                        rankingItems.get(i).setTxtUpDown(String.valueOf(upDownTime));
+                                                                    }else if(!getPreRank.equals(rank)){
+                                                                        changedRank=Integer.parseInt(getPreRank)-rank;
+                                                                        upDownTime=snapshot.child("monthlyData/upDown").child("upDownTime").getValue().toString();
+                                                                        changedRank = changedRank+Integer.parseInt(upDownTime);
+                                                                        if(Integer.valueOf(upDownTime)>0){
+                                                                            rankingItems.get(i).setImgUpDown("1");
+                                                                        }else if(Integer.valueOf(upDownTime)==0){
+                                                                            rankingItems.get(i).setImgUpDown("0");
+                                                                        }else if(Integer.valueOf(upDownTime)<0){
+                                                                            rankingItems.get(i).setImgUpDown("-1");
+                                                                        }
+                                                                        rankingItems.get(i).setTxtUpDown(String.valueOf(upDownTime));
+                                                                        ref.child(uid).child("/monthlyData/upDown").child("upDownTime").setValue(changedRank);
+                                                                    }
+                                                                }
+
+
+
+
+
+
+                                                            }
+
                                                         }
                                                     }
                                                 }catch (Exception e3){
@@ -543,31 +627,104 @@ public class RankFragment extends Fragment {
                                             String dailyTotalDis;
                                             String monthlyTotalDis;
                                             String putRank;
-                                            String dailyRankCheck;
+                                            String dailyRankCheck, month_dis_rank;
                                             String uid;
+                                            String daily_dis_rank;
+                                            String getPreRank;
+                                            String dailyRank, upDownDis = null;
+                                            String upDownTime=null;
+                                            int changedRank = 0;
+
                                             try {
                                                 dailyRankCheck = snapshot.child(check).getValue().toString();
                                                 if (dailyRankCheck.isEmpty()) {
                                                     continue;
                                                 } else {
-                                                    dailyTotalDis = snapshot.child("dailyData/1557360000000/").child("dailyTotalDis").getValue().toString();
-                                                    monthlyTotalDis = snapshot.child(monthCheck).child("monthlyDis").getValue().toString();
+                                                    dailyTotalDis = snapshot.child(check2).child("dailyTotalTime").getValue().toString();
+                                                    monthlyTotalDis = snapshot.child(monthCheck).child("monthlyTime").getValue().toString();
                                                     if(setTimeFlag == 0) { //당일 랭킹
-                                                        if(getDis.equals(dailyTotalDis)) {
+                                                        if (getDis.equals(dailyTotalDis)) {
                                                             uid = snapshot.getKey();
-                                                            ref.child(uid).child("/dailyData/1557360000000/").child("dailyRank").setValue(String.valueOf(rank));
-                                                            putRank = snapshot.child(check).child("dailyRank").getValue().toString();
-                                                            rankingItems.get(i).setRank(String.valueOf(putRank));
-                                                            break;
+
+                                                            daily_dis_rank = snapshot.child(check).child("daily_time_rank").getValue().toString();
+                                                            if (Integer.parseInt(daily_dis_rank) == 0) {
+
+                                                                ref.child(uid).child(check2).child("daily_time_rank").setValue(String.valueOf(rank));
+                                                                putRank = snapshot.child(check).child("daily_time_rank").getValue().toString();
+                                                                rankingItems.get(i).setRank(putRank);
+                                                                rankingItems.get(i).setImgUpDown("0");
+                                                                rankingItems.get(i).setTxtUpDown("0");
+                                                            } else if (Integer.parseInt(daily_dis_rank) != 0) {
+                                                                getPreRank = snapshot.child(check).child("daily_time_rank").getValue().toString();
+                                                                if (getPreRank.equals(rank)) {
+                                                                    upDownDis = snapshot.child("dailyData/upDown").child("upDownTime").getValue().toString();
+                                                                    if (Integer.valueOf(upDownDis) > 0) {
+                                                                        rankingItems.get(i).setImgUpDown("1");
+                                                                    } else if (Integer.valueOf(upDownDis) == 0) {
+                                                                        rankingItems.get(i).setImgUpDown("0");
+                                                                    } else if (Integer.valueOf(upDownDis) < 0) {
+                                                                        rankingItems.get(i).setImgUpDown("-1");
+                                                                    }
+                                                                    rankingItems.get(i).setTxtUpDown(String.valueOf(upDownDis));
+                                                                } else if (!getPreRank.equals(rank)) {
+                                                                    changedRank = Integer.parseInt(getPreRank) - rank;
+                                                                    upDownDis = snapshot.child("dailyData/upDown").child("upDownTime").getValue().toString();
+                                                                    changedRank = changedRank+Integer.valueOf(upDownDis);
+                                                                    if (changedRank > 0) {
+                                                                        rankingItems.get(i).setImgUpDown("1");
+                                                                    } else if (changedRank == 0) {
+                                                                        rankingItems.get(i).setImgUpDown("0");
+                                                                    } else if (changedRank < 0) {
+                                                                        rankingItems.get(i).setImgUpDown("-1");
+                                                                    }
+                                                                    rankingItems.get(i).setTxtUpDown(String.valueOf(upDownDis));
+                                                                    ref.child(uid).child("/monthlyData/upDown").child("upDownTime").setValue(changedRank);
+                                                                }
+                                                            }
+                                                            ref.child(uid).child(check2).child("daily_time_rank").setValue(String.valueOf(rank));
+                                                            rankingItems.get(i).setRank(String.valueOf(rank));
                                                         }
                                                     }
                                                     if(setTimeFlag == 1) { //이번달 랭킹
                                                         if(getDis.equals(monthlyTotalDis)) {
                                                             uid = snapshot.getKey();
-                                                            ref.child(uid).child("/"+monthCheck).child("monthlyRank").setValue(String.valueOf(rank));
-                                                            putRank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
-                                                            rankingItems.get(i).setRank(String.valueOf(putRank));
-                                                            break;
+
+                                                            month_dis_rank = snapshot.child(uid).child(monthCheck).child("month_time_rank").getValue().toString();
+                                                            if(Integer.parseInt(month_dis_rank)==0){
+                                                                ref.child(uid).child("/"+monthCheck).child("month_time_rank").setValue(String.valueOf(rank));
+                                                                putRank = snapshot.child(monthCheck).child("month_time_rank").getValue().toString();
+                                                                rankingItems.get(i).setRank(putRank);
+                                                                rankingItems.get(i).setImgUpDown("0");
+                                                                rankingItems.get(i).setTxtUpDown("0");
+                                                            }else if(Integer.parseInt(month_dis_rank)!=0){
+                                                                getPreRank = snapshot.child(monthCheck).child("month_time_rank").getValue().toString();
+                                                                if(getPreRank.equals(rank)){
+                                                                    upDownDis = snapshot.child("monthlyData/upDown").child("upDownTime").getValue().toString();
+                                                                    if(Integer.valueOf(upDownDis)>0){
+                                                                        rankingItems.get(i).setImgUpDown("1");
+                                                                    }else if(Integer.valueOf(upDownDis)==0){
+                                                                        rankingItems.get(i).setImgUpDown("0");
+                                                                    }else if(Integer.valueOf(upDownDis)<0){
+                                                                        rankingItems.get(i).setImgUpDown("-1");
+                                                                    }
+                                                                    rankingItems.get(i).setTxtUpDown(String.valueOf(upDownDis));
+                                                                }else if(!getPreRank.equals(rank)){
+                                                                    changedRank = Integer.parseInt(getPreRank)-rank;
+                                                                    upDownDis = snapshot.child("monthlyData/upDown").child("upDownTime").getValue().toString();
+                                                                    changedRank = changedRank+Integer.parseInt(upDownDis);
+                                                                    if(changedRank > 0){
+                                                                        rankingItems.get(i).setImgUpDown("1");
+                                                                    }else if(changedRank == 0){
+                                                                        rankingItems.get(i).setImgUpDown("0");
+                                                                    }else if(changedRank <0){
+                                                                        rankingItems.get(i).setImgUpDown("-1");
+                                                                    }
+                                                                    rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                    ref.child(uid).child("/monthlyData/upDown").child("upDownTime").setValue(changedRank);
+                                                                }
+                                                            }
+                                                            ref.child(uid).child("/"+monthCheck).child("month_time_rank").setValue(String.valueOf(rank));
+                                                            rankingItems.get(i).setRank(String.valueOf(rank));
                                                         }
                                                     }
 
@@ -630,7 +787,7 @@ public class RankFragment extends Fragment {
                                             changed = snapshot.child("userInfo/upDownImg").getValue().toString();
                                             imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
                                             //TODO. 나중에 바꾸기
-                                            rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                            rank= snapshot.child(check).child("daily_dis_rank").getValue().toString(); //데일리 시간
                                             adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                                         }else if(setTimeFlag == 1){ //이번달 데이터
                                             //monthlyRank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
@@ -639,7 +796,7 @@ public class RankFragment extends Fragment {
                                             changed = snapshot.child("userInfo/upDownImg").getValue().toString();
                                             imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
                                             //TODO. 나중에 바꾸기.
-                                            rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                            rank= snapshot.child(check).child("daily_dis_rank").getValue().toString(); //데일리 시간
                                             adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                                         }
 
@@ -655,7 +812,6 @@ public class RankFragment extends Fragment {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     for (int i = 0; i < rankingItems.size(); i++) {
-                                        //Todo. 나중에 데이터베이스의 기존 순위 읽어와서 바뀐 순위와의 변동 구하기
                                         final int rank = i + 1;
 
                                         String getRank = rankingItems.get(i).getRank();
@@ -669,30 +825,102 @@ public class RankFragment extends Fragment {
                                                 String monthlyTotalDis;
                                                 String putRank;
                                                 String dailyRankCheck;
-                                                String uid;
+                                                String uid, daily_dis_rank, getPreRank, month_dis_rank;
+                                                String upDownDis = null;
+                                                String upDownTime=null;
+                                                int changedRank = 0;
+
                                                 try {
                                                     dailyRankCheck = snapshot.child(check).getValue().toString();
                                                     if (dailyRankCheck.isEmpty()) {
                                                         continue;
                                                     } else {
-                                                        dailyTotalDis = snapshot.child("dailyData/1557360000000/").child("dailyTotalDis").getValue().toString();
+                                                        dailyTotalDis = snapshot.child(check2).child("dailyTotalDis").getValue().toString();
                                                         monthlyTotalDis = snapshot.child(monthCheck).child("monthlyDis").getValue().toString();
                                                             if(setTimeFlag == 0) { //당일 랭킹
                                                                 if(getDis.equals(dailyTotalDis)) {
                                                                     uid = snapshot.getKey();
-                                                                    ref.child(uid).child("/dailyData/1557360000000/").child("dailyRank").setValue(String.valueOf(rank));
-                                                                    putRank = snapshot.child(check).child("dailyRank").getValue().toString();
-                                                                    rankingItems.get(i).setRank(String.valueOf(putRank));
-                                                                    break;
+                                                                    rankingItems.get(i).setRank(String.valueOf(rank));
+                                                                    daily_dis_rank = snapshot.child(check).child("daily_dis_rank").getValue().toString();
+                                                                    if (Integer.parseInt(daily_dis_rank) == 0) {
+
+                                                                        ref.child(uid).child(check2).child("daily_dis_rank").setValue(String.valueOf(rank));
+                                                                        putRank = snapshot.child(check).child("daily_dis_rank").getValue().toString();
+                                                                        rankingItems.get(i).setRank(putRank);
+                                                                        rankingItems.get(i).setImgUpDown("0");
+                                                                        rankingItems.get(i).setTxtUpDown("0");
+                                                                    } else if (Integer.parseInt(daily_dis_rank) != 0) {
+                                                                        getPreRank = snapshot.child(check).child("daily_dis_rank").getValue().toString();
+                                                                        if (getPreRank.equals(rank)) {
+                                                                            upDownDis = snapshot.child("dailyData/upDown").child("upDownDis").getValue().toString();
+                                                                            if (Integer.valueOf(upDownDis) > 0) {
+                                                                                rankingItems.get(i).setImgUpDown("1");
+                                                                            } else if (Integer.valueOf(upDownDis) == 0) {
+                                                                                rankingItems.get(i).setImgUpDown("0");
+                                                                            } else if (Integer.valueOf(upDownDis) < 0) {
+                                                                                rankingItems.get(i).setImgUpDown("-1");
+                                                                            }
+                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(upDownDis));
+                                                                        } else if (!getPreRank.equals(rank)) {
+                                                                            changedRank = Integer.parseInt(getPreRank) - rank;
+                                                                            upDownDis = snapshot.child("dailyData/upDown").child("upDownDis").getValue().toString();
+                                                                            changedRank = changedRank+Integer.valueOf(upDownDis);
+                                                                            if (changedRank > 0) {
+                                                                                rankingItems.get(i).setImgUpDown("1");
+                                                                            } else if (changedRank == 0) {
+                                                                                rankingItems.get(i).setImgUpDown("0");
+                                                                            } else if (changedRank < 0) {
+                                                                                rankingItems.get(i).setImgUpDown("-1");
+                                                                            }
+                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(upDownDis));
+                                                                            ref.child(uid).child("/monthlyData/upDown").child("upDownDis").setValue(changedRank);
+                                                                        }
+                                                                    }
+                                                                    ref.child(uid).child(check2).child("daily_dis_rank").setValue(String.valueOf(rank));
+                                                                    rankingItems.get(i).setRank(String.valueOf(rank));
                                                                 }
                                                             }
                                                             if(setTimeFlag == 1) { //이번달 랭킹
                                                                 if(getDis.equals(monthlyTotalDis)) {
                                                                     uid = snapshot.getKey();
-                                                                    ref.child(uid).child("/"+monthCheck).child("monthlyRank").setValue(String.valueOf(rank));
-                                                                    putRank = snapshot.child(monthCheck).child("monthlyRank").getValue().toString();
-                                                                    rankingItems.get(i).setRank(String.valueOf(putRank));
-                                                                    break;
+                                                                    rankingItems.get(i).setRank(String.valueOf(rank));
+                                                                    month_dis_rank = snapshot.child(uid).child(monthCheck).child("month_dis_rank").getValue().toString();
+                                                                    if(Integer.parseInt(month_dis_rank)==0){
+                                                                        ref.child(uid).child("/"+monthCheck).child("month_dis_rank").setValue(String.valueOf(rank));
+                                                                        putRank = snapshot.child(monthCheck).child("month_dis_rank").getValue().toString();
+                                                                        rankingItems.get(i).setRank(putRank);
+                                                                        rankingItems.get(i).setImgUpDown("0");
+                                                                        rankingItems.get(i).setTxtUpDown("0");
+                                                                    }else if(Integer.parseInt(month_dis_rank)!=0){
+                                                                        getPreRank = snapshot.child(monthCheck).child("month_dis_rank").getValue().toString();
+                                                                        if(getPreRank.equals(rank)){
+                                                                            upDownDis = snapshot.child("monthlyData/upDown").child("upDownDis").getValue().toString();
+                                                                            if(Integer.valueOf(upDownDis)>0){
+                                                                                rankingItems.get(i).setImgUpDown("1");
+                                                                            }else if(Integer.valueOf(upDownDis)==0){
+                                                                                rankingItems.get(i).setImgUpDown("0");
+                                                                            }else if(Integer.valueOf(upDownDis)<0){
+                                                                                rankingItems.get(i).setImgUpDown("-1");
+                                                                            }
+                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(upDownDis));
+                                                                        }else if(!getPreRank.equals(rank)){
+                                                                            changedRank = Integer.parseInt(getPreRank)-rank;
+                                                                            upDownDis = snapshot.child("monthlyData/upDown").child("upDownDis").getValue().toString();
+                                                                            changedRank = changedRank+Integer.parseInt(upDownDis);
+                                                                            if(changedRank > 0){
+                                                                                rankingItems.get(i).setImgUpDown("1");
+                                                                            }else if(changedRank == 0){
+                                                                                rankingItems.get(i).setImgUpDown("0");
+                                                                            }else if(changedRank <0){
+                                                                                rankingItems.get(i).setImgUpDown("-1");
+                                                                            }
+                                                                            rankingItems.get(i).setTxtUpDown(String.valueOf(changedRank));
+                                                                            ref.child(uid).child("/monthlyData/upDown").child("upDownDis").setValue(changedRank);
+                                                                        }
+                                                                    }
+                                                                    ref.child(uid).child("/"+monthCheck).child("month_dis_rank").setValue(String.valueOf(rank));
+                                                                    rankingItems.get(i).setRank(String.valueOf(rank));
+
                                                                 }
                                                             }
                                                         }
@@ -753,7 +981,7 @@ public class RankFragment extends Fragment {
                                 changed = snapshot.child("userInfo/upDownImg").getValue().toString();
                                 imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
                                 //TODO 나중에 바꾸기
-                                rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                rank= snapshot.child(check).child("daily_dis_rank").getValue().toString(); //데일리 시간
                                 adapter.addItem(new RankingItem(profile, nickname, dailyTotalDis, dailyTotalTime, rank, changed, imgUpDown));
                             }
                         }catch (Exception e){
@@ -771,29 +999,64 @@ public class RankFragment extends Fragment {
 
         adapter = new RankingAdapter();
         listRank.setAdapter(adapter);
+
+       swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+           @Override
+           public void onRefresh() {
+               swipeRefreshLayout.setRefreshing(true);
+               ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                   @Override
+                   public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                       adapter.clearItem();
+                       for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                           String dailyTotalDis;
+                           String rank;
+                           String dailyTotalTime;
+                           String dailyRankCheck;
+                           String nickname;
+                           String profile,changed, imgUpDown ;
+
+                           try {
+                               dailyRankCheck = snapshot.child(check).getValue().toString();
+                               if(dailyRankCheck.isEmpty()){
+                                   continue;
+                               }else {
+                                   nickname = snapshot.child("userInfo/nickname").getValue().toString();
+                                   profile = snapshot.child("userInfo/profile").getValue().toString();
+                                   //dailyRank = snapshot.child(check).child("dailyRank").getValue().toString();
+                                   dailyTotalDis = snapshot.child(check).child("dailyTotalDis").getValue().toString();
+                                   dailyTotalTime = snapshot.child(check).child("dailyTotalTime").getValue().toString();
+                                   changed = snapshot.child("userInfo/upDownImg").getValue().toString();
+                                   imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
+                                   //TODO 나중에 바꾸기
+                                   rank= snapshot.child(check).child("daily_dis_rank").getValue().toString(); //데일리 시간
+                                   adapter.addItem(new RankingItem(profile, nickname, dailyTotalDis, dailyTotalTime, rank, changed, imgUpDown));
+                               }
+                           }catch (Exception e){
+
+                           }
+
+                       }
+                       Collections.sort(rankingItems, adapter.rankComparator);
+                       adapter.notifyDataSetChanged();
+                   }
+
+                   @Override
+                   public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                   }
+               });
+               swipeRefreshLayout.setRefreshing(false);
+           }
+       });
+
+
+
+
+
+
         return v;
     }
-
-    public void startAlarm(View view){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        //TODO. TEST. 나중에 자정으로 시간 바꾸기.
-        calendar.set(Calendar.HOUR_OF_DAY, 14);
-        calendar.set(calendar.MINUTE, 28);
-
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
-
-        RankingAlarm rankingAlarm = new RankingAlarm();
-        reset = rankingAlarm.returnSit();
-    }
-
-    public void cancelAlarm(View view){
-        if(alarmManager!=null){
-            alarmManager.cancel(alarmIntent);
-        }
-    }
-
-
 
 
     public class RankingAdapter extends BaseAdapter {

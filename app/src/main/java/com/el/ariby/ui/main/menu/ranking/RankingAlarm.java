@@ -16,7 +16,6 @@ public class RankingAlarm extends BroadcastReceiver {
         Log.d("알람","done");
         Toast.makeText(context, "알람울림", Toast.LENGTH_SHORT).show();
     }
-
     public int returnSit(){
         return 1;
     }
