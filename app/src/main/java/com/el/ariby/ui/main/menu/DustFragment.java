@@ -45,8 +45,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class DustFragment extends Fragment {
-    public final static int SMILE = 16;
-    public final static int NORMAL = 36;
+    public final static int SMILE = 50;
+    public final static int NORMAL = 100;
     public final static int BAD = 76;
     public final static int TO_GRID = 0;
     public final static int TO_GPS = 1;
@@ -71,6 +71,12 @@ public class DustFragment extends Fragment {
 
         startLocationService();
 
+        mBinding.btnWeather.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void getCoord(String x, String y) {
@@ -356,13 +362,13 @@ public class DustFragment extends Fragment {
     public void setDustView(int khaiValue, int pm10Value,
                             int pm25Value, Double no2Value, Double coValue) {
 
-        if (khaiValue < SMILE) {
+        if (khaiValue <= 50) {
             mBinding.layout.setBackgroundColor(Color.BLUE);
             mBinding.txtKhaiText.setText("통합지수 : 매우좋음");
-        } else if (khaiValue < NORMAL) {
+        } else if (khaiValue <= 100) {
             mBinding.layout.setBackgroundColor(Color.GREEN);
             mBinding.txtKhaiText.setText("통합지수 : 보통");
-        } else if (khaiValue < BAD) {
+        } else if (khaiValue <= 250) {
             mBinding.layout.setBackgroundColor(Color.parseColor("#cc6600"));
             mBinding.txtKhaiText.setText("통합지수 : 나쁨");
         } else {

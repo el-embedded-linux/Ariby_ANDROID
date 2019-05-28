@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -35,25 +36,22 @@ public class LoginActivity extends AppCompatActivity {
                 String email = mBinding.etEmail.getText().toString().trim();
                 String pwd = mBinding.etPassword.getText().toString().trim();
 
-                if (email.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                }
-
-                if (pwd.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                }
-                firebaseAuth.signInWithEmailAndPassword(email, pwd)
-                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(LoginActivity.this, "아이디,비밀번호가 틀리거나 없는 아이디입니다.", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(email) || TextUtils.isEmpty(pwd)) {
+                    Toast.makeText(getApplicationContext(), "아이디나 패스워드를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                } else {
+                    firebaseAuth.signInWithEmailAndPassword(email, pwd)
+                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                    } else {
+                                        Toast.makeText(LoginActivity.this, "아이디,비밀번호가 틀리거나 없는 아이디입니다.", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
             }
         });
     }

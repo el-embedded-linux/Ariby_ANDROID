@@ -26,8 +26,9 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/menu_bottom"/>
+            app:menu="@menu/menu_bottom" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/floating"
