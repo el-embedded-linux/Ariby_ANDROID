@@ -237,7 +237,7 @@ public class DustFragment extends Fragment {
                     baseTime,
                     nx,
                     ny,
-                    "10",
+                    "30",
                     "1",
                     "json");
         } catch (UnsupportedEncodingException e) {
@@ -251,7 +251,12 @@ public class DustFragment extends Fragment {
                 if (response.isSuccessful()) {
                     WeatherRepoResponse repo = response.body();
                     if (repo != null) {
-                        Log.e("test", repo.getResponse().getBody().getItems().getItem().get(0).getCategory());
+                        Log.e("test", repo.getResponse().
+                                        getBody().
+                                        getItems().
+                                        getItem().
+                                        get(0).
+                                        getCategory());
                     }
                 }
             }
@@ -313,7 +318,8 @@ public class DustFragment extends Fragment {
             Double latitude = location.getLatitude();
             Double longitude = location.getLongitude();
 
-            String msg = "Latitude : " + latitude + "\nLongitude : " + longitude;
+            String msg = "Latitude : " + latitude +
+                    "\nLongitude : " + longitude;
             Log.i("GPSListener", msg);
         }
 

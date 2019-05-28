@@ -4,10 +4,6 @@ import java.util.List;
 
 public class WeatherRepoResponse {
 
-    /**
-     * response : {"header":{"resultCode":"0000","resultMsg":"OK"},"body":{"items":{"item":[{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":"0900","fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":1000,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":1100,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":1200,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":"0900","fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":1000,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":1100,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":1200,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"RN1","fcstDate":20190528,"fcstTime":"0900","fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"RN1","fcstDate":20190528,"fcstTime":1000,"fcstValue":0,"nx":60,"ny":127}]},"numOfRows":10,"pageNo":1,"totalCount":40}}
-     */
-
     private ResponseBean response;
 
     public ResponseBean getResponse() {
@@ -19,11 +15,6 @@ public class WeatherRepoResponse {
     }
 
     public static class ResponseBean {
-        /**
-         * header : {"resultCode":"0000","resultMsg":"OK"}
-         * body : {"items":{"item":[{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":"0900","fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":1000,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":1100,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":1200,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":"0900","fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":1000,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":1100,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":1200,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"RN1","fcstDate":20190528,"fcstTime":"0900","fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"RN1","fcstDate":20190528,"fcstTime":1000,"fcstValue":0,"nx":60,"ny":127}]},"numOfRows":10,"pageNo":1,"totalCount":40}
-         */
-
         private HeaderBean header;
         private BodyBean body;
 
@@ -70,13 +61,6 @@ public class WeatherRepoResponse {
         }
 
         public static class BodyBean {
-            /**
-             * items : {"item":[{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":"0900","fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":1000,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":1100,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"LGT","fcstDate":20190528,"fcstTime":1200,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":"0900","fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":1000,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":1100,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"PTY","fcstDate":20190528,"fcstTime":1200,"fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"RN1","fcstDate":20190528,"fcstTime":"0900","fcstValue":0,"nx":60,"ny":127},{"baseDate":20190528,"baseTime":"0830","category":"RN1","fcstDate":20190528,"fcstTime":1000,"fcstValue":0,"nx":60,"ny":127}]}
-             * numOfRows : 10
-             * pageNo : 1
-             * totalCount : 40
-             */
-
             private ItemsBean items;
             private int numOfRows;
             private int pageNo;
@@ -126,23 +110,12 @@ public class WeatherRepoResponse {
                 }
 
                 public static class ItemBean {
-                    /**
-                     * baseDate : 20190528
-                     * baseTime : 0830
-                     * category : LGT
-                     * fcstDate : 20190528
-                     * fcstTime : 0900
-                     * fcstValue : 0
-                     * nx : 60
-                     * ny : 127
-                     */
-
                     private int baseDate;
                     private String baseTime;
                     private String category;
                     private int fcstDate;
-                    private String fcstTime;
-                    private int fcstValue;
+                    private int fcstTime;
+                    private Object fcstValue;
                     private int nx;
                     private int ny;
 
@@ -178,15 +151,15 @@ public class WeatherRepoResponse {
                         this.fcstDate = fcstDate;
                     }
 
-                    public String getFcstTime() {
+                    public int getFcstTime() {
                         return fcstTime;
                     }
 
-                    public void setFcstTime(String fcstTime) {
+                    public void setFcstTime(int fcstTime) {
                         this.fcstTime = fcstTime;
                     }
 
-                    public int getFcstValue() {
+                    public Object getFcstValue() {
                         return fcstValue;
                     }
 
