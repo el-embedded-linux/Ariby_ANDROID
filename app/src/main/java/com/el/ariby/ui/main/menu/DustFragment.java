@@ -35,7 +35,9 @@ import com.el.ariby.ui.main.menu.dust.DustHourData;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -68,7 +70,6 @@ public class DustFragment extends Fragment {
         mBinding = FragmentDustBinding.bind(getView());
 
         startLocationService();
-        getWeatherData("20190528","1930","60","127");
 
     }
 
@@ -225,7 +226,7 @@ public class DustFragment extends Fragment {
         });
     }
 
-    private void getWeatherData(String baseDate,String baseTime,String nx,String ny) {
+    private void getWeatherData(String baseDate, String baseTime, String nx, String ny) {
         Retrofit retrofit = SelfCall.createRetrofit(WeatherApi.BASEURL);
         WeatherApi apiService = retrofit.create(WeatherApi.class);
         Call<WeatherRepoResponse> call = null;
@@ -250,7 +251,7 @@ public class DustFragment extends Fragment {
                 if (response.isSuccessful()) {
                     WeatherRepoResponse repo = response.body();
                     if (repo != null) {
-                        Log.e("test",repo.getResponse().getBody().getItems().getItem().get(0).getBaseTime());
+                        Log.e("test", repo.getResponse().getBody().getItems().getItem().get(0).getCategory());
                     }
                 }
             }
@@ -279,6 +280,14 @@ public class DustFragment extends Fragment {
         Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         Double latitude = location.getLatitude();
         Double longitude = location.getLongitude();
+        long now = System.currentTimeMillis(); // 현재시간
+        Date date = new Date(now);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat hour = new SimpleDateFormat("HHmm");
+
+        String getTime = sdf.format(date);
+        String getHourMin = hour.format(date);
+
 
         String msg = "Last Known Location -> Latitude : " +
                 location.getLatitude() +
@@ -290,7 +299,12 @@ public class DustFragment extends Fragment {
                 minTime, minDistance, gpsListener);
         getGeo(longitude.toString(), latitude.toString(), "WGS84");
         getCoord(longitude.toString(), latitude.toString());
+        LatXLngY data = convertGRID_GPS(0, latitude, longitude);
 
+        getWeatherData(getTime,
+                getHourMin,
+                String.valueOf((int) data.x),
+                String.valueOf((int) data.y));
     }
 
     private class GPSListener implements LocationListener {
@@ -387,8 +401,7 @@ public class DustFragment extends Fragment {
             mBinding.imgDust4.setImageResource(R.drawable.worst);
     }
 
-    private LatXLngY convertGRID_GPS(int mode, double lat_X, double lng_Y )
-    {
+    private LatXLngY convertGRID_GPS(int mode, double lat_X, double lng_Y) {
         double RE = 6371.00877; // 지구 반경(km)
         double GRID = 5.0; // 격자 간격(km)
         double SLAT1 = 30.0; // 투영 위도1(degree)
@@ -431,8 +444,7 @@ public class DustFragment extends Fragment {
             theta *= sn;
             rs.x = Math.floor(ra * Math.sin(theta) + XO + 0.5);
             rs.y = Math.floor(ro - ra * Math.cos(theta) + YO + 0.5);
-        }
-        else {
+        } else {
             rs.x = lat_X;
             rs.y = lng_Y;
             double xn = lat_X - XO;
@@ -447,15 +459,13 @@ public class DustFragment extends Fragment {
             double theta = 0.0;
             if (Math.abs(xn) <= 0.0) {
                 theta = 0.0;
-            }
-            else {
+            } else {
                 if (Math.abs(yn) <= 0.0) {
                     theta = Math.PI * 0.5;
                     if (xn < 0.0) {
                         theta = -theta;
                     }
-                }
-                else theta = Math.atan2(xn, yn);
+                } else theta = Math.atan2(xn, yn);
             }
             double alon = theta / sn + olon;
             rs.lat = alat * RADDEG;
@@ -465,9 +475,7 @@ public class DustFragment extends Fragment {
     }
 
 
-
-    class LatXLngY
-    {
+    class LatXLngY {
         public double lat;
         public double lng;
 
