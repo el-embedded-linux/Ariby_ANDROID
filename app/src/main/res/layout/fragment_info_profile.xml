@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="20dp"
@@ -7,49 +8,57 @@
 
     <ImageView
         android:id="@+id/fragment_info_profile_photo"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="56dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/daram"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_width="60dp"
-        android:layout_height="60dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/fragment_info_profile_displayName"
-        android:textSize="20dp"
-        android:textColor="#222"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:text="(unknown)"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="5dp"
+        android:text="test"
+        android:textColor="#222"
+        android:textSize="36dp"
+        android:textStyle="bold"
         app:layout_constraintLeft_toRightOf="@+id/fragment_info_profile_photo"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/fragment_info_profile_following"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_info_profile_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_info_profile_photo">
+
         <TextView
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:textColor="#666"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="팔로잉"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/following_num" />
+            android:textColor="#666"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/following_num"
+            app:layout_constraintLeft_toLeftOf="parent" />
 
         <TextView
             android:id="@+id/following_num"
-            android:textSize="30dp"
-            android:textColor="@color/colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="15"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent" />
     </LinearLayout>
 
     <LinearLayout

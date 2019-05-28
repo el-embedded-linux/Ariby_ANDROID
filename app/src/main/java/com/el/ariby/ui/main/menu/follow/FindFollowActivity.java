@@ -1,12 +1,14 @@
 package com.el.ariby.ui.main.menu.follow;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ListView;
+
 import com.el.ariby.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -16,13 +18,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class FindFollowActivity extends AppCompatActivity {
-    DatabaseReference ref;
+    DatabaseReference ref, followref;
     FirebaseDatabase database;
     EditText editTextFilter;
     FindFollowAdapter adapter;
     ListView listView;
     FirebaseUser user;
+    String myUid, userUid;
+
+    int followCount;
+    ArrayList<String> followingUid = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,29 +42,54 @@ public class FindFollowActivity extends AppCompatActivity {
         listView = findViewById(R.id.listview1);
         listView.setAdapter(adapter);
         database = FirebaseDatabase.getInstance();
-        ref = database.getReference("USER");
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        myUid = user.getUid();
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        loadData(new Callback() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String url = (String) snapshot.child("userImageURL").getValue();
-                    String nickname = snapshot.child("nickname").getValue().toString();
-                    user = FirebaseAuth.getInstance().getCurrentUser();
-                    String uid = snapshot.getKey();
+            public void success(ArrayList<String> data) {
+                followingUid=data;
+                ref = database.getReference("USER");
+                ref.addListenerForSingleValueEvent(new ValueEventListener() { // USER
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Log.d("align", "2");
+                            userUid = snapshot.getKey();
+                            boolean a = true;
+                            Log.d("asd", userUid);
 
+                            for (int j = 0; j < followCount; j++) {
+                                if (userUid.equals(followingUid.get(j)) || myUid.equals(userUid)) {
+                                    a = false;
+                                }
+                            }
 
-                    Log.d("nickname",nickname+uid);
-                    adapter.addItem(new FollowItem(url,nickname));
-                }
-                adapter.notifyDataSetChanged();
+                            if (a) {
+                                String url = (String) snapshot.child("userImageURL").getValue();
+                                String nickname = snapshot.child("nickname").getValue().toString();
+                                adapter.addItem(new FollowItem(url, nickname));
+
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+                        adapter.notifyDataSetChanged();
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void fail(String errorMessage) {
 
             }
         });
+
 
 
         editTextFilter.addTextChangedListener(new TextWatcher() {
@@ -72,9 +106,40 @@ public class FindFollowActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 String filterText = s.toString();
-                ((FindFollowAdapter)listView.getAdapter()).getFilter().filter(filterText) ;
+                ((FindFollowAdapter) listView.getAdapter()).getFilter().filter(filterText);
             }
         });
 
     }
+
+    public interface Callback {
+        void success(ArrayList<String> data);
+
+        void fail(String errorMessage);
+    }
+
+    public void loadData(final Callback callback) {
+        followref = database.getReference("FRIEND").child("following").child(myUid);
+
+        followref.addListenerForSingleValueEvent(new ValueEventListener() { //following
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                followCount = (int) dataSnapshot.getChildrenCount();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String list = snapshot.getKey();
+                    followingUid.add(list);
+                    Log.d("align", "1");
+                }
+                callback.success(followingUid);
+            }
+
+            // * 내가 팔로잉 되어있는 UID를 ArrayList<String> followingUid에 추가함 *
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }
+
+
