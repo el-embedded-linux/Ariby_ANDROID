@@ -1,5 +1,6 @@
 package com.el.ariby.ui.join;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.el.ariby.MainActivity;
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityJoiningBinding;
+import com.el.ariby.ui.login.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
@@ -34,7 +36,7 @@ public class JoiningActivity extends AppCompatActivity {
     String birth = "";
     int height = 0;
     String nickName = "";
-
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,9 @@ public class JoiningActivity extends AppCompatActivity {
         mBinding.btnJoining.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog = new ProgressDialog(JoiningActivity.this);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setMessage("가입 진행 중 입니다.");
                 final String email = mBinding.etEmail.getText().toString().trim();
                 final String password = mBinding.etPassword.getText().toString().trim();
 
@@ -57,8 +62,9 @@ public class JoiningActivity extends AppCompatActivity {
                 }
                 if (TextUtils.isEmpty(password)) { // 패스워드 공백 체크
                     Toast.makeText(getApplicationContext(), "Password를 입력해 주세요.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-
+                progressDialog.show();
                 firebaseAuth.createUserWithEmailAndPassword(email, password)//파이어베이스 계정생성 함수
                         .addOnCompleteListener(JoiningActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
@@ -90,6 +96,7 @@ public class JoiningActivity extends AppCompatActivity {
                                     myRef.child("FRIEND").child("following").child(firebaseAuth.getUid()).setValue("false");
                                     myRef.child("FRIEND").child("follower").child(firebaseAuth.getUid()).setValue("false");
                                     Intent intent = new Intent(JoiningActivity.this, MainActivity.class);
+                                    progressDialog.dismiss();
                                     startActivity(intent);
                                     Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
                                     finish();

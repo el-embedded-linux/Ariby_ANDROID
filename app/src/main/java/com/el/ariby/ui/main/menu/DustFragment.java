@@ -363,16 +363,16 @@ public class DustFragment extends Fragment {
                             int pm25Value, Double no2Value, Double coValue) {
 
         if (khaiValue <= 50) {
-            mBinding.layout.setBackgroundColor(Color.BLUE);
+            mBinding.layout.setBackgroundColor(Color.parseColor("#3F5AE9"));
             mBinding.txtKhaiText.setText("통합지수 : 매우좋음");
         } else if (khaiValue <= 100) {
-            mBinding.layout.setBackgroundColor(Color.GREEN);
+            mBinding.layout.setBackgroundColor(Color.parseColor("#57B457"));
             mBinding.txtKhaiText.setText("통합지수 : 보통");
         } else if (khaiValue <= 250) {
-            mBinding.layout.setBackgroundColor(Color.parseColor("#cc6600"));
+            mBinding.layout.setBackgroundColor(Color.parseColor("#B92424"));
             mBinding.txtKhaiText.setText("통합지수 : 나쁨");
         } else {
-            mBinding.layout.setBackgroundColor(Color.RED);
+            mBinding.layout.setBackgroundColor(Color.parseColor("3F3737"));
             mBinding.txtKhaiText.setText("통합지수 : 매우나쁨");
         }
 
