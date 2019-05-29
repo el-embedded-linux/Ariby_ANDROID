@@ -372,7 +372,7 @@ public class DustFragment extends Fragment {
             mBinding.layout.setBackgroundColor(Color.parseColor("#B92424"));
             mBinding.txtKhaiText.setText("통합지수 : 나쁨");
         } else {
-            mBinding.layout.setBackgroundColor(Color.parseColor("3F3737"));
+            mBinding.layout.setBackgroundColor(Color.parseColor("#3F3737"));
             mBinding.txtKhaiText.setText("통합지수 : 매우나쁨");
         }
 

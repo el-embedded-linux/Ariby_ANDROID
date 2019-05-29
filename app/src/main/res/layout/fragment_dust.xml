@@ -7,7 +7,7 @@
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#3F3737"
+        android:background="#3F5AE9"
         android:orientation="vertical">
 
         <TextView
@@ -17,7 +17,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="48dp"
             android:layout_marginEnd="8dp"
-            android:text="서울 금천구 가산동"
+            android:text="Loading..."
             android:textAlignment="center"
             android:textColor="#fff"
             android:textSize="28dp"
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="통합지수 : 나쁨"
+            android:text="통합지수 : Loading..."
             android:textAlignment="center"
             android:textColor="#fff"
             android:textSize="24dp"
@@ -199,81 +199,69 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/img_dust4"
                     app:layout_constraintStart_toEndOf="@+id/img_dust2"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <ImageView
                     android:id="@+id/img_dust4"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:src="@drawable/smile"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/img_dust3"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </android.support.constraint.ConstraintLayout>
-
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:layout_editor_absoluteY="77dp">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.228" />
 
                 <TextView
                     android:id="@+id/txt_dust1"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_height="19dp"
+                    android:layout_marginStart="44dp"
                     android:layout_marginTop="8dp"
-                    android:layout_marginEnd="4dp"
                     android:text="25ug"
                     android:textColor="#fff"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@+id/txt_dust2"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/img_dust1" />
 
                 <TextView
                     android:id="@+id/txt_dust2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="60dp"
                     android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
                     android:text="25ug"
                     android:textColor="#fff"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@+id/txt_dust3"
                     app:layout_constraintStart_toEndOf="@+id/txt_dust1"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/img_dust2" />
 
                 <TextView
                     android:id="@+id/txt_dust3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="64dp"
                     android:layout_marginTop="8dp"
                     android:text="25ug"
                     android:textColor="#fff"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@+id/txt_dust4"
                     app:layout_constraintStart_toEndOf="@+id/txt_dust2"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/img_dust3" />
 
                 <TextView
                     android:id="@+id/txt_dust4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="63dp"
                     android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
                     android:text="25ug"
                     android:textColor="#fff"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/txt_dust3"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/img_dust4" />
             </android.support.constraint.ConstraintLayout>
 
             <View
