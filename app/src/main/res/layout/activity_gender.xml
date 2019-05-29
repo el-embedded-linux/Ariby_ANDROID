@@ -66,14 +66,13 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="83dp"
                 android:layout_marginBottom="70dp"
-                android:checkedButton="@+id/btnRadio1"
                 android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/radio_male"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:background="@drawable/activity_gender_male_img"
+                    android:background="@drawable/activity_gender_male"
                     android:button="@android:color/transparent" />
 
                 <RadioButton
@@ -81,7 +80,7 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginLeft="65dp"
-                    android:background="@drawable/activity_gender_female_img"
+                    android:background="@drawable/activity_gender_female"
                     android:button="@android:color/transparent" />
             </RadioGroup>
 
