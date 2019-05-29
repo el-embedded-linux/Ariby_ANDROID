@@ -52,14 +52,14 @@ public class FollowListActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
                                 String user = snapshot1.getKey();
-                                Log.d("ddd",user);
                                 followuid = snapshot.getKey();
-                                Log.d("follow", followuid);
                                 if(followuid.equals(user)) {
                                     String url = (String) snapshot1.child("userImageURL").getValue();
                                     String nickname = dataSnapshot.child(user).child("nickname").getValue().toString();
+                                    String following = snapshot1.child("following").getValue().toString();
+                                    String follower = snapshot1.child("follower").getValue().toString();
                                     Log.d("123321", nickname);
-                                    adapter.addItem(new FollowItem(url, nickname));
+                                    adapter.addItem(new FollowItem(url, nickname,following,follower));
 
                                 }
 

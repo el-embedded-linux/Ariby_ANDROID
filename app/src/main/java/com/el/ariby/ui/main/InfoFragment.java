@@ -29,14 +29,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import javax.security.auth.callback.Callback;
+
 public class InfoFragment extends Fragment {
-    DatabaseReference ref, followref;
+    DatabaseReference ref;
     FirebaseDatabase database;
     TextView displayName, following_num, followers_num;
     ImageView photo;
@@ -45,7 +49,8 @@ public class InfoFragment extends Fragment {
     View v;
     FirebaseUser user;
     Uri uri;
-    int following, follower;
+    String following, follower;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,14 +65,23 @@ public class InfoFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("USER");
 
+
         user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            String name = user.getDisplayName();
-            uri = user.getPhotoUrl();
-            Glide.with(this).load(uri).apply(RequestOptions.circleCropTransform()).into(photo); //이미지를 둥글게 처리
-            displayName.setText(name);
-            photo.setImageURI(uri);
-        }
+
+        doWork(new Callback() {
+            @Override
+            public void callback() {
+                if (user != null) {
+                    String name = user.getDisplayName();
+                    uri = user.getPhotoUrl();
+                    Glide.with(getActivity()).load(uri).apply(RequestOptions.circleCropTransform()).into(photo); //이미지를 둥글게 처리
+                    displayName.setText(name);
+                    photo.setImageURI(uri);
+                    following_num.setText(following);
+                    followers_num.setText(follower);
+                }
+            }
+        });
 
 
 
@@ -147,7 +161,7 @@ public class InfoFragment extends Fragment {
                             user = FirebaseAuth.getInstance().getCurrentUser();
 
                             String uid = user.getUid();
-                            Log.d("URI", String.valueOf(uri)+"\nref"+ref+"\n"+uid);
+                            Log.d("URI", String.valueOf(uri) + "\nref" + ref + "\n" + uid);
                             ref.child(uid).child("userImageURL").setValue(String.valueOf(uri));
 
 
@@ -167,4 +181,30 @@ public class InfoFragment extends Fragment {
             });
         }
     }
+
+
+    public interface Callback {
+        void callback();             // Callback 인터페이스 내의 속이 없는 껍데기 함수
+    }
+
+
+        public void doWork(final Callback mCallback) {
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    String userUid = user.getUid();
+                    following = dataSnapshot.child(userUid).child("following").getValue().toString();
+                    follower = dataSnapshot.child(userUid).child("follower").getValue().toString();
+                    Log.d("asd11", String.valueOf(following) + "asd11" + follower);
+                    mCallback.callback();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
 }
+

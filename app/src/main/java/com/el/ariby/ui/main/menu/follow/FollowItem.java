@@ -12,7 +12,8 @@ public class FollowItem {
         this.nick=nick;
 
     }
-    public FollowItem(String nick, String follwingNum, String followerNum){
+    public FollowItem(String iconDrawable, String nick, String follwingNum, String followerNum){
+        this.iconDrawable=iconDrawable;
         this.nick=nick;
         this.follwingNum = follwingNum;
         this.followerNum = followerNum;

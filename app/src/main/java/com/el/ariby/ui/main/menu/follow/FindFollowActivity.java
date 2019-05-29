@@ -1,5 +1,6 @@
 package com.el.ariby.ui.main.menu.follow;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -68,13 +69,13 @@ public class FindFollowActivity extends AppCompatActivity {
                             if (a) {
                                 String url = (String) snapshot.child("userImageURL").getValue();
                                 String nickname = snapshot.child("nickname").getValue().toString();
-                                adapter.addItem(new FollowItem(url, nickname));
-
+                                String following = snapshot.child("following").getValue().toString();
+                                String follower = snapshot.child("follower").getValue().toString();
+                                adapter.addItem(new FollowItem(url, nickname, following, follower));
                             }
                             adapter.notifyDataSetChanged();
                         }
                         adapter.notifyDataSetChanged();
-
                     }
 
                     @Override
@@ -89,7 +90,6 @@ public class FindFollowActivity extends AppCompatActivity {
 
             }
         });
-
 
 
         editTextFilter.addTextChangedListener(new TextWatcher() {

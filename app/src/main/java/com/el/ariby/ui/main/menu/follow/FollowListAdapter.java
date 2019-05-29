@@ -112,6 +112,7 @@ public class FollowListAdapter extends BaseAdapter implements Filterable {
                         followref.child("following").child(String.valueOf(user)).child(uid).setValue(null);
                         followref.child("follower").child(uid).child(String.valueOf(user)).setValue(null);
 
+
                         Toast.makeText(context, "팔로잉이 취소 되었습니다.", Toast.LENGTH_SHORT).show();
                     }
 
