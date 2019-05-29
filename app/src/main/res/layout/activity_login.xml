@@ -30,6 +30,7 @@
 
     <EditText
         android:id="@+id/et_email"
+        android:text="test@naver.com"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#000"
@@ -44,6 +45,7 @@
 
     <EditText
         android:id="@+id/et_password"
+        android:text="121212"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
