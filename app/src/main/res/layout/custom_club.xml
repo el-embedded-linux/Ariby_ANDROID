@@ -13,8 +13,6 @@
         android:layout_marginBottom="3dp">
     <ImageView
         android:id="@+id/img_main"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="5dp"
         android:layout_width="65dp"
         android:layout_height="56dp"
         android:src="@drawable/ic_room_black_24dp" />
@@ -44,7 +42,7 @@
                 android:id="@+id/img_nick"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:src="@drawable/ic_account_circle_black_24dp"/>
 
@@ -74,7 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/img_nick"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="5dp"
                 android:layout_toStartOf="@+id/img_map"
                 android:text="6"
                 android:textSize="16dp"
@@ -92,12 +90,12 @@
                 android:id="@+id/txt_map"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="30dp"
                 android:layout_alignBottom="@+id/img_nick"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="50dp"
-                android:text="서울특별시 구로구"
-                android:textSize="16dp"
-                android:textColor="#000" />
+                android:text="서울 구로구 가산동"
+                android:textColor="#000"
+                android:textSize="16dp" />
         </RelativeLayout>
     </LinearLayout>
     </LinearLayout>

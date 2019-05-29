@@ -257,12 +257,7 @@ public class DustFragment extends Fragment {
                 if (response.isSuccessful()) {
                     WeatherRepoResponse repo = response.body();
                     if (repo != null) {
-                        Log.e("test", repo.getResponse().
-                                        getBody().
-                                        getItems().
-                                        getItem().
-                                        get(0).
-                                        getCategory());
+
                     }
                 }
             }
