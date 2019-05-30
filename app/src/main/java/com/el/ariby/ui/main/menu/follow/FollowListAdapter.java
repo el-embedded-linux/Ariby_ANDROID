@@ -1,6 +1,7 @@
 package com.el.ariby.ui.main.menu.follow;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,7 +83,6 @@ public class FollowListAdapter extends BaseAdapter implements Filterable {
         Glide.with(convertView).
                 load(item.getIconDrawable()).
                 centerCrop().
-                fitCenter().
                 into(iconImageView);
         titleTextView.setText(item.getNick());
         followingNum.setText(item.getFollwingNum());
@@ -112,7 +112,9 @@ public class FollowListAdapter extends BaseAdapter implements Filterable {
                         followref.child("following").child(String.valueOf(user)).child(uid).setValue(null);
                         followref.child("follower").child(uid).child(String.valueOf(user)).setValue(null);
 
-
+                        canclefollow.setBackgroundColor(R.drawable.custom_follow_button_border);
+                        canclefollow.setText("팔로우");
+                        canclefollow.setTextColor(Color.WHITE);
                         Toast.makeText(context, "팔로잉이 취소 되었습니다.", Toast.LENGTH_SHORT).show();
                     }
 

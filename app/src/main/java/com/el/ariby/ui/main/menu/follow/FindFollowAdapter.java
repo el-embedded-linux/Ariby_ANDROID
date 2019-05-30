@@ -3,6 +3,7 @@ package com.el.ariby.ui.main.menu.follow;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -90,7 +91,7 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
         // 아이템 내 각 위젯에 데이터 반영
         Glide.with(convertView).
                 load(item.getIconDrawable()).
-                fitCenter().
+                centerCrop().
                 into(iconImageView);
         titleTextView.setText(item.getNick());
         following_num.setText(item.getFollwingNum());
@@ -133,6 +134,7 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
                                     ref.child(user).child("following").setValue(followingNum);
                                     ref.child(UsersUid).child("follower").setValue(followerNum);
                                     addfollow.setText("팔로잉");
+                                    addfollow.setBackgroundColor(R.drawable.friend_add_button_border);
                                     Toast.makeText(context, "팔로잉 되었습니다.", Toast.LENGTH_SHORT).show();
                                 }
                             }
