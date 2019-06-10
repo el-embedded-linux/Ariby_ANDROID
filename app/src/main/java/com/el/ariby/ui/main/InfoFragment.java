@@ -21,6 +21,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.el.ariby.R;
 import com.el.ariby.ui.main.menu.follow.FindFollowActivity;
 import com.el.ariby.ui.main.menu.follow.FollowListActivity;
+import com.el.ariby.ui.main.menu.follow.FollowerListActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,7 +41,7 @@ import com.google.firebase.storage.UploadTask;
 import javax.security.auth.callback.Callback;
 
 public class InfoFragment extends Fragment {
-    DatabaseReference ref;
+    DatabaseReference ref,numberref;
     FirebaseDatabase database;
     TextView displayName, following_num, followers_num;
     ImageView photo;
@@ -63,10 +64,11 @@ public class InfoFragment extends Fragment {
         followers_num = v.findViewById(R.id.followers_num);
 
         database = FirebaseDatabase.getInstance();
-        ref = database.getReference("USER");
 
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+        ref = database.getReference("USER");
+        numberref = database.getReference("FRIEND");
 
         doWork(new Callback() {
             @Override
@@ -116,7 +118,7 @@ public class InfoFragment extends Fragment {
         followers_num.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), FollowListActivity.class);
+                Intent intent = new Intent(getActivity(), FollowerListActivity.class);
                 startActivity(intent);
             }
         });
@@ -189,14 +191,14 @@ public class InfoFragment extends Fragment {
 
 
         public void doWork(final Callback mCallback) {
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            numberref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                     String userUid = user.getUid();
-                    following = dataSnapshot.child(userUid).child("following").getValue().toString();
-                    follower = dataSnapshot.child(userUid).child("follower").getValue().toString();
-                    Log.d("asd11", String.valueOf(following) + "asd11" + follower);
+                    following = String.valueOf(dataSnapshot.child("following").child(userUid).getChildrenCount());
+                    follower = String.valueOf(dataSnapshot.child("follower").child(userUid).getChildrenCount());
+                    Log.d("asd11", following + "asd11" + follower);
                     mCallback.callback();
                 }
 

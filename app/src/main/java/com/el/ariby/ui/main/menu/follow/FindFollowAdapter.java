@@ -38,11 +38,11 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
     FirebaseDatabase database;
     FirebaseUser auth;
     Filter listFilter;
-    String user, UsersUid;
+    String user, userUid;
 
     int followCount;
     ArrayList<String> followingUid = new ArrayList<>();
-
+    ArrayList<String> userUidList = new ArrayList<>();
     public FindFollowAdapter(){
 
     }
@@ -102,41 +102,29 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
 
         doWork(new Callback() {
             @Override
-            public void callback(ArrayList<String> data) {
+            public void callback(ArrayList<String> data,ArrayList<String> userUid) {
                 followingUid = data;
-
+                userUidList = userUid;
                 addfollow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    ref.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                UsersUid = snapshot.getKey();
-                                boolean a= true;
-                                Log.d("flow","2");
-                                for (int i=0; i<followCount; i++){
-                                    if(UsersUid.equals(followingUid.get(i)) || user.equals(UsersUid))
-                                        a = false;
-                                }
 
-                                if(a){
-                                    String following = dataSnapshot.child(user).child("following").getValue().toString();
-                                    String follower =  dataSnapshot.child(UsersUid).child("follower").getValue().toString();
-                                    int followingNum = Integer.parseInt(following);
-                                    int followerNum = Integer.parseInt(follower);
-                                    followingNum = followingNum+1;
-                                    followerNum = followerNum+1;
+                                String addUserUid = userUidList.get(pos);
+                                Log.d("addUserUid",addUserUid);
 
-                                    followref.child("following").child(user).child(UsersUid).setValue("true");
-                                    followref.child("follower").child(UsersUid).child(user).setValue("true");
-                                    ref.child(user).child("following").setValue(followingNum);
-                                    ref.child(UsersUid).child("follower").setValue(followerNum);
-                                    addfollow.setText("팔로잉");
-                                    addfollow.setBackgroundColor(R.drawable.friend_add_button_border);
-                                    Toast.makeText(context, "팔로잉 되었습니다.", Toast.LENGTH_SHORT).show();
-                                }
+                                followref.child("following").child(user).child(addUserUid).setValue("true");
+                                followref.child("follower").child(addUserUid).child(user).setValue("true");
+
+                                addfollow.setText("팔로잉");
+                                addfollow.setBackgroundColor(R.drawable.friend_add_button_border);
+                                Toast.makeText(context, "팔로잉 되었습니다.", Toast.LENGTH_SHORT).show();
+                                break;
+
                             }
                     }
 
@@ -203,11 +191,11 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
         }
     }
     public interface Callback{
-        void callback(ArrayList<String> data);
+        void callback(ArrayList<String> data,ArrayList<String>userUid);
     }
 
         public void doWork(final Callback mCallback){
-            followref.child("following").child(user).addListenerForSingleValueEvent(new ValueEventListener() {
+            followref.child("following").child(user).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     followCount = (int) dataSnapshot.getChildrenCount();
@@ -216,7 +204,34 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
                         followingUid.add(list);
                         Log.d("flow","1");
                     }
-                    mCallback.callback(followingUid);
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        userUid = snapshot.getKey();
+                        boolean a = true;
+                        Log.d("asd", userUid);
+
+                        for (int j = 0; j < followCount; j++) {
+                            if (userUid.equals(followingUid.get(j)) || user.equals(userUid)) {
+                                a = false;
+                            }
+                        }
+
+                        if(a){
+                            userUidList.add(userUid);
+                        }
+
+                    }
+                    mCallback.callback(followingUid,userUidList);
                 }
 
                 @Override
