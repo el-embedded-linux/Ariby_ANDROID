@@ -18,11 +18,6 @@ public class CustomRanking extends LinearLayout {
     TextView txtRidingDis;
     TextView txtRidingTime;
     TextView txtUpDown;
-
-
-
-
-
     ImageView imgUpDown;
 
     public CustomRanking(Context context){

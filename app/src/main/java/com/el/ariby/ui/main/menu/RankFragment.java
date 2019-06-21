@@ -105,9 +105,6 @@ public class RankFragment extends Fragment {
         dropDown.setAdapter(sortAdapter);
         dropDown.setPopupBackgroundResource(R.color.colorPrimary);
 
-        //알람 설정
-
-
         //현재 날짜/시간 가져오기
         long currentTime = System.currentTimeMillis();
         final Date date = new Date(currentTime);
@@ -158,9 +155,13 @@ public class RankFragment extends Fragment {
         final long monthTimestamp = Long.parseLong(monthStr) * 1000;
         final String check = "dailyData/1557360000000/";
         final String check2 = "/dailyData/1557360000000/";
-        final String monthCheck = "monthlyData/"+String.valueOf(monthTimestamp)+"/";
+        //TODO.나중에 monthTimestamp이용한 monthCheck로 바꾸기.
+        //final String monthCheck = "monthlyData/"+String.valueOf(monthTimestamp)+"/";
+        //Test용.
+        final String monthCheck = "monthlyData/1556636400000/";
         //final String monthCheck = "monthlyData/1556636400000";
 
+        Log.d("monthCheck check : ", monthCheck);
         dropDown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -403,7 +404,6 @@ public class RankFragment extends Fragment {
                                             //TODO. 나중에 monthly로 바꾸기!!
                                             if(setStandardFlag ==0 || setStandardFlag==1){
                                                 rank = snapshot.child(monthCheck).child("month_dis_rank").getValue().toString(); //데일리 거리순
-
                                             }else if(setStandardFlag==2){
                                                 rank= snapshot.child(monthCheck).child("month_time_rank").getValue().toString(); //데일리 시간
                                             }
@@ -796,7 +796,7 @@ public class RankFragment extends Fragment {
                                             changed = snapshot.child("userInfo/upDownImg").getValue().toString();
                                             imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
                                             //TODO. 나중에 바꾸기.
-                                            rank= snapshot.child(check).child("daily_dis_rank").getValue().toString(); //데일리 시간
+                                            rank= snapshot.child(monthCheck).child("month_dis_rank").getValue().toString(); //데일리 시간
                                             adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                                         }
 
@@ -1058,10 +1058,7 @@ public class RankFragment extends Fragment {
         return v;
     }
 
-
     public class RankingAdapter extends BaseAdapter {
-
-
         @Override
         public int getCount() { return rankingItems.size(); }
         @Override
