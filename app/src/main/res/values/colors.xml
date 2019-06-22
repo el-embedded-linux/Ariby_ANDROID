@@ -11,8 +11,10 @@
     <color name="colorCRed">#ff3943</color>
     <color name="colorCRedDark">#801b20</color>
     <color name="colorCGreenLight">#abffc0</color>
+    <color name="colorGreenLight2">#E0FFDB</color>
     <color name="colorCGreen">#247b37</color>
     <color name="colorCGreen1">#3eb959</color>
     <color name="colorCWhite">#ffffff</color>
     <color name="colorCAccent">#FF4081</color>
+
 </resources>

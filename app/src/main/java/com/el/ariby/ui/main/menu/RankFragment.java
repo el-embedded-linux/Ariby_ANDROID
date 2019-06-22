@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.provider.ContactsContract;
 import android.service.notification.NotificationListenerService;
 import android.support.annotation.NonNull;
@@ -102,8 +103,9 @@ public class RankFragment extends Fragment {
 
         ArrayAdapter sortAdapter = ArrayAdapter.createFromResource(mcontext, R.array.sort, android.R.layout.simple_spinner_item);
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         dropDown.setAdapter(sortAdapter);
-        dropDown.setPopupBackgroundResource(R.color.colorPrimary);
+        dropDown.setPopupBackgroundResource(R.color.colorWhite);
 
         //현재 날짜/시간 가져오기
         long currentTime = System.currentTimeMillis();
@@ -448,9 +450,16 @@ public class RankFragment extends Fragment {
                                                         monthlyTotalDis = snapshot.child(monthCheck).child("monthlyDis").getValue().toString();
                                                         if(getDis.equals(monthlyTotalDis)){
                                                             uid = snapshot.getKey();
+                                                            Log.e("플래그 : ", String.valueOf(setStandardFlag));
+                                                            Log.e("왜 안되냐 : ", uid+", "+rank);
                                                             if(setStandardFlag==0 || setStandardFlag==1){
+                                                                Log.e("if문 통과 : ", uid+", "+rank);
+                                                                ref.child(uid).child("/"+monthCheck).child("month_dis_rank").setValue(String.valueOf(rank));
+                                                                rankingItems.get(i).setRank(String.valueOf(rank));
                                                                 month_dis_rank = snapshot.child(uid).child(monthCheck).child("month_dis_rank").getValue().toString();
+
                                                                 if(Integer.parseInt(month_dis_rank)==0){
+                                                                    Log.e("왜 안되냐2 : ", uid+", "+rank);
                                                                     ref.child(uid).child("/"+monthCheck).child("month_dis_rank").setValue(String.valueOf(rank));
                                                                     putRank = snapshot.child(monthCheck).child("month_dis_rank").getValue().toString();
                                                                     rankingItems.get(i).setRank(putRank);
@@ -483,8 +492,8 @@ public class RankFragment extends Fragment {
                                                                         ref.child(uid).child("/monthlyData/upDown").child("upDownDis").setValue(changedRank);
                                                                     }
                                                                     }
-                                                                    ref.child(uid).child("/"+monthCheck).child("month_dis_rank").setValue(String.valueOf(rank));
-                                                                rankingItems.get(i).setRank(String.valueOf(rank));
+                                                                    //ref.child(uid).child("/"+monthCheck).child("month_dis_rank").setValue(String.valueOf(rank));
+                                                               //rankingItems.get(i).setRank(String.valueOf(rank));
                                                             }else if(setStandardFlag ==2){
                                                                 month_time_rank = snapshot.child(monthCheck).child("month_time_rank").getValue().toString();
                                                                 if(Integer.parseInt(month_time_rank)==0){
@@ -566,7 +575,10 @@ public class RankFragment extends Fragment {
         btnTime.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                btnTime.setBackgroundColor(getResources().getColor(R.color.colorGreenLight2));
+                btnDistance.setBackgroundColor(Color.WHITE);
             setStandardFlag = 2;
+            Log.d("setTimeFlag = ", String.valueOf(setTimeFlag));
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -599,7 +611,7 @@ public class RankFragment extends Fragment {
                                     changed = snapshot.child("userInfo/upDownImg").getValue().toString();
                                     imgUpDown = snapshot.child("userInfo/upDownTxt").getValue().toString();
                                     //TODO. 나중에 먼슬리 타임 랭크 불러오는걸로 바꾸기.
-                                    rank= snapshot.child(check).child("daily_time_rank").getValue().toString(); //데일리 시간
+                                    rank= snapshot.child(monthCheck).child("month_time_rank").getValue().toString(); //데일리 시간
                                     adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                                 }
                             }
@@ -758,6 +770,8 @@ public class RankFragment extends Fragment {
         btnDistance.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                btnDistance.setBackgroundColor(getResources().getColor(R.color.colorGreenLight2));
+                btnTime.setBackgroundColor(Color.WHITE);
                 setStandardFlag = 1;
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

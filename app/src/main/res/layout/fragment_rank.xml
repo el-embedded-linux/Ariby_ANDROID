@@ -20,7 +20,6 @@
                 android:layout_height="wrap_content"
                 android:background="#00FF0000"
                 android:textColor="#000"
-
                 android:text="주행시간"/>
 
             <Button
@@ -37,9 +36,16 @@
 
     <Spinner
         android:layout_width="210dp"
-        android:layout_height="wrap_content"
+        android:layout_height="25dp"
+        android:dropDownWidth="210dp"
         android:layout_below="@+id/layout_tab_rank"
-        android:id="@+id/dropDown">
+        android:spinnerMode="dropdown"
+        android:background="@drawable/spinner_bg"
+        android:popupBackground="@color/colorWhite"
+        android:stateListAnimator="@drawable/spinner_sla"
+        android:id="@+id/dropDown"
+        style="@style/Widget.AppCompat.Spinner"
+        >
     </Spinner>
 
     <android.support.v4.widget.SwipeRefreshLayout
