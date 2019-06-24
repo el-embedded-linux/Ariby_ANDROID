@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.el.ariby.R;
 import com.el.ariby.databinding.FragmentDustBinding;
@@ -32,12 +33,16 @@ import com.el.ariby.ui.api.response.GeoRepoResponse;
 import com.el.ariby.ui.api.response.MeasureRepoResponse;
 import com.el.ariby.ui.api.response.WeatherRepoResponse;
 import com.el.ariby.ui.main.menu.dust.DustHourData;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -243,7 +248,7 @@ public class DustFragment extends Fragment {
                     baseTime,
                     nx,
                     ny,
-                    "30",
+                    "10",
                     "1",
                     "json");
         } catch (UnsupportedEncodingException e) {
@@ -257,7 +262,16 @@ public class DustFragment extends Fragment {
                 if (response.isSuccessful()) {
                     WeatherRepoResponse repo = response.body();
                     if (repo != null) {
-
+                        int count = repo.getResponse().getBody().getNumOfRows();
+                        for (int i=0;i<count;i++) {
+                            if(repo.getResponse().getBody().getItems()
+                                    .getItem().get(i).getCategory().equals("T1H")) {
+                                int fcstValue=(int)repo.getResponse().getBody().getItems()
+                                        .getItem().get(i).getFcstValue();
+                                mBinding.btnWeather.setText(fcstValue);
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -274,15 +288,29 @@ public class DustFragment extends Fragment {
         long minTime = 10000;
         float minDistance = 0;
 
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                Toast.makeText(getActivity(), "권한 허가", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPermissionDenied(List<String> deniedPermissions) {
+                Toast.makeText(getActivity(), "권한 거부\n" + deniedPermissions.toString(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        TedPermission.with(getActivity())
+                .setPermissionListener(permissionlistener)
+                .setRationaleMessage("각종 서비스를 위해서는 위치 접근 권한이 필요합니다.")
+                .setDeniedMessage("서비스가 제한됩니다.\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
+                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+                .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .check();
+
         LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-            return;
-        }
+
         Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         Double latitude = location.getLatitude();
         Double longitude = location.getLongitude();
@@ -291,9 +319,14 @@ public class DustFragment extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat hour = new SimpleDateFormat("HHmm");
 
-        String getTime = sdf.format(date);
-        String getHourMin = hour.format(date);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MINUTE, -30);
 
+        String getTime = sdf.format(date);
+        String getHourMin = hour.format(cal.getTime());
+
+        Log.d("time",getHourMin);
 
         String msg = "Last Known Location -> Latitude : " +
                 location.getLatitude() +
