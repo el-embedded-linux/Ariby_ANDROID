@@ -507,10 +507,16 @@ public class DustFragment extends Fragment {
         }
 
         @Override
-        public void onPermissionDenied(List<String> deniedPermissions) {
+        public void onPermissionDenied(ArrayList<String> deniedPermissions) {
             Toast.makeText(getActivity(), "권한 거부\n" + deniedPermissions.toString(),
                     Toast.LENGTH_SHORT).show();
         }
+
+        /*@Override
+        public void onPermissionDenied(List<String> deniedPermissions) {
+            Toast.makeText(getActivity(), "권한 거부\n" + deniedPermissions.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }*/
     };
 
     class LatXLngY {

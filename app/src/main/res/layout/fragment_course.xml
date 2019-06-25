@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context=".ui.main.menu.RankFragment">
+    tools:context=".ui.main.menu.CourseFragment">
 
     <TableLayout
         android:id="@+id/layout_tab_rank"
@@ -18,7 +18,7 @@
                 android:id="@+id/btn_ridingDis"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ranking_selected"
+                android:background="#FFF"
                 android:textColor="#000"
                 android:text="주행거리"/>
 
@@ -33,7 +33,6 @@
 
 
         </TableRow>
-
     </TableLayout>
 
     <Spinner
@@ -43,6 +42,7 @@
         android:layout_below="@+id/layout_tab_rank"
         android:spinnerMode="dropdown"
         android:background="@drawable/spinner_bg"
+        android:popupBackground="@color/colorWhite"
         android:stateListAnimator="@drawable/spinner_sla"
         android:id="@+id/dropDown"
         style="@style/Widget.AppCompat.Spinner"
@@ -54,12 +54,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/dropDown">
-        <ListView
-            android:id="@+id/list_rank"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="#979797"
-            android:dividerHeight="2px">
-        </ListView>
+       <view class="android.support.v7.app.AlertController$RecycleListView"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:id="@+id/cource">
+       </view>
     </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

@@ -12,13 +12,13 @@
         android:top="8dp" />
 
     <corners
-        android:bottomRightRadius="8dp"
-        android:bottomLeftRadius="8dp"
-        android:topLeftRadius="8dp"
-        android:topRightRadius="8dp"/>
+        android:bottomRightRadius="3dp"
+        android:bottomLeftRadius="3dp"
+        android:topLeftRadius="3dp"
+        android:topRightRadius="3dp"/>
 
     <stroke
-        android:width="2dp"
+        android:width="1dp"
         android:color="@color/colorPrimary" />
 
 </shape>

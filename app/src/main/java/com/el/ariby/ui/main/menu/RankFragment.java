@@ -197,7 +197,8 @@ public class RankFragment extends Fragment {
         btnTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnTime.setBackgroundColor(getResources().getColor(R.color.colorGreenLight2));
+                //btnTime.setBackgroundColor(getResources().getColor(R.color.colorGreenLight2));
+                btnTime.setBackgroundColor(R.drawable.ranking_selected);
                 btnDistance.setBackgroundColor(Color.WHITE);
                 setStandardFlag = 2;
                 Log.d("setTimeFlag = ", String.valueOf(setTimeFlag));
@@ -211,7 +212,8 @@ public class RankFragment extends Fragment {
             // void disRank(){
             @Override
             public void onClick(View v) {
-                btnDistance.setBackgroundColor(getResources().getColor(R.color.colorGreenLight2));
+                //btnDistance.setBackgroundColor(getResources().getColor(R.color.colorGreenLight2));
+                btnDistance.setBackgroundColor(R.drawable.ranking_selected);
                 btnTime.setBackgroundColor(Color.WHITE);
                 setStandardFlag = 1;
                 swipe_mode=3;
