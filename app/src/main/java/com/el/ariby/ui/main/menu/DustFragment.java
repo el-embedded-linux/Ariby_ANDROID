@@ -2,7 +2,6 @@ package com.el.ariby.ui.main.menu;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -10,7 +9,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -73,6 +71,15 @@ public class DustFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mBinding = FragmentDustBinding.bind(getView());
+
+        TedPermission.with(getActivity())
+                .setPermissionListener(permissionlistener)
+                .setRationaleMessage("각종 서비스를 위해서는 위치 접근 권한이 필요합니다.")
+                .setDeniedMessage("서비스가 제한됩니다.\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
+                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+                .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .check();
+
 
         startLocationService();
 
@@ -181,6 +188,7 @@ public class DustFragment extends Fragment {
                         for (int i = 0; i < dustHourData.size(); i++) {
                             if (!isNullDustHourData(dustHourData.get(i))) {
                                 DustHourData list = dustHourData.get(i);
+                                int KhaiValue=Integer.parseInt(list.getKhaiValue());
                                 mBinding.txtKhai.setText(list.getKhaiValue());
                                 mBinding.txtDust1.setText(list.getPm10Value().concat("㎍/㎥"));
                                 mBinding.txtDust2.setText(list.getPm25Value().concat("㎍/㎥"));
@@ -248,7 +256,7 @@ public class DustFragment extends Fragment {
                     baseTime,
                     nx,
                     ny,
-                    "10",
+                    "16",
                     "1",
                     "json");
         } catch (UnsupportedEncodingException e) {
@@ -263,13 +271,12 @@ public class DustFragment extends Fragment {
                     WeatherRepoResponse repo = response.body();
                     if (repo != null) {
                         int count = repo.getResponse().getBody().getNumOfRows();
-                        for (int i=0;i<count;i++) {
-                            if(repo.getResponse().getBody().getItems()
+                        for (int i = 0; i < count; i++) {
+                            if (repo.getResponse().getBody().getItems()
                                     .getItem().get(i).getCategory().equals("T1H")) {
-                                int fcstValue=(int)repo.getResponse().getBody().getItems()
+                                Double temp = (double) repo.getResponse().getBody().getItems()
                                         .getItem().get(i).getFcstValue();
-                                mBinding.btnWeather.setText(fcstValue);
-                                break;
+                                mBinding.btnWeather.setText(Math.round(temp) + "°");
                             }
                         }
                     }
@@ -284,66 +291,45 @@ public class DustFragment extends Fragment {
     }
 
     private void startLocationService() {
-        DustFragment.GPSListener gpsListener = new DustFragment.GPSListener();
-        long minTime = 10000;
-        float minDistance = 0;
-
-        PermissionListener permissionlistener = new PermissionListener() {
-            @Override
-            public void onPermissionGranted() {
-                Toast.makeText(getActivity(), "권한 허가", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onPermissionDenied(List<String> deniedPermissions) {
-                Toast.makeText(getActivity(), "권한 거부\n" + deniedPermissions.toString(),
-                        Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        TedPermission.with(getActivity())
-                .setPermissionListener(permissionlistener)
-                .setRationaleMessage("각종 서비스를 위해서는 위치 접근 권한이 필요합니다.")
-                .setDeniedMessage("서비스가 제한됩니다.\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
-                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
-                .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION)
-                .check();
-
         LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        try {
+            Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (location != null) {
+                Double latitude = location.getLatitude();
+                Double longitude = location.getLongitude();
 
-        Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        Double latitude = location.getLatitude();
-        Double longitude = location.getLongitude();
-        long now = System.currentTimeMillis(); // 현재시간
-        Date date = new Date(now);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        SimpleDateFormat hour = new SimpleDateFormat("HHmm");
+                long now = System.currentTimeMillis(); // 현재시간
+                Date date = new Date(now);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                SimpleDateFormat hour = new SimpleDateFormat("HHmm");
 
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.MINUTE, -30);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                cal.add(Calendar.MINUTE, -30);
 
-        String getTime = sdf.format(date);
-        String getHourMin = hour.format(cal.getTime());
+                String getTime = sdf.format(date);
+                String getHourMin = hour.format(cal.getTime());
 
-        Log.d("time",getHourMin);
+                Log.d("time", getHourMin);
 
-        String msg = "Last Known Location -> Latitude : " +
-                location.getLatitude() +
-                "\nLongitude : " + location.getLongitude();
-        Log.i("SampleLocation ", msg);
+                String msg = "Last Known Location -> Latitude : " +
+                        location.getLatitude() +
+                        "\nLongitude : " + location.getLongitude();
+                Log.i("SampleLocation ", msg);
 
-        manager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                minTime, minDistance, gpsListener);
-        getGeo(longitude.toString(), latitude.toString(), "WGS84");
-        getCoord(longitude.toString(), latitude.toString());
-        LatXLngY data = convertGRID_GPS(0, latitude, longitude);
 
-        getWeatherData(getTime,
-                getHourMin,
-                String.valueOf((int) data.x),
-                String.valueOf((int) data.y));
+                getGeo(longitude.toString(), latitude.toString(), "WGS84");
+                getCoord(longitude.toString(), latitude.toString());
+                LatXLngY data = convertGRID_GPS(0, latitude, longitude);
+
+                getWeatherData(getTime,
+                        getHourMin,
+                        String.valueOf((int) data.x),
+                        String.valueOf((int) data.y));
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
     }
 
     private class GPSListener implements LocationListener {
@@ -514,6 +500,18 @@ public class DustFragment extends Fragment {
         return rs;
     }
 
+    PermissionListener permissionlistener = new PermissionListener() {
+        @Override
+        public void onPermissionGranted() {
+            Toast.makeText(getActivity(), "권한 허가", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onPermissionDenied(List<String> deniedPermissions) {
+            Toast.makeText(getActivity(), "권한 거부\n" + deniedPermissions.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
 
     class LatXLngY {
         public double lat;

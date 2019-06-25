@@ -297,11 +297,12 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/weather_layout"
             android:layout_width="105dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/round"
+            android:background="@drawable/round_good"
             android:orientation="horizontal"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

@@ -18,7 +18,7 @@
                 android:id="@+id/btn_ridingDis"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/colorGreenLight2"
+                android:background="#FFF"
                 android:textColor="#000"
                 android:text="주행거리"/>
 
