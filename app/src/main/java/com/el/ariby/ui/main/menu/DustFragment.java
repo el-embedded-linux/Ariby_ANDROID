@@ -2,6 +2,7 @@ package com.el.ariby.ui.main.menu;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -9,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,7 +40,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -53,6 +54,8 @@ public class DustFragment extends Fragment {
     public final static int BAD = 76;
     public final static int TO_GRID = 0;
     public final static int TO_GPS = 1;
+    public static Double latitude;
+    public static Double longitude;
 
     private FragmentDustBinding mBinding;
     String openKey = "vMgzVOM7K3D3t89QY%2F%2FtYxGc7fTDhMi3AkGC" +
@@ -74,14 +77,11 @@ public class DustFragment extends Fragment {
 
         TedPermission.with(getActivity())
                 .setPermissionListener(permissionlistener)
-                .setRationaleMessage("각종 서비스를 위해서는 위치 접근 권한이 필요합니다.")
-                .setDeniedMessage("서비스가 제한됩니다.\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
-                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+                .setRationaleMessage("구글 로그인을 하기 위해서는 주소록 접근 권한이 필요해요")
+                .setDeniedMessage("왜 거부하셨어요...\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
                 .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
                 .check();
-
-
-        startLocationService();
 
         mBinding.btnWeather.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +90,21 @@ public class DustFragment extends Fragment {
             }
         });
     }
+
+    PermissionListener permissionlistener = new PermissionListener() {
+        @Override
+        public void onPermissionGranted() {
+            Toast.makeText(getActivity(), "권한 허가", Toast.LENGTH_SHORT).show();
+
+            startLocationService();
+        }
+
+        @Override
+        public void onPermissionDenied(List<String> deniedPermissions) {
+
+        }
+
+    };
 
     private void getCoord(String x, String y) {
         Retrofit retrofit = SelfCall.createRetrofit(CoordApi.BASEURL);
@@ -188,7 +203,6 @@ public class DustFragment extends Fragment {
                         for (int i = 0; i < dustHourData.size(); i++) {
                             if (!isNullDustHourData(dustHourData.get(i))) {
                                 DustHourData list = dustHourData.get(i);
-                                int KhaiValue=Integer.parseInt(list.getKhaiValue());
                                 mBinding.txtKhai.setText(list.getKhaiValue());
                                 mBinding.txtDust1.setText(list.getPm10Value().concat("㎍/㎥"));
                                 mBinding.txtDust2.setText(list.getPm25Value().concat("㎍/㎥"));
@@ -256,7 +270,7 @@ public class DustFragment extends Fragment {
                     baseTime,
                     nx,
                     ny,
-                    "16",
+                    "10",
                     "1",
                     "json");
         } catch (UnsupportedEncodingException e) {
@@ -274,9 +288,10 @@ public class DustFragment extends Fragment {
                         for (int i = 0; i < count; i++) {
                             if (repo.getResponse().getBody().getItems()
                                     .getItem().get(i).getCategory().equals("T1H")) {
-                                Double temp = (double) repo.getResponse().getBody().getItems()
+                                int fcstValue = (int) repo.getResponse().getBody().getItems()
                                         .getItem().get(i).getFcstValue();
-                                mBinding.btnWeather.setText(Math.round(temp) + "°");
+                                mBinding.btnWeather.setText(fcstValue);
+                                break;
                             }
                         }
                     }
@@ -291,56 +306,57 @@ public class DustFragment extends Fragment {
     }
 
     private void startLocationService() {
+        DustFragment.GPSListener gpsListener = new DustFragment.GPSListener();
+        long minTime = 10000;
+        float minDistance = 0;
+
         LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        try {
-            Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if (location != null) {
-                Double latitude = location.getLatitude();
-                Double longitude = location.getLongitude();
-
-                long now = System.currentTimeMillis(); // 현재시간
-                Date date = new Date(now);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-                SimpleDateFormat hour = new SimpleDateFormat("HHmm");
-
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                cal.add(Calendar.MINUTE, -30);
-
-                String getTime = sdf.format(date);
-                String getHourMin = hour.format(cal.getTime());
-
-                Log.d("time", getHourMin);
-
-                String msg = "Last Known Location -> Latitude : " +
-                        location.getLatitude() +
-                        "\nLongitude : " + location.getLongitude();
-                Log.i("SampleLocation ", msg);
-
-
-                getGeo(longitude.toString(), latitude.toString(), "WGS84");
-                getCoord(longitude.toString(), latitude.toString());
-                LatXLngY data = convertGRID_GPS(0, latitude, longitude);
-
-                getWeatherData(getTime,
-                        getHourMin,
-                        String.valueOf((int) data.x),
-                        String.valueOf((int) data.y));
-            }
-        } catch (SecurityException e) {
-            e.printStackTrace();
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            return;
         }
+        Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        long now = System.currentTimeMillis(); // 현재시간
+        Date date = new Date(now);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat hour = new SimpleDateFormat("HHmm");
+
+        String getTime = sdf.format(date);
+        String getHourMin = hour.format(date);
+
+        String msg = "Last Known Location -> Latitude : " +
+                location.getLatitude() +
+                "\nLongitude : " + location.getLongitude();
+        Log.i("SampleLocation ", msg);
+
+        manager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                minTime, minDistance, gpsListener);
+        manager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                minTime, minDistance, gpsListener);
+
+        getGeo(longitude.toString(), latitude.toString(), "WGS84");
+        getCoord(longitude.toString(), latitude.toString());
+        LatXLngY data = convertGRID_GPS(0, latitude, longitude);
+
+        getWeatherData(getTime,
+                getHourMin,
+                String.valueOf((int) data.x),
+                String.valueOf((int) data.y));
     }
 
     private class GPSListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
-            Double latitude = location.getLatitude();
-            Double longitude = location.getLongitude();
-
-            String msg = "Latitude : " + latitude +
-                    "\nLongitude : " + longitude;
-            Log.i("GPSListener", msg);
+            longitude = location.getLongitude();    //경도
+            latitude = location.getLatitude();         //위도
         }
 
         @Override
@@ -358,6 +374,7 @@ public class DustFragment extends Fragment {
 
         }
     }
+
 
     public boolean isNullDustHourData(DustHourData data) { // 필드 중 null 이거나 비어있으면 false 반환.
         if (TextUtils.isEmpty(data.getKhaiValue())
@@ -500,24 +517,6 @@ public class DustFragment extends Fragment {
         return rs;
     }
 
-    PermissionListener permissionlistener = new PermissionListener() {
-        @Override
-        public void onPermissionGranted() {
-            Toast.makeText(getActivity(), "권한 허가", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-            Toast.makeText(getActivity(), "권한 거부\n" + deniedPermissions.toString(),
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        /*@Override
-        public void onPermissionDenied(List<String> deniedPermissions) {
-            Toast.makeText(getActivity(), "권한 거부\n" + deniedPermissions.toString(),
-                    Toast.LENGTH_SHORT).show();
-        }*/
-    };
 
     class LatXLngY {
         public double lat;
