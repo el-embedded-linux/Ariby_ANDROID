@@ -16,10 +16,21 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="30dp"
             android:src="@drawable/ic_my_location_black_24dp"
             app:backgroundTint="#fff" />
-
     </RelativeLayout>
+    <TextView
+        android:id="@+id/txt_map_guide"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:padding="25dp"
+        android:elevation="10dp"
+        android:layout_margin="15dp"
+        android:text="가나다라마바사"/>
 </RelativeLayout>

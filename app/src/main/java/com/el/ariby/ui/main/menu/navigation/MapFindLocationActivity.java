@@ -1,5 +1,7 @@
 package com.el.ariby.ui.main.menu.navigation;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -29,7 +31,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-
+/**
+ * 지도 어플
+ */
 public class MapFindLocationActivity extends AppCompatActivity implements
         MapView.CurrentLocationEventListener {
     MapView mapView;
@@ -89,6 +93,37 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /**
+                 *
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapFindLocationActivity.this);
+                builder.setTitle("네비게이션");
+                builder.setMessage("주행을 시작하시겠습니까?");
+                builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOff) {
+                            mapView.setZoomLevel(-1, true);
+                            mapView.zoomIn(true);
+                            mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+                        }
+                    }
+                });
+                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.show();
+                 */
+            }
+        });
+        /**
+         *
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 if (mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOff) {
                     mapView.setZoomLevel(-1, true);
                     mapView.zoomIn(true);
@@ -100,6 +135,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 }
             }
         });
+         */
     }
 
     private void getMapFind(final String startX, final String startY, final String endX, final String endY) {

@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.el.ariby.R;
 
+import org.w3c.dom.Text;
+
 public class MapInputActivity extends AppCompatActivity {
     public static final int CODE_MAP_START_SEARCH = 3000;           // 출발지 인텐트 코드
     public static final int CODE_MAP_END_SEARCH = 4000;             // 도착지 인텐트 코드
@@ -52,12 +54,18 @@ public class MapInputActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!(TextUtils.isEmpty(edtStart.getText()))
                         && !(TextUtils.isEmpty(edtEnd.getText()))) {
-                    Intent intent = new Intent(getApplicationContext(), MapFindLocationActivity.class);
-                    intent.putExtra("startX", startX);
-                    intent.putExtra("startY", startY);
-                    intent.putExtra("endX", endX);
-                    intent.putExtra("endY", endY);
-                    startActivity(intent);
+                    String txtStart= edtStart.getText().toString();
+                    if(!txtStart.equals(edtEnd.getText().toString())) {
+                        Intent intent = new Intent(getApplicationContext(), MapFindLocationActivity.class);
+                        intent.putExtra("startX", startX);
+                        intent.putExtra("startY", startY);
+                        intent.putExtra("endX", endX);
+                        intent.putExtra("endY", endY);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                "출발지와 도착지는 같을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    }
                 } else
                     Toast.makeText(getApplicationContext(),
                             "출발지 또는 도착지를 설정 하셔야 합니다.",Toast.LENGTH_SHORT).show();

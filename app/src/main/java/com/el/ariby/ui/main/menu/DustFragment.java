@@ -77,8 +77,8 @@ public class DustFragment extends Fragment {
 
         TedPermission.with(getActivity())
                 .setPermissionListener(permissionlistener)
-                .setRationaleMessage("구글 로그인을 하기 위해서는 주소록 접근 권한이 필요해요")
-                .setDeniedMessage("왜 거부하셨어요...\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
+                .setRationaleMessage("각종 서비스를 위해서는 지도 접근 권한이 필요합니다.")
+                .setDeniedMessage("서비스가 제한될 수 있습니다...\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
                 .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION)
                 .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
                 .check();
@@ -95,7 +95,6 @@ public class DustFragment extends Fragment {
         @Override
         public void onPermissionGranted() {
             Toast.makeText(getActivity(), "권한 허가", Toast.LENGTH_SHORT).show();
-
             startLocationService();
         }
 
