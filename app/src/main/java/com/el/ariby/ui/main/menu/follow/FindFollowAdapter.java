@@ -39,6 +39,7 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
     FirebaseUser auth;
     Filter listFilter;
     String user, userUid;
+    FindFollowAdapter adapter;
 
     int followCount;
     ArrayList<String> followingUid = new ArrayList<>();
@@ -69,6 +70,7 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("USER");
         followref = database.getReference("FRIEND");
+        adapter = new FindFollowAdapter();
         /*Intent intent = ();
         ArrayList<String> ReceiveArr = intent.getStringArrayListExtra("ArrayList");*/
         // "custom_follow_list" Layout을 inflate하여 convertView 참조 획득.
@@ -100,45 +102,49 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
         auth = FirebaseAuth.getInstance().getCurrentUser();
         user = auth.getUid();
 
-        doWork(new Callback() {
-            @Override
-            public void callback(ArrayList<String> data,ArrayList<String> userUid) {
-                followingUid = data;
-                userUidList = userUid;
-                addfollow.setOnClickListener(new View.OnClickListener() {
+                doWork(new Callback() {
                     @Override
-                    public void onClick(View v) {
+                    public void callback(ArrayList<String> data,ArrayList<String> userUid) {
+                        followingUid = data;
+                        userUidList = userUid;
+                        addfollow.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                    ref.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                ref.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                                String addUserUid = userUidList.get(pos);
-                                Log.d("addUserUid",addUserUid);
+                                            String addUserUid = userUidList.get(pos);
+                                            Log.d("addUserUid",addUserUid);
 
-                                followref.child("following").child(user).child(addUserUid).setValue("true");
-                                followref.child("follower").child(addUserUid).child(user).setValue("true");
+                                            followref.child("following").child(user).child(addUserUid).setValue("true");
+                                            followref.child("follower").child(addUserUid).child(user).setValue("true");
 
-                                addfollow.setText("팔로잉");
-                                addfollow.setBackgroundColor(R.drawable.friend_add_button_border);
-                                Toast.makeText(context, "팔로잉 되었습니다.", Toast.LENGTH_SHORT).show();
-                                break;
+                                            addfollow.setText("팔로우");
+                                            FollowItemList.remove(pos);
+                                            userUidList.remove(pos);
+                                            adapter.notifyDataSetChanged();
+                                            Toast.makeText(context, "팔로잉 되었습니다.", Toast.LENGTH_SHORT).show();
+                                            break;
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
 
                             }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
+                        });
                     }
                 });
 
-            }
 
-        });
-    }
-});
         return convertView;
 
     }
@@ -194,51 +200,51 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
         void callback(ArrayList<String> data,ArrayList<String>userUid);
     }
 
-        public void doWork(final Callback mCallback){
-            followref.child("following").child(user).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    followCount = (int) dataSnapshot.getChildrenCount();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                        String list = snapshot.getKey();
-                        followingUid.add(list);
-                        Log.d("flow","1");
+    public void doWork(final Callback mCallback){
+        followref.child("following").child(user).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                followCount = (int) dataSnapshot.getChildrenCount();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String list = snapshot.getKey();
+                    followingUid.add(list);
+                    Log.d("flow","1");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    userUid = snapshot.getKey();
+                    boolean a = true;
+                    Log.d("asd", userUid);
+
+                    for (int j = 0; j < followCount; j++) {
+                        if (userUid.equals(followingUid.get(j)) || user.equals(userUid)) {
+                            a = false;
+                        }
+                    }
+
+                    if(a){
+                        userUidList.add(userUid);
                     }
 
                 }
+                mCallback.callback(followingUid,userUidList);
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
-            ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        userUid = snapshot.getKey();
-                        boolean a = true;
-                        Log.d("asd", userUid);
+            }
+        });
 
-                        for (int j = 0; j < followCount; j++) {
-                            if (userUid.equals(followingUid.get(j)) || user.equals(userUid)) {
-                                a = false;
-                            }
-                        }
-
-                        if(a){
-                            userUidList.add(userUid);
-                        }
-
-                    }
-                    mCallback.callback(followingUid,userUidList);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
-        }
+    }
 }

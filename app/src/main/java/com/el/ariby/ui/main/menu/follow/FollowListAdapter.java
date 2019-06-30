@@ -34,7 +34,7 @@ public class FollowListAdapter extends BaseAdapter implements Filterable {
     FirebaseDatabase database;
     FirebaseUser auth;
     Filter listFilter;
-
+    FollowListAdapter adapter;
     public FollowListAdapter(){
 
     }
@@ -58,26 +58,23 @@ public class FollowListAdapter extends BaseAdapter implements Filterable {
     public View getView(int position, View convertView, ViewGroup parent) {
         final int pos = position;
         final Context context = parent.getContext();
+        auth = FirebaseAuth.getInstance().getCurrentUser();
+        final String user = auth.getUid();
         database = FirebaseDatabase.getInstance();
-        ref = database.getReference("USER");
+        ref = database.getReference("FRIEND").child("following").child(user);
         followref = database.getReference("FRIEND");
+        adapter = new FollowListAdapter();
         // "custom_follow_list" Layout을 inflate하여 convertView 참조 획득.
-
         if(convertView == null){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.custom_follow_list,parent, false);
         }
         // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
-
         ImageView iconImageView = convertView.findViewById(R.id.imageView1);
         TextView titleTextView = convertView.findViewById(R.id.textView1);
         final Button canclefollow = convertView.findViewById(R.id.cancle_follow);
         TextView followingNum = convertView.findViewById(R.id.following_num);
         TextView followerNum = convertView.findViewById(R.id.followers_num);
-
-        //TextView descTextView = convertView.findViewById(R.id.textView2);
-        // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
-
         FollowItem item = filteredItemList.get(position);
         // 아이템 내 각 위젯에 데이터 반영
         Glide.with(convertView).
@@ -93,28 +90,30 @@ public class FollowListAdapter extends BaseAdapter implements Filterable {
             @Override
             public void onClick(View v) {
                 final int pos = (Integer)v.getTag();
-
+                final ArrayList<String> uidList = new ArrayList<>();
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         int i=0;
-                        String uid = null, user;
+                        String uid = null;
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                             uid = snapshot.getKey();
-                            Log.d("nickname", uid + "position" + pos);
-                            if(i == pos)break;
+                            Log.d("유저", uid + "position" + pos);
+
+                            uidList.add(uid);
                             i++;
                         }
-                        auth = FirebaseAuth.getInstance().getCurrentUser();
-                        user = auth.getUid();
-                        Log.d("유저", String.valueOf(user));
-                        followref.child("following").child(String.valueOf(user)).child(uid).setValue(null);
-                        followref.child("follower").child(uid).child(String.valueOf(user)).setValue(null);
 
-                        canclefollow.setBackgroundColor(R.drawable.custom_follow_button_border);
-                        canclefollow.setText("팔로우");
-                        canclefollow.setTextColor(Color.WHITE);
+                        Log.d("유저", uidList.get(pos));
+                        followref.child("following").child(String.valueOf(user)).child(uidList.get(pos)).setValue(null);
+                        followref.child("follower").child(uidList.get(pos)).child(String.valueOf(user)).setValue(null);
+
+                        FollowItemList.remove(pos);
+                        canclefollow.setText("팔로우 끊기");
+                        uidList.remove(pos);
+                        adapter.notifyDataSetChanged();
+
                         Toast.makeText(context, "팔로잉이 취소 되었습니다.", Toast.LENGTH_SHORT).show();
                     }
 

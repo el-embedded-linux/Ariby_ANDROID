@@ -46,51 +46,50 @@ public class FindFollowActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUid = user.getUid();
 
-        loadData(new Callback() {
-            @Override
-            public void success(ArrayList<String> data) {
-                followingUid=data;
-                ref = database.getReference("USER");
-                ref.addListenerForSingleValueEvent(new ValueEventListener() { // USER
+                loadData(new Callback() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Log.d("align", "2");
-                            userUid = snapshot.getKey();
-                            boolean a = true;
-                            Log.d("asd", userUid);
+                    public void success(ArrayList<String> data) {
+                        followingUid=data;
+                        ref = database.getReference("USER");
+                        ref.addListenerForSingleValueEvent(new ValueEventListener() { // USER
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    Log.d("align", "2");
+                                    userUid = snapshot.getKey();
+                                    boolean a = true;
+                                    Log.d("asd", userUid);
 
-                            for (int j = 0; j < followCount; j++) {
-                                if (userUid.equals(followingUid.get(j)) || myUid.equals(userUid)) {
-                                    a = false;
+                                    for (int j = 0; j < followCount; j++) {
+                                        if (userUid.equals(followingUid.get(j)) || myUid.equals(userUid)) {
+                                            a = false;
+                                        }
+                                    }
+
+                                    if (a) {
+                                        String url = (String) snapshot.child("userImageURL").getValue();
+                                        String nickname = snapshot.child("nickname").getValue().toString();
+                                        String following = snapshot.child("following").getValue().toString();
+                                        String follower = snapshot.child("follower").getValue().toString();
+                                        adapter.addItem(new FollowItem(url, nickname, following, follower));
+                                    }
+                                    adapter.notifyDataSetChanged();
                                 }
+                                adapter.notifyDataSetChanged();
                             }
 
-                            if (a) {
-                                String url = (String) snapshot.child("userImageURL").getValue();
-                                String nickname = snapshot.child("nickname").getValue().toString();
-                                String following = snapshot.child("following").getValue().toString();
-                                String follower = snapshot.child("follower").getValue().toString();
-                                adapter.addItem(new FollowItem(url, nickname, following, follower));
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
                             }
-                            adapter.notifyDataSetChanged();
-                        }
-                        adapter.notifyDataSetChanged();
+                        });
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void fail(String errorMessage) {
 
                     }
                 });
-            }
-
-            @Override
-            public void fail(String errorMessage) {
-
-            }
-        });
-
 
         editTextFilter.addTextChangedListener(new TextWatcher() {
             @Override

@@ -67,7 +67,7 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
 
-    implementation "gun0912.ted:tedpermission:$tedpermissionVersion"
+    implementation "gun0912.ted:tedpermission:2.2.2"
 
     // daum map
     implementation files('libs/libDaumMapAndroid.jar')
