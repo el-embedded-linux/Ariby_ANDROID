@@ -7,12 +7,12 @@ buildscript {
         retrofitVersion = '2.5.0'
         glideVersion = '4.9.0'
         firebaseVersion = '16.0.1'
+        tedpermissionVersion = '2.2.0'
     }
 
     repositories {
         google()
         jcenter()
-        
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.2'
