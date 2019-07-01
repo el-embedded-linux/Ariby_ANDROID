@@ -60,6 +60,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView8">
 
             <TextView
+                android:id="@+id/txt_take_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="10분"
@@ -68,6 +69,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/txt_take_kilo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -100,7 +102,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/txt_take_kcal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"

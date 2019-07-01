@@ -1,16 +1,14 @@
 package com.el.ariby.ui.main.menu.navigation;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.el.ariby.R;
 import com.el.ariby.ui.api.MapFindApi;
@@ -31,6 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+
 /**
  * 지도 어플
  */
@@ -42,7 +41,9 @@ public class MapFindLocationActivity extends AppCompatActivity implements
     String startY;
     String endX;
     String endY;
-    ArrayList<Point> points;
+    TextView txtTakeTime;
+    TextView txtTakeKilo;
+    TextView txtTakeKcal;
     ArrayList<PointDouble> naviPoints = new ArrayList<>();
 
     @Override
@@ -51,6 +52,11 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_map_find_location);
 
         fab = findViewById(R.id.fab_focus);
+        txtTakeTime = findViewById(R.id.txt_take_time);
+        txtTakeKilo = findViewById(R.id.txt_take_kilo);
+        ;
+        txtTakeKcal = findViewById(R.id.txt_take_kcal);
+        ;
         mapView = new MapView(this);
 
         Intent intent = getIntent();
@@ -96,31 +102,27 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 /**
                  *
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(MapFindLocationActivity.this);
-                builder.setTitle("네비게이션");
-                builder.setMessage("주행을 시작하시겠습니까?");
-                builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOff) {
-                            mapView.setZoomLevel(-1, true);
-                            mapView.zoomIn(true);
-                            mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
-                        }
-                    }
+                 AlertDialog.Builder builder = new AlertDialog.Builder(MapFindLocationActivity.this);
+                 builder.setTitle("네비게이션");
+                 builder.setMessage("주행을 시작하시겠습니까?");
+                 builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                @Override public void onClick(DialogInterface dialog, int which) {
+                if (mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOff) {
+                mapView.setZoomLevel(-1, true);
+                mapView.zoomIn(true);
+                mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+                }
+                }
                 });
-                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                 builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                @Override public void onClick(DialogInterface dialog, int which) {
 
-                    }
+                }
                 });
-                builder.show();
+                 builder.show();
                  */
             }
         });
-        /**
-         *
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +137,6 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 }
             }
         });
-         */
     }
 
     private void getMapFind(final String startX, final String startY, final String endX, final String endY) {
@@ -196,8 +197,13 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));
                 mapView.addPolyline(polyline);
                 MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
-                int padding = 250; // px
+                int padding = 200; // px
                 mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
+                int time = repo.getFeatures().get(0).getProperties().getTotalTime().intValue()/60;
+                Double kilo = repo.getFeatures().get(0).getProperties().
+                        getTotalDistance().doubleValue()/1000;
+                txtTakeTime.setText(time+"분");
+                txtTakeKilo.setText(Math.round(kilo*10)/10.0+"km");
             }
 
             @Override
