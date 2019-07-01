@@ -196,7 +196,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));
                 mapView.addPolyline(polyline);
                 MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
-                int padding = 100; // px
+                int padding = 250; // px
                 mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
             }
 
