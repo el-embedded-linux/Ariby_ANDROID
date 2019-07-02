@@ -199,11 +199,19 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
                 int padding = 250; // px
                 mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
-                int time = repo.getFeatures().get(0).getProperties().getTotalTime().intValue()/60;
                 Double kilo = repo.getFeatures().get(0).getProperties().
                         getTotalDistance().doubleValue()/1000;
-                txtTakeTime.setText(time+"분");
-                txtTakeKilo.setText(Math.round(kilo*10)/10.0+"km");
+                Double time2=(kilo/13.0)*60;
+
+                Log.e("time", time2.toString());
+                int kcal = (int)(72*0.0939*Math.round(time2)); // 평균 몸무게 62 + 자전거 무게 10 * 속도칼로리소비계수*분
+                txtTakeTime.setText(Math.round(time2)+"분");
+                if(kilo>=1.0) //
+                    txtTakeKilo.setText(Math.round(kilo*10)/10.0+"km");
+                else
+                    txtTakeKilo.setText(Math.round(kilo*1000)+"m");
+
+                txtTakeKcal.setText(kcal+"kcal");
             }
 
             @Override
