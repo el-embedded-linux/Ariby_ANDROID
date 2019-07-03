@@ -91,6 +91,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton
+                android:id="@+id/imgbtn_navi_start"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/daram" />

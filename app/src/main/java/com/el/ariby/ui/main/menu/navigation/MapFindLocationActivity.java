@@ -1,14 +1,21 @@
 package com.el.ariby.ui.main.menu.navigation;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.el.ariby.R;
 import com.el.ariby.ui.api.MapFindApi;
@@ -45,6 +52,8 @@ public class MapFindLocationActivity extends AppCompatActivity implements
     TextView txtTakeKilo;
     TextView txtTakeKcal;
     ArrayList<PointDouble> naviPoints = new ArrayList<>();
+    ImageButton imgBtnStart;
+    RelativeLayout layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +63,10 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         fab = findViewById(R.id.fab_focus);
         txtTakeTime = findViewById(R.id.txt_take_time);
         txtTakeKilo = findViewById(R.id.txt_take_kilo);
-        ;
+
         txtTakeKcal = findViewById(R.id.txt_take_kcal);
-        ;
+        imgBtnStart = findViewById(R.id.imgbtn_navi_start);
+        layout=findViewById(R.id.relativeLayout);
         mapView = new MapView(this);
 
         Intent intent = getIntent();
@@ -107,12 +117,12 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                  builder.setMessage("주행을 시작하시겠습니까?");
                  builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dialog, int which) {
-                if (mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOff) {
-                mapView.setZoomLevel(-1, true);
-                mapView.zoomIn(true);
-                mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+                if (mapNaviView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOff) {
+                mapNaviView.setZoomLevel(-1, true);
+                mapNaviView.zoomIn(true);
+                mapNaviView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
                 }
-                }
+                 }
                 });
                  builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dialog, int which) {
@@ -137,6 +147,19 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 }
             }
         });
+
+        imgBtnStart.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   choiceNavigation();
+               }
+           }
+        );
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void getMapFind(final String startX, final String startY, final String endX, final String endY) {
@@ -161,8 +184,6 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(startY), Double.parseDouble(startX)));
                 for (int i = 0; i < featuresSize; i++) {
                     String type = repo.getFeatures().get(i).getGeometry().getType();
-                    Double x;
-                    Double y;
                     PointDouble points;
                     if (type.equals("Point")) {
                         points = new PointDouble(
@@ -197,13 +218,12 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));
                 mapView.addPolyline(polyline);
                 MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
-                int padding = 250; // px
+                int padding = 150; // px
                 mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
                 Double kilo = repo.getFeatures().get(0).getProperties().
                         getTotalDistance().doubleValue()/1000;
-                Double time2=(kilo/13.0)*60;
+                Double time2=(kilo/13.0)*60; // 자전거 소요시간 공식 (거리/속도)*분
 
-                Log.e("time", time2.toString());
                 int kcal = (int)(72*0.0939*Math.round(time2)); // 평균 몸무게 62 + 자전거 무게 10 * 속도칼로리소비계수*분
                 txtTakeTime.setText(Math.round(time2)+"분");
                 if(kilo>=1.0) //
@@ -282,5 +302,32 @@ public class MapFindLocationActivity extends AppCompatActivity implements
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
+    }
+
+    private void choiceNavigation() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("스마트폰");
+        list.add("라즈베리파이");
+
+        final CharSequence[] items = list.toArray(new String[list.size()]);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("디바이스 선택");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(which == 0) {
+                    Intent intent = new Intent(getApplicationContext(),MapNavigationActivity.class);
+                    intent.putExtra("startX",startX);
+                    intent.putExtra("startY",startY);
+                    intent.putExtra("endX", endX);
+                    intent.putExtra("endY",endY);
+                    layout.removeAllViews();
+                    startActivity(intent);
+
+                }
+
+            }
+        });
+        builder.show();
     }
 }
