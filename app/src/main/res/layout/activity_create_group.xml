@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context=".ui.main.menu.groupRiding.CreateGroupActivity"
+    >
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    android:padding="10dp">
+    <TextView
+        android:id="@+id/group_name"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:textSize="18dp"
+        android:gravity="bottom"
+        android:text="그룹명"
+        />
+
+    <EditText
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        />
+</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
+        <TextView
+            android:id="@+id/riding_time"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:textSize="18dp"
+            android:gravity="bottom"
+            android:text="시작 시간"
+            />
+
+        <EditText
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
+        <TextView
+            android:id="@+id/riding_loc"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:textSize="18dp"
+            android:gravity="bottom"
+            android:text="출발 지역"
+            />
+
+        <EditText
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
+        <TextView
+            android:id="@+id/riding_dis"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:textSize="18dp"
+            android:gravity="bottom"
+            android:text="도착 지역"
+            />
+
+        <EditText
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="5dp"
+        android:layout_marginTop="50dp">
+        <Button
+            android:id="@+id/add_rider"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:text="친구 추가하기"
+            />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="5dp">
+
+        <Button
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:text="그룹 생성하기"
+            android:gravity="center"
+            android:id="@+id/btn_makeGroup"
+            />
+    </LinearLayout>
+
+</LinearLayout>

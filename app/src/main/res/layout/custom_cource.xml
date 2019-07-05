@@ -78,21 +78,6 @@
                         android:src="@drawable/arrow" />
                 </RelativeLayout>
 
-
-                <LinearLayout
-                    android:id="@+id/rl_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp">
-
-                    <ImageView
-                        android:id="@+id/iv_image"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/test" />
-                </LinearLayout>
-
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

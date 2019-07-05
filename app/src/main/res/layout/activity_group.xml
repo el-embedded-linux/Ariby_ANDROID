@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.menu.groupRiding.GroupRideActivity">
+
+    <TextView
+        android:id="@+id/group_title"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:text="TextView"
+        tools:text="Group Riding"
+        android:textSize="20dp"
+        android:gravity="bottom"
+        android:padding="10dp"
+        android:textColor="@color/colorBlack"
+        />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_layout_group"
+        android:layout_width="match_parent"
+        android:layout_height="635dp"
+        android:layout_below="@+id/group_title"
+        >
+        <ListView
+            android:id="@+id/list_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="#979797"
+            android:dividerHeight="2px">
+        </ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TableLayout
+        android:id="@+id/layout_tab_rank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/swipe_layout_group"
+        android:stretchColumns="0,1,2,3">
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/btn_createG"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create a Group Ride"
+                android:textColor="#000"
+                />
+
+        </TableRow>
+
+    </TableLayout>
+</RelativeLayout>
