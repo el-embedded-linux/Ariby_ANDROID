@@ -23,7 +23,6 @@ public class RankingItem {
        this.rank = rank;
         this.txtUpDown = changed;
         this.imgUpDown = imgChanged;
-
     }
 
     public RankingItem(String nickname){

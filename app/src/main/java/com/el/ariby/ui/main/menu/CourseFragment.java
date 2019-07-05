@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,6 @@ public class CourseFragment extends Fragment {
         single = view.findViewById(R.id.single);
         group = view.findViewById(R.id.group);
         course = view.findViewById(R.id.cource);
-
         single.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

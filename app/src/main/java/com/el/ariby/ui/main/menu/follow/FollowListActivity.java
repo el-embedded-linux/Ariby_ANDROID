@@ -46,7 +46,6 @@ public class FollowListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
                     userref.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -60,9 +59,7 @@ public class FollowListActivity extends AppCompatActivity {
                                     String follower = snapshot1.child("follower").getValue().toString();
                                     Log.d("123321", nickname);
                                     adapter.addItem(new FollowItem(url, nickname,following,follower));
-
                                 }
-
                             }
                             adapter.notifyDataSetChanged();
                         }
