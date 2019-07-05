@@ -75,7 +75,7 @@ public class MapActivity extends AppCompatActivity {
         marker.setMarkerType(MapPOIItem.MarkerType.BluePin);
         marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
 
-        ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
+        ViewGroup mapViewContainer = findViewById(R.id.map_view);
         mapViewContainer.addView(mapView);
         mapView.addPOIItem(marker);
         mapView.setHDMapTileEnabled(true); // HD 타일 사용여부
