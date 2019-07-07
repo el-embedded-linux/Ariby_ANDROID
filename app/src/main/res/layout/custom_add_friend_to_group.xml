@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".ui.main.menu.groupRiding.addFriend.CustomFriendList"
+
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lin_list"
+        android:padding="5dp"
+        android:orientation="horizontal">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_Prof"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/default_image"
+        android:layout_marginLeft="5dp"
+        />
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:text="후후후"
+                android:id="@+id/txt_friend_nick"
+                android:textSize="20dp"
+                android:textColor="#666666"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"/>
+
+            <Button
+                android:id="@+id/btn_invite"
+                android:textSize="15dp"
+                android:text="그룹 초대하기"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/friend_add_button_border"
+                android:layout_width="wrap_content"
+                android:layout_height="37dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

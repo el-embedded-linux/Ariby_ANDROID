@@ -74,4 +74,7 @@ dependencies {
 
     // T map
     implementation files('libs/com.skt.Tmap_1.60.jar')
+
+    // Picasso
+    implementation files('libs/picasso-2.5.2.jar')
 }

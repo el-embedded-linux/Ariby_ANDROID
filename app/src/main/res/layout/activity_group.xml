@@ -25,7 +25,6 @@
         android:id="@+id/recycler_view"
         >
     </android.support.v7.widget.RecyclerView>
-
             <Button
                 android:id="@+id/btn_createG"
                 android:layout_width="match_parent"
@@ -33,5 +32,4 @@
                 android:text="Create a Group Ride"
                 android:textColor="#000"
                 />
-
 </LinearLayout>

@@ -10,12 +10,13 @@ import com.el.ariby.R;
 
 public class CreateGroupActivity extends AppCompatActivity {
     Button makeGroup;
-
+    Button addFriend;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
         makeGroup = findViewById(R.id.btn_makeGroup);
+        addFriend = findViewById(R.id.btn_add_rider);
         makeGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -24,5 +25,12 @@ public class CreateGroupActivity extends AppCompatActivity {
             }
         });
 
+        addFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CreateGroupActivity.this, AddFriendActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

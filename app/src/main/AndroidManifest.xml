@@ -53,9 +53,9 @@
         <activity android:name=".ui.join.AgeActivity" />
         <activity android:name=".ui.join.JoiningActivity" />
         <activity android:name=".ui.main.menu.follow.FollowListFragment" />
-        <activity android:name=".ui.main.menu.groupRiding.CreateGroupActivity">
-        </activity>
+        <activity android:name=".ui.main.menu.groupRiding.CreateGroupActivity"/>
         <activity android:name=".ui.main.menu.groupRiding.SingleRideActivity"/>
+        <activity android:name=".ui.main.menu.groupRiding.AddFriendActivity"/>
     </application>
 
 </manifest>

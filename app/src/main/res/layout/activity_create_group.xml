@@ -96,7 +96,7 @@
         android:padding="5dp"
         android:layout_marginTop="50dp">
         <Button
-            android:id="@+id/add_rider"
+            android:id="@+id/btn_add_rider"
             android:layout_width="250dp"
             android:layout_height="45dp"
             android:gravity="center"
