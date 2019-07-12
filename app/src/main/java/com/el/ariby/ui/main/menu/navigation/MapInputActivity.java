@@ -1,6 +1,7 @@
 package com.el.ariby.ui.main.menu.navigation;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class MapInputActivity extends AppCompatActivity {
     String startY;
     String endX;
     String endY;
+    int result=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +99,34 @@ public class MapInputActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(!TextUtils.isEmpty(edtStart.getText().toString()) &&
+            !TextUtils.isEmpty(edtEnd.getText().toString())) {
+            setPreference("startX", startX);
+            setPreference("startY", startY);
+            setPreference("endX", endX);
+            setPreference("endY", endY);
+            result++;
+        }
+
+        Toast.makeText(getApplicationContext(),"onPause",Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(result>=1) {
+            startX = getPreferenceString("startX");
+            startY = getPreferenceString("startY");
+            endX = getPreferenceString("endX");
+            endY = getPreferenceString("endY");
+        }
+        Toast.makeText(getApplicationContext(),"onResume",Toast.LENGTH_SHORT).show();
+    }
+
     /**
      * 출발지 좌표 저장
      * @param data intent
@@ -117,5 +147,17 @@ public class MapInputActivity extends AppCompatActivity {
         endY = data.getStringExtra("Y");
         Log.d("startX", endX);
         Log.d("startY", endY);
+    }
+
+    public void setPreference(String key, String value) {
+        SharedPreferences pref = getSharedPreferences("com.el.ariby_mapInput", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    public String getPreferenceString(String key) {
+        SharedPreferences pref = getSharedPreferences("com.el.ariby_mapInput", MODE_PRIVATE);
+        return pref.getString(key, "");
     }
 }
