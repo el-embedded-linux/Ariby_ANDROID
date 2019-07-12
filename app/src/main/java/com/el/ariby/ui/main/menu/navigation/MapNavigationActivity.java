@@ -18,7 +18,6 @@ import com.el.ariby.ui.api.response.MapFindRepoResponse;
 import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
-import net.daum.mf.map.api.MapPointBounds;
 import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapView;
 
@@ -32,14 +31,15 @@ import retrofit2.Retrofit;
 
 public class MapNavigationActivity extends AppCompatActivity implements
         MapView.CurrentLocationEventListener {
-    ArrayList<PointDouble> points;
+    ArrayList<PointDouble> points = new ArrayList<>();
     ActivityMapNavigationBinding mBinding;
     MapView mapNaviView;
     String startX, startY, endX, endY;
     ArrayList<PointDouble> naviPoints = new ArrayList<>();
-    int testCount =0;
+    ArrayList<String> naviName=new ArrayList<>();
+    int testCount = 0;
+    int naviCount = 0;
 
-    int naviCount=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +86,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
         mapNaviView.setCurrentLocationEventListener(this);
 
         mapNaviView.moveCamera(
-                CameraUpdateFactory.newMapPoint(markerPointStart,-1));
+                CameraUpdateFactory.newMapPoint(markerPointStart, -1));
         mapNaviView.zoomIn(true);
 
         mapNaviView.setCurrentLocationTrackingMode(
@@ -114,9 +114,10 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 polyline.setTag(1000);
                 polyline.setLineColor(Color.argb(128, 255, 51, 0));
                 // Polyline 컬러 지정.
-
+                mBinding.txtNaviMap.setText(repo.getFeatures().get(1).getProperties().getName());
+                mBinding.txtNaviMeter.setText(repo.getFeatures().get(1).getProperties().getDistance() + "m");
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(
-                                Double.parseDouble(startY), Double.parseDouble(startX)));
+                        Double.parseDouble(startY), Double.parseDouble(startX)));
                 for (int i = 0; i < featuresSize; i++) {
                     String type = repo.getFeatures().get(i).getGeometry().getType();
                     PointDouble point;
@@ -124,7 +125,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         point = new PointDouble(
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0),
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1));
-                        points=new ArrayList<>();
                         points.add(point);
 
                         MapPoint marketPoint3 = MapPoint.mapPointWithGeoCoord(point.getY(), point.getX());
@@ -144,6 +144,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                     } else if (type.equals("LineString")) {
                         List<Object> list = repo.getFeatures().get(i).getGeometry().getCoordinates();
                         for (int k = 0; k < list.size(); k++) { // k
+                            naviName.add(repo.getFeatures().get(k).getProperties().getName());
                             String[] lit = String.valueOf(list.get(k)).split(" ");
                             Double lineX = Double.parseDouble(lit[0].substring(1, lit[0].length() - 1));
                             Double lineY = Double.parseDouble(lit[1].substring(0, lit[1].length() - 1));
@@ -170,17 +171,12 @@ public class MapNavigationActivity extends AppCompatActivity implements
         // 킬로미터(Kilo Meter) 단위
         double distanceKiloMeter =
                 distance(mapPointGeo.latitude, mapPointGeo.longitude,
-                        points.get(naviCount).y, points.get(naviCount).x, "meter");
-
-        if(distanceKiloMeter<=2) {
-            MapPoint aaa = MapPoint.mapPointWithGeoCoord(points.get(0).y,points.get(0).x);
-            MapPOIItem marker6 = new MapPOIItem(); // 마커 생성
-            marker6.setMapPoint(aaa);
-            marker6.setMarkerType(MapPOIItem.MarkerType.BluePin);
-            mapNaviView.addPOIItem(marker6);
-            naviCount++;
+                        naviPoints.get(naviCount).y, naviPoints.get(naviCount).x, "meter");
+        mBinding.txtNaviMeter.setText((int)distanceKiloMeter+"m");
+        if (distanceKiloMeter <= 2.5) {
+            ++naviCount;
+            mBinding.txtNaviMap.setText(naviName.get(naviCount));
         }
-
 
         Log.e("firstPoint1", String.valueOf(mapPointGeo.latitude));
         Log.e("firstPoint2", String.valueOf(mapPointGeo.longitude));
@@ -193,7 +189,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 String.format("MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)",
                         mapPointGeo.latitude, mapPointGeo.longitude, v));
 
-        Toast.makeText(getApplicationContext(),String.valueOf(testCount),Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), String.valueOf(testCount), Toast.LENGTH_SHORT).show();
         testCount++;
     }
 
