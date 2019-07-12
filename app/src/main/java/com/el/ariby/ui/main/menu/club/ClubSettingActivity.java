@@ -1,4 +1,4 @@
-package com.el.ariby;
+package com.el.ariby.ui.main.menu.club;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,9 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityClubSettingBinding;
-import com.el.ariby.ui.main.menu.club.ClubDetailActivity;
-import com.el.ariby.ui.main.menu.club.ClubSearchActivity;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -24,7 +23,7 @@ public class ClubSettingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding= DataBindingUtil.setContentView(this,R.layout.activity_club_setting);
+        mBinding= DataBindingUtil.setContentView(this, R.layout.activity_club_setting);
         Intent intent = getIntent();
         clubTitle = intent.getStringExtra("title");
         clubDetailActi = (ClubDetailActivity)ClubDetailActivity.clubDetail;

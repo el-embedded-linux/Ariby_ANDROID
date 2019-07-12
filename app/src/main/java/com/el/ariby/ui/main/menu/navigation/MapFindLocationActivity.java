@@ -201,9 +201,6 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                         mapView.addPOIItem(marker3);
 
                         polyline.addPoint(MapPoint.mapPointWithGeoCoord(points.getY(), points.getX()));
-
-                        Log.d("testX" + i, points.getX().toString());
-                        Log.d("testY" + i, points.getY().toString());
                     } else if (type.equals("LineString")) {
                         List<Object> list = repo.getFeatures().get(i).getGeometry().getCoordinates();
                         for (int k = 0; k < list.size(); k++) { // k
@@ -212,8 +209,6 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                             Double lineY = Double.parseDouble(lit[1].substring(0, lit[1].length() - 1));
                             polyline.addPoint(MapPoint.mapPointWithGeoCoord(lineY, lineX));
                         }
-                        Log.d("listtest", String.valueOf(list));
-                        Log.d("listtest", String.valueOf(list.size()));
                     }
                 }
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));

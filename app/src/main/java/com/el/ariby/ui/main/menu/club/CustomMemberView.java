@@ -1,8 +1,6 @@
 package com.el.ariby.ui.main.menu.club;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
@@ -11,8 +9,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.el.ariby.R;
-
-import org.w3c.dom.Text;
 
 public class CustomMemberView extends LinearLayout {
     ImageView imgProfile;

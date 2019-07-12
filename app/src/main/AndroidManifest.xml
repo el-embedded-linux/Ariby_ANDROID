@@ -18,7 +18,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".ui.main.menu.navigation.MapNavigationActivity"/>
         <activity android:name=".ui.main.menu.follow.FollowerListActivity" />
-        <activity android:name=".ClubSettingActivity" />
+        <activity android:name=".ui.main.menu.club.ClubSettingActivity" />
         <activity android:name=".ui.main.menu.follow.FollowListActivity" />
         <activity android:name=".ui.main.menu.navigation.MapFindLocationActivity" />
         <activity android:name=".ui.main.menu.follow.FindFollowActivity" />

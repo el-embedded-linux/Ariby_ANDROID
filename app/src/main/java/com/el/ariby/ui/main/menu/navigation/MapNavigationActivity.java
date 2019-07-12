@@ -5,14 +5,10 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityMapNavigationBinding;
@@ -40,7 +36,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
     MapView mapNaviView;
     String startX, startY, endX, endY;
     ArrayList<PointDouble> naviPoints = new ArrayList<>();
-    int testCount = 0;
     int naviCount = 0;
     ProgressDialog progressDialog;
     ArrayList<NaviMember> naviMembers = new ArrayList<>();
@@ -56,6 +51,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
         mapNaviView.setHDMapTileEnabled(true); // HD 타일 사용여부
         mapNaviView.setMapTilePersistentCacheEnabled(true);
         //다운한 지도 데이터를 단말의 영구 캐쉬 영역에 저장하는 기능
+        mapNaviView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
+
 
         Intent intent = getIntent();
 
@@ -75,6 +72,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
         MapPoint markerPointEnd = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(endX), Double.parseDouble(endY));
 
+
+        progressDialog.dismiss();
 
         MapPOIItem marker = new MapPOIItem(); // 마커 생성
         marker.setItemName("Dafault Market");
@@ -97,10 +96,15 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 CameraUpdateFactory.newMapPoint(markerPointStart, -1));
         mapNaviView.zoomIn(true);
 
-        mapNaviView.setCurrentLocationTrackingMode(
-                MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
 
-        mapNaviView.setCurrentLocationEventListener(this);
+        try {
+            Thread.sleep(1000);
+            mapNaviView.setCurrentLocationTrackingMode(
+                    MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
+            mapNaviView.setCurrentLocationEventListener(this);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -134,12 +138,10 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 MapPolyline polyline = new MapPolyline();
                 polyline.setTag(1000);
                 polyline.setLineColor(Color.argb(128, 255, 51, 0));
-                // Polyline 컬러 지정.
-                //mBinding.txtNaviMap.setText(repo.getFeatures().get(1).getProperties().getName());
-                //mBinding.txtNaviMeter.setText(repo.getFeatures().get(1).getProperties().getDistance() + "m");
+
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(
                         Double.parseDouble(startY), Double.parseDouble(startX)));
-                NaviMember member=new NaviMember();
+                NaviMember member = new NaviMember();
                 for (int i = 0; i < featuresSize; i++) {
                     String type = repo.getFeatures().get(i).getGeometry().getType();
                     PointDouble point;
@@ -148,7 +150,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0),
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1));
                         String name = repo.getFeatures().get(i).getProperties().getName();
-                        if(!TextUtils.isEmpty(name))
+                        if (!TextUtils.isEmpty(name))
                             member.setName(name);
 
                         MapPoint marketPoint3 = MapPoint.mapPointWithGeoCoord(point.getY(), point.getX());
@@ -162,9 +164,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         mapNaviView.addPOIItem(marker5);
 
                         polyline.addPoint(MapPoint.mapPointWithGeoCoord(point.getY(), point.getX()));
-
-                        Log.d("testX" + i, point.getX().toString());
-                        Log.d("testY" + i, point.getY().toString());
                     } else if (type.equals("LineString")) {
                         List<Object> list = repo.getFeatures().get(i).getGeometry().getCoordinates();
                         for (int k = 0; k < list.size(); k++) { // k
@@ -173,12 +172,14 @@ public class MapNavigationActivity extends AppCompatActivity implements
                             Double lineY = Double.parseDouble(lit[1].substring(0, lit[1].length() - 1));
                             polyline.addPoint(MapPoint.mapPointWithGeoCoord(lineY, lineX));
                         }
-                        String name=repo.getFeatures().get(i).getProperties().getName();
-                        if(!TextUtils.isEmpty(name))
+                        String name = repo.getFeatures().get(i).getProperties().getName();
+                        if (!TextUtils.isEmpty(name))
                             member.setName(name);
+
                         member.setDistance(repo.getFeatures().get(i).getProperties().getDistance());
                         member.setTime(repo.getFeatures().get(i).getProperties().getTime());
                         naviMembers.add(member);
+                        member = new NaviMember();
                     }
                 }
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));
@@ -186,8 +187,9 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 double distanceKiloMeter =
                         distance(Double.valueOf(startY), Double.valueOf(startX),
                                 naviPoints.get(naviCount).y, naviPoints.get(naviCount).x, "meter");
-                mBinding.txtNaviMeter.setText((int)distanceKiloMeter+"m");
-                progressDialog.dismiss();
+                mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
+                mBinding.txtNaviMap.setText(naviMembers.get(0).getName());
+
             }
 
             @Override
@@ -204,22 +206,13 @@ public class MapNavigationActivity extends AppCompatActivity implements
         double distanceKiloMeter =
                 distance(mapPointGeo.latitude, mapPointGeo.longitude,
                         naviPoints.get(naviCount).y, naviPoints.get(naviCount).x, "meter");
-        mBinding.txtNaviMeter.setText((int)distanceKiloMeter+"m");
+        mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
         if (distanceKiloMeter <= 2.5) {
             ++naviCount;
             mBinding.txtNaviMap.setText(naviMembers.get(naviCount).getName());
         }
 
-        Log.e("firstPoint1", String.valueOf(mapPointGeo.latitude));
-        Log.e("firstPoint2", String.valueOf(mapPointGeo.longitude));
-
         Log.d("currentDistance", String.valueOf(distanceKiloMeter));
-        Log.d("currentLocation",
-                String.format("MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)",
-                        mapPointGeo.latitude, mapPointGeo.longitude, v));
-
-        Toast.makeText(getApplicationContext(), String.valueOf(testCount), Toast.LENGTH_SHORT).show();
-        testCount++;
     }
 
     private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
