@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -34,15 +36,14 @@ import retrofit2.Retrofit;
 
 public class MapNavigationActivity extends AppCompatActivity implements
         MapView.CurrentLocationEventListener {
-    ArrayList<PointDouble> points = new ArrayList<>();
     ActivityMapNavigationBinding mBinding;
     MapView mapNaviView;
     String startX, startY, endX, endY;
     ArrayList<PointDouble> naviPoints = new ArrayList<>();
-    ArrayList<String> naviName=new ArrayList<>();
     int testCount = 0;
     int naviCount = 0;
     ProgressDialog progressDialog;
+    ArrayList<NaviMember> naviMembers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +116,17 @@ public class MapNavigationActivity extends AppCompatActivity implements
             @Override
             public void onResponse(Call<MapFindRepoResponse> call,
                                    Response<MapFindRepoResponse> response) {
+                /**
+                 * 01
+                 * 23
+                 * 45
+                 * 67
+                 * 89
+                 *
+                 * NaviMember
+                 *     String name;
+                 *     int distance;
+                 *     int time;*/
 
                 MapFindRepoResponse repo = response.body();
                 int featuresSize = repo.getFeatures().size();
@@ -123,10 +135,11 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 polyline.setTag(1000);
                 polyline.setLineColor(Color.argb(128, 255, 51, 0));
                 // Polyline 컬러 지정.
-                mBinding.txtNaviMap.setText(repo.getFeatures().get(1).getProperties().getName());
-                mBinding.txtNaviMeter.setText(repo.getFeatures().get(1).getProperties().getDistance() + "m");
+                //mBinding.txtNaviMap.setText(repo.getFeatures().get(1).getProperties().getName());
+                //mBinding.txtNaviMeter.setText(repo.getFeatures().get(1).getProperties().getDistance() + "m");
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(
                         Double.parseDouble(startY), Double.parseDouble(startX)));
+                NaviMember member=new NaviMember();
                 for (int i = 0; i < featuresSize; i++) {
                     String type = repo.getFeatures().get(i).getGeometry().getType();
                     PointDouble point;
@@ -134,7 +147,9 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         point = new PointDouble(
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0),
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1));
-                        points.add(point);
+                        String name = repo.getFeatures().get(i).getProperties().getName();
+                        if(!TextUtils.isEmpty(name))
+                            member.setName(name);
 
                         MapPoint marketPoint3 = MapPoint.mapPointWithGeoCoord(point.getY(), point.getX());
                         naviPoints.add(point);
@@ -152,19 +167,26 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         Log.d("testY" + i, point.getY().toString());
                     } else if (type.equals("LineString")) {
                         List<Object> list = repo.getFeatures().get(i).getGeometry().getCoordinates();
-                        naviName.add(repo.getFeatures().get(i).getProperties().getName());
                         for (int k = 0; k < list.size(); k++) { // k
                             String[] lit = String.valueOf(list.get(k)).split(" ");
                             Double lineX = Double.parseDouble(lit[0].substring(1, lit[0].length() - 1));
                             Double lineY = Double.parseDouble(lit[1].substring(0, lit[1].length() - 1));
                             polyline.addPoint(MapPoint.mapPointWithGeoCoord(lineY, lineX));
                         }
-                        Log.d("listtest", String.valueOf(list));
-                        Log.d("listtest", String.valueOf(list.size()));
+                        String name=repo.getFeatures().get(i).getProperties().getName();
+                        if(!TextUtils.isEmpty(name))
+                            member.setName(name);
+                        member.setDistance(repo.getFeatures().get(i).getProperties().getDistance());
+                        member.setTime(repo.getFeatures().get(i).getProperties().getTime());
+                        naviMembers.add(member);
                     }
                 }
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));
                 mapNaviView.addPolyline(polyline);
+                double distanceKiloMeter =
+                        distance(Double.valueOf(startY), Double.valueOf(startX),
+                                naviPoints.get(naviCount).y, naviPoints.get(naviCount).x, "meter");
+                mBinding.txtNaviMeter.setText((int)distanceKiloMeter+"m");
                 progressDialog.dismiss();
             }
 
@@ -185,14 +207,11 @@ public class MapNavigationActivity extends AppCompatActivity implements
         mBinding.txtNaviMeter.setText((int)distanceKiloMeter+"m");
         if (distanceKiloMeter <= 2.5) {
             ++naviCount;
-            mBinding.txtNaviMap.setText(naviName.get(naviCount));
+            mBinding.txtNaviMap.setText(naviMembers.get(naviCount).getName());
         }
 
         Log.e("firstPoint1", String.valueOf(mapPointGeo.latitude));
         Log.e("firstPoint2", String.valueOf(mapPointGeo.longitude));
-
-        Log.e("nextPoint1", points.get(naviCount).y.toString());
-        Log.e("nextPoint2", points.get(naviCount).x.toString());
 
         Log.d("currentDistance", String.valueOf(distanceKiloMeter));
         Log.d("currentLocation",
@@ -250,5 +269,35 @@ public class MapNavigationActivity extends AppCompatActivity implements
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
+    }
+}
+
+class NaviMember {
+    String name;
+    int distance;
+    int time;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
     }
 }

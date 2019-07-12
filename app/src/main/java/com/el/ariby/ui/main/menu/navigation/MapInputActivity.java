@@ -104,11 +104,7 @@ public class MapInputActivity extends AppCompatActivity {
         super.onPause();
         if(!TextUtils.isEmpty(edtStart.getText().toString()) &&
             !TextUtils.isEmpty(edtEnd.getText().toString())) {
-            setPreference("startX", startX);
-            setPreference("startY", startY);
-            setPreference("endX", endX);
-            setPreference("endY", endY);
-            result++;
+
         }
 
         Toast.makeText(getApplicationContext(),"onPause",Toast.LENGTH_SHORT).show();
@@ -118,11 +114,9 @@ public class MapInputActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(result>=1) {
-            startX = getPreferenceString("startX");
-            startY = getPreferenceString("startY");
-            endX = getPreferenceString("endX");
-            endY = getPreferenceString("endY");
+        if(!TextUtils.isEmpty(edtStart.getText().toString()) &&
+                !TextUtils.isEmpty(edtEnd.getText().toString())) {
+            result = 1;
         }
         Toast.makeText(getApplicationContext(),"onResume",Toast.LENGTH_SHORT).show();
     }
