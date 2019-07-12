@@ -1,12 +1,15 @@
 package com.el.ariby.ui.main.menu.navigation;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.el.ariby.R;
@@ -39,6 +42,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
     ArrayList<String> naviName=new ArrayList<>();
     int testCount = 0;
     int naviCount = 0;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,10 @@ public class MapNavigationActivity extends AppCompatActivity implements
         startX = intent.getStringExtra("startX");
         endY = intent.getStringExtra("endY");
         endX = intent.getStringExtra("endX");
+        progressDialog = new ProgressDialog(MapNavigationActivity.this);
+        progressDialog.setMessage("데이터를 로딩중입니다.");
+        progressDialog.show();
+
         getMapFind(startY, startX, endY, endX);
 
         MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
@@ -83,7 +91,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
         mapNaviView.addPOIItem(marker);
         mapNaviView.addPOIItem(marker2);
-        mapNaviView.setCurrentLocationEventListener(this);
 
         mapNaviView.moveCamera(
                 CameraUpdateFactory.newMapPoint(markerPointStart, -1));
@@ -91,6 +98,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
         mapNaviView.setCurrentLocationTrackingMode(
                 MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
+
+        mapNaviView.setCurrentLocationEventListener(this);
 
     }
 
@@ -143,8 +152,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         Log.d("testY" + i, point.getY().toString());
                     } else if (type.equals("LineString")) {
                         List<Object> list = repo.getFeatures().get(i).getGeometry().getCoordinates();
+                        naviName.add(repo.getFeatures().get(i).getProperties().getName());
                         for (int k = 0; k < list.size(); k++) { // k
-                            naviName.add(repo.getFeatures().get(k).getProperties().getName());
                             String[] lit = String.valueOf(list.get(k)).split(" ");
                             Double lineX = Double.parseDouble(lit[0].substring(1, lit[0].length() - 1));
                             Double lineY = Double.parseDouble(lit[1].substring(0, lit[1].length() - 1));
@@ -156,6 +165,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 }
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));
                 mapNaviView.addPolyline(polyline);
+                progressDialog.dismiss();
             }
 
             @Override
