@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.el.ariby.ClubSettingActivity;
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityClubDetailBinding;
 import com.google.firebase.auth.FirebaseAuth;

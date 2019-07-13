@@ -9,15 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityNicknameBinding;
-import com.el.ariby.ui.main.menu.club.ClubItem;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

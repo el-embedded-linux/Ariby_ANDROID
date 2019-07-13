@@ -1,9 +1,6 @@
 package com.el.ariby.ui.main.menu.club;
 
 import android.content.Context;
-import android.media.Image;
-import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +8,12 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.el.ariby.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ClubSearchAdapter extends BaseAdapter implements Filterable {
     ArrayList<ClubItem> listViewItemList = new ArrayList<ClubItem>();
