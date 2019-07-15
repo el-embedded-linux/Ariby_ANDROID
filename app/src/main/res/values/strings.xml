@@ -4,4 +4,11 @@
     <string name="positive_popup_title_default">Like a boss!</string>
     <string name="negative_popup_text_default">You have failed to complete the challenge. So close! Wanna have another go at it?</string>
     <string name="negative_popup_title_default">Awww.... Snap!</string>
+
+    <string name="invite_friend">그룹원 추가하기</string>
+    <string name="hello_world">Hello World!</string>
+    <string name="action_settings">Settings</string>
+
+    <!--Action Mode Menu Items-->
+    <string name="invite">Invite</string>
 </resources>

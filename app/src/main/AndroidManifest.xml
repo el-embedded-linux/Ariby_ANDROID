@@ -32,10 +32,7 @@
             android:name="com.kakao.sdk.AppKey"
             android:value="bcb5be527657eea3d6511a0c20cbb41b" />
         <activity android:name=".ui.main.MapActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity android:name=".ui.main.menu.club.ClubMemberActivity" />
         <activity android:name=".ui.main.menu.club.ClubDetailActivity" />
@@ -43,7 +40,12 @@
         <activity android:name=".ui.main.menu.club.ClubCreateActivity" />
         <activity android:name=".ui.main.menu.groupRiding.GroupRideActivity"/>
         <activity android:name=".ui.join.NicknameActivity" />
-        <activity android:name=".ui.login.LoginActivity"/>
+        <activity android:name=".ui.login.LoginActivity">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".SplashActivity" />
         <activity android:name=".FirstActivity" />

@@ -2,7 +2,9 @@ package com.el.ariby.ui.main.menu.groupRiding.addFriend;
 
 import com.bumptech.glide.Glide;
 
-public class FriendListItem {
+import java.io.Serializable;
+
+public class FriendListItem implements Serializable {
     public String getFriend_nick() {
         return friend_nick;
     }

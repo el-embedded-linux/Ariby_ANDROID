@@ -17,4 +17,6 @@
     <color name="colorCWhite">#ffffff</color>
     <color name="colorCAccent">#FF4081</color>
 
+    <color name="grey">#EEEEEE</color>
+
 </resources>
