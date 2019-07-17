@@ -1,7 +1,11 @@
 package com.el.ariby.ui.main.menu.groupRiding.addFriend;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
@@ -13,8 +17,12 @@ import android.support.v7.view.ActionMode;
 
 import com.el.ariby.R;
 import com.el.ariby.ui.main.menu.groupRiding.AddFriendActivity;
+import com.el.ariby.ui.main.menu.groupRiding.CreateGroupActivity;
 
 import java.util.ArrayList;
+
+import static com.el.ariby.ui.main.menu.groupRiding.AddFriendActivity.*;
+import static com.el.ariby.ui.main.menu.groupRiding.addFriend.RecyclerView_Fragment.fa;
 
 public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
     public Toolbar_ActionMode_Callback(Context context, FriendListRecyclerAdapter recyclerAdapter, ArrayList<FriendListItem> items) {
@@ -54,7 +62,7 @@ public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
                 SparseBooleanArray selected;
                 selected = recyclerAdapter.getSelectedIds();
                 int selectedMessageSize = selected.size();
-
+                StringBuilder str = new StringBuilder();
                 //loop
                 for(int i = (selectedMessageSize -1); i>=0;i--){
                     if(selected.valueAt(i))
@@ -63,12 +71,22 @@ public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
                         FriendListItem model = items.get(selected.keyAt(i));
                         String nickname = model.getFriend_nick();
                         Log.e("선택된 아이템 : ",nickname);
+                        str.append(nickname+"*");
                     }
                 }
-                Toast.makeText(context, "You selected invite menu.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, selectedMessageSize+"명의 친구를 초대했습니다.", Toast.LENGTH_SHORT).show();
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this.context);
+                //editor 얻기
+                SharedPreferences.Editor editor = sharedPref.edit();
+                //value 넣기
+                editor.putString("members",str.toString());
+                editor.commit();
                 mode.finish();
+                ((Activity)context).finish();
                 break;
         }
+
+
         return false;
     }
 
@@ -81,5 +99,7 @@ public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
         if(recyclerFragment != null){
             ((RecyclerView_Fragment)recyclerFragment).setNullToActionMode();
         }
+
     }
+
 }

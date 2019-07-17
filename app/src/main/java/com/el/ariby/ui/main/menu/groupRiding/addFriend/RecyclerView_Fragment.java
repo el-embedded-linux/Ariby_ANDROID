@@ -44,14 +44,15 @@ public class RecyclerView_Fragment extends Fragment {
 
     }
 
+    public static Fragment fa;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.recycler_view_fragment, container, false);
-
-
         populateRecyclerView();
         implementRecyclerViewClickListeners();
+        fa = this.getTargetFragment();
         return view;
     }
 
@@ -150,7 +151,7 @@ public class RecyclerView_Fragment extends Fragment {
         if (actionMode != null)
             //set action mode title on item selection
             actionMode.setTitle(String.valueOf(adapter
-                    .getSelectedCount()) + " selected");
+                    .getSelectedCount()) + "명의 친구 추가");
     }
 
     //Set action mode null after use

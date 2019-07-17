@@ -2,17 +2,22 @@ package com.el.ariby.ui.main.menu.groupRiding;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.el.ariby.R;
 import com.el.ariby.ui.main.menu.navigation.MapSearchActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class CreateGroupActivity extends AppCompatActivity {
     Button makeGroup;
@@ -20,15 +25,22 @@ public class CreateGroupActivity extends AppCompatActivity {
     EditText groupName;
     EditText inputStart;
     EditText inputEnd;
+    EditText inputInfo;
 
-    String start_lat, start_lon;
     String end_lat, end_lon;
     String leader_nick;
     String member_nick;
     String uid;
+
     FirebaseDatabase database;
     DatabaseReference ref;
     DatabaseReference userRef;
+
+    String startX;
+    String startY;
+
+    String endX;
+    String endY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +51,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         groupName = findViewById(R.id.input_groupName);
         inputEnd = findViewById(R.id.input_end);
         inputStart = findViewById(R.id.input_start);
+        inputInfo = findViewById(R.id.input_info);
 
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
@@ -47,6 +60,7 @@ public class CreateGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 UploadGroupInfoToFirebase();
+                Toast.makeText(CreateGroupActivity.this, "그룹이 생성되었습니다.", Toast.LENGTH_SHORT).show();
                 Intent intent=new Intent(CreateGroupActivity.this, GroupRideActivity.class);
                 startActivity(intent);
             }
@@ -82,6 +96,8 @@ public class CreateGroupActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK)
                 {
                     String startPoint = data.getStringExtra("result_msg");
+                    startX = data.getStringExtra("X");
+                    startY = data.getStringExtra("Y");
                     inputStart.setText(startPoint);
                 }
                 break;
@@ -89,6 +105,8 @@ public class CreateGroupActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK)
                 {
                     String endPoint = data.getStringExtra("result_msg");
+                    endX = data.getStringExtra("X");
+                    endY = data.getStringExtra("Y");
                     inputEnd.setText(endPoint);
                 }
         }
@@ -96,11 +114,46 @@ public class CreateGroupActivity extends AppCompatActivity {
 
     public void UploadGroupInfoToFirebase(){
         FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-        userRef = database.getReference("GROUP_RIDING").child(mUser.getUid());
+        userRef = database.getReference("USER").child(mUser.getUid());
+
         final String group_name = groupName.getText().toString();
         String start = inputStart.getText().toString();
         String end = inputEnd.getText().toString();
-        ref.child("GROUP_RIDING").child(group_name).child("endPoint").child("lat").setValue(end_lat);
+        String note = inputInfo.getText().toString();
+
+        //출발지
+        ref.child("GROUP_RIDING").child(group_name).child("startPoint").child("name").setValue(start);
+        ref.child("GROUP_RIDING").child(group_name).child("startPoint").child("lat").setValue(startY);
+        ref.child("GROUP_RIDING").child(group_name).child("startPoint").child("lon").setValue(startX);
+
+        //도착지
+        ref.child("GROUP_RIDING").child(group_name).child("endPoint").child("name").setValue(end);
+        ref.child("GROUP_RIDING").child(group_name).child("endPoint").child("lat").setValue(endY);
+        ref.child("GROUP_RIDING").child(group_name).child("endPoint").child("lon").setValue(endX);
+
+        //info
+        ref.child("GROUP_RIDING").child(group_name).child("info").child("note").setValue(note);
+
+        //생성자 닉네임
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ref.child("GROUP_RIDING").child(group_name).child("leader_nick").setValue(dataSnapshot.child("nickname").getValue());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        //멤버 정보 (리더, 멤버)
+        ref.child("GROUP_RIDING").child(group_name).child("members").child("leader").setValue(mUser.getUid());
+        //ref.child("GROUP_RIDING").child(group_name).child("members").child("nickname").setValue("haha"); //나중에 uid로 넣기
+
+
+
+
 
     }
 
