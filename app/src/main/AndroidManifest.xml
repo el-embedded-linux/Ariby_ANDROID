@@ -16,7 +16,8 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.main.menu.navigation.MapNavigationActivity"/>
+        <activity android:name=".ui.main.menu.recommend.RecommendActivity"/>
+        <activity android:name=".ui.main.menu.navigation.MapNavigationActivity" />
         <activity android:name=".ui.main.menu.follow.FollowerListActivity" />
         <activity android:name=".ui.main.menu.club.ClubSettingActivity" />
         <activity android:name=".ui.main.menu.follow.FollowListActivity" />
@@ -38,13 +39,13 @@
         <activity android:name=".ui.main.menu.club.ClubDetailActivity" />
         <activity android:name=".ui.main.menu.club.ClubSearchActivity" />
         <activity android:name=".ui.main.menu.club.ClubCreateActivity" />
-        <activity android:name=".ui.main.menu.groupRiding.GroupRideActivity"/>
+        <activity android:name=".ui.main.menu.groupRiding.GroupRideActivity" />
         <activity android:name=".ui.join.NicknameActivity" />
         <activity android:name=".ui.login.LoginActivity">
-        <intent-filter>
+            <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+            </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".SplashActivity" />
@@ -55,9 +56,9 @@
         <activity android:name=".ui.join.AgeActivity" />
         <activity android:name=".ui.join.JoiningActivity" />
         <activity android:name=".ui.main.menu.follow.FollowListFragment" />
-        <activity android:name=".ui.main.menu.groupRiding.CreateGroupActivity"/>
-        <activity android:name=".ui.main.menu.groupRiding.SingleRideActivity"/>
-        <activity android:name=".ui.main.menu.groupRiding.AddFriendActivity"/>
+        <activity android:name=".ui.main.menu.groupRiding.CreateGroupActivity" />
+        <activity android:name=".ui.main.menu.groupRiding.SingleRideActivity" />
+        <activity android:name=".ui.main.menu.groupRiding.AddFriendActivity" />
     </application>
 
 </manifest>
