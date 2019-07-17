@@ -308,7 +308,7 @@ public class DustFragment extends Fragment {
         DustFragment.GPSListener gpsListener = new DustFragment.GPSListener();
         long minTime = 10000;
         float minDistance = 0;
-
+        String locationProvider;
         LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -318,7 +318,16 @@ public class DustFragment extends Fragment {
                     Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
             return;
         }
-        Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        // LocationManaer.NETWORK_PROVIDER : 기지국들로부터 현재 위치 확인
+        // LocationManaer.GPS_PROVIDER : GPS들로부터 현재 위치 확인
+        if (manager.isProviderEnabled(manager.NETWORK_PROVIDER) == true) {
+            locationProvider = LocationManager.NETWORK_PROVIDER;
+        } else
+            locationProvider = LocationManager.GPS_PROVIDER;
+
+        manager.requestLocationUpdates(locationProvider,10000,0,gpsListener);
+        Location location = manager.getLastKnownLocation(locationProvider);
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         long now = System.currentTimeMillis(); // 현재시간
