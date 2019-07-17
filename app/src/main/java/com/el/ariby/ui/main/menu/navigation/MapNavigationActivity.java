@@ -1,6 +1,8 @@
 package com.el.ariby.ui.main.menu.navigation;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -120,18 +122,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
             @Override
             public void onResponse(Call<MapFindRepoResponse> call,
                                    Response<MapFindRepoResponse> response) {
-                /**
-                 * 01
-                 * 23
-                 * 45
-                 * 67
-                 * 89
-                 *
-                 * NaviMember
-                 *     String name;
-                 *     int distance;
-                 *     int time;*/
-
                 MapFindRepoResponse repo = response.body();
                 int featuresSize = repo.getFeatures().size();
 
@@ -149,9 +139,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         point = new PointDouble(
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0),
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1));
-                        String name = repo.getFeatures().get(i).getProperties().getName();
-                        if (!TextUtils.isEmpty(name))
-                            member.setName(name);
 
                         MapPoint marketPoint3 = MapPoint.mapPointWithGeoCoord(point.getY(), point.getX());
                         naviPoints.add(point);
@@ -171,11 +158,9 @@ public class MapNavigationActivity extends AppCompatActivity implements
                             Double lineX = Double.parseDouble(lit[0].substring(1, lit[0].length() - 1));
                             Double lineY = Double.parseDouble(lit[1].substring(0, lit[1].length() - 1));
                             polyline.addPoint(MapPoint.mapPointWithGeoCoord(lineY, lineX));
+                            member.setPoint(new PointDouble(lineX, lineY));
                         }
-                        String name = repo.getFeatures().get(i).getProperties().getName();
-                        if (!TextUtils.isEmpty(name))
-                            member.setName(name);
-
+                        member.setDescription(repo.getFeatures().get(i).getProperties().getDescription());
                         member.setDistance(repo.getFeatures().get(i).getProperties().getDistance());
                         member.setTime(repo.getFeatures().get(i).getProperties().getTime());
                         naviMembers.add(member);
@@ -186,10 +171,9 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 mapNaviView.addPolyline(polyline);
                 double distanceKiloMeter =
                         distance(Double.valueOf(startY), Double.valueOf(startX),
-                                naviPoints.get(naviCount).y, naviPoints.get(naviCount).x, "meter");
+                                naviMembers.get(0).getPoint().y, naviMembers.get(0).getPoint().x, "meter");
                 mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
-                mBinding.txtNaviMap.setText(naviMembers.get(0).getName());
-
+                mBinding.txtNaviMap.setText(naviMembers.get(0).description);
             }
 
             @Override
@@ -205,11 +189,24 @@ public class MapNavigationActivity extends AppCompatActivity implements
         // 킬로미터(Kilo Meter) 단위
         double distanceKiloMeter =
                 distance(mapPointGeo.latitude, mapPointGeo.longitude,
-                        naviPoints.get(naviCount).y, naviPoints.get(naviCount).x, "meter");
+                        naviMembers.get(naviCount).getPoint().y,
+                        naviMembers.get(naviCount).getPoint().x, "meter");
         mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
         if (distanceKiloMeter <= 2.5) {
             ++naviCount;
-            mBinding.txtNaviMap.setText(naviMembers.get(naviCount).getName());
+            mBinding.txtNaviMap.setText(naviMembers.get(naviCount).getDescription());
+            if(naviMembers.get(naviCount).getDescription().equals("도착")) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("도착했습니다. 안내를 종료합니다.");
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                builder.show();
+            }
+
         }
 
         Log.d("currentDistance", String.valueOf(distanceKiloMeter));
@@ -266,16 +263,17 @@ public class MapNavigationActivity extends AppCompatActivity implements
 }
 
 class NaviMember {
-    String name;
+    String description;
+    PointDouble point;
     int distance;
     int time;
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getDistance() {
@@ -292,5 +290,13 @@ class NaviMember {
 
     public void setTime(int time) {
         this.time = time;
+    }
+
+    public PointDouble getPoint() {
+        return point;
+    }
+
+    public void setPoint(PointDouble point) {
+        this.point = point;
     }
 }
