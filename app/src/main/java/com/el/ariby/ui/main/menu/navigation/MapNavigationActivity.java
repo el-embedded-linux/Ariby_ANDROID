@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityMapNavigationBinding;
@@ -100,7 +101,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             mapNaviView.setCurrentLocationTrackingMode(
                     MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
             mapNaviView.setCurrentLocationEventListener(this);
@@ -192,11 +193,12 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         naviMembers.get(naviCount).getPoint().y,
                         naviMembers.get(naviCount).getPoint().x, "meter");
         mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
-        if (distanceKiloMeter <= 2.5) {
+        if (distanceKiloMeter <= 3.0) {
             ++naviCount;
-            mBinding.txtNaviMap.setText(naviMembers.get(naviCount).getDescription());
+
             if(naviMembers.get(naviCount).getDescription().equals("도착")) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                Toast.makeText(getApplicationContext(),"도착",Toast.LENGTH_LONG).show();
+                /*final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("도착했습니다. 안내를 종료합니다.");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
@@ -204,8 +206,9 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         finish();
                     }
                 });
-                builder.show();
-            }
+                builder.show();*/
+            } else
+                mBinding.txtNaviMap.setText(naviMembers.get(naviCount).getDescription());
 
         }
 
