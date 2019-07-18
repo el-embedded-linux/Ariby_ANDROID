@@ -22,16 +22,18 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class FindFollowActivity extends AppCompatActivity {
-    DatabaseReference ref, followref;
+    DatabaseReference ref, followref,followerNumRef, follwingNumRef;
     FirebaseDatabase database;
     EditText editTextFilter;
     FindFollowAdapter adapter;
     ListView listView;
     FirebaseUser user;
     String myUid, userUid;
-
+    String follower, following;
     int followCount;
     ArrayList<String> followingUid = new ArrayList<>();
+    ArrayList<String[]> followingNumList = new ArrayList<String[]>();
+    ArrayList<String[]> followerNumList = new ArrayList<String[]>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +48,18 @@ public class FindFollowActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUid = user.getUid();
 
+              //요소의 크기만큼 돌면서
+
+
+
+
                 loadData(new Callback() {
                     @Override
-                    public void success(ArrayList<String> data) {
+                    public void success(ArrayList<String> data, ArrayList<String[]> followerNum, ArrayList<String[]> followingNum) {
                         followingUid=data;
+                        followerNumList=followerNum;
+                        followingNumList=followingNum;
+
                         ref = database.getReference("USER");
                         ref.addListenerForSingleValueEvent(new ValueEventListener() { // USER
                             @Override
@@ -69,8 +79,22 @@ public class FindFollowActivity extends AppCompatActivity {
                                     if (a) {
                                         String url = (String) snapshot.child("userImageURL").getValue();
                                         String nickname = snapshot.child("nickname").getValue().toString();
-                                        String following = snapshot.child("following").getValue().toString();
-                                        String follower = snapshot.child("follower").getValue().toString();
+
+                                        for(int t=0; t<followingNumList.size(); t++)  {
+                                            if(followingNumList.get(t)[0].equals(userUid)){
+                                                Log.d("userUid1", String.valueOf(followingNumList.get(t)));
+                                                following = followingNumList.get(t)[1];
+                                            }
+                                        }
+                                            //요소의 크기만큼 돌면서
+                                        for(int t=0; t<followerNumList.size(); t++){
+                                            if(followerNumList.get(t)[0].equals(userUid)){
+                                                Log.d("userUid2", String.valueOf(followerNumList.get(t)));
+                                                follower = followerNumList.get(t)[1];
+                                            }
+                                        }
+
+                                                Log.d("getChildrenCount",follower+"\n"+following+"\n"+snapshot.getRef()+"\n"+userUid);
                                         adapter.addItem(new FollowItem(url, nickname, following, follower));
                                     }
                                     adapter.notifyDataSetChanged();
@@ -112,13 +136,15 @@ public class FindFollowActivity extends AppCompatActivity {
     }
 
     public interface Callback {
-        void success(ArrayList<String> data);
+        void success(ArrayList<String> data, ArrayList<String[]> followerNum, ArrayList<String[]> followingNum);
 
         void fail(String errorMessage);
     }
 
     public void loadData(final Callback callback) {
         followref = database.getReference("FRIEND").child("following").child(myUid);
+        followerNumRef = database.getReference("FRIEND").child("follower");
+        follwingNumRef= database.getReference("FRIEND").child("following");
 
         followref.addListenerForSingleValueEvent(new ValueEventListener() { //following
             @Override
@@ -129,7 +155,7 @@ public class FindFollowActivity extends AppCompatActivity {
                     followingUid.add(list);
                     Log.d("align", "1");
                 }
-                callback.success(followingUid);
+
             }
 
             // * 내가 팔로잉 되어있는 UID를 ArrayList<String> followingUid에 추가함 *
@@ -138,6 +164,42 @@ public class FindFollowActivity extends AppCompatActivity {
 
             }
         });
+
+        follwingNumRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String uid = snapshot.getKey();
+
+                        following = String.valueOf(snapshot.getChildrenCount());
+                        followingNumList.add(new String[]{uid, following});
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        followerNumRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                     String uid = snapshot.getKey();
+                         follower = String.valueOf(snapshot.getChildrenCount());
+                         followerNumList.add(new String[]{uid, follower});
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        callback.success(followingUid,followingNumList,followerNumList);
+
     }
 }
 
