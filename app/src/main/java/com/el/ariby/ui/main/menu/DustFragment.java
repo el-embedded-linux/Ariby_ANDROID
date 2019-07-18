@@ -49,9 +49,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class DustFragment extends Fragment {
-    public final static int SMILE = 50;
-    public final static int NORMAL = 100;
-    public final static int BAD = 76;
+    public final static int PM10_SMILE = 50;
+    public final static int PM10_NORMAL = 76;
+    public final static int PM10_BAD = 100;
+
+    public final static int PM25_SMILE = 15;
+    public final static int PM25_NORMAL = 25;
+    public final static int PM25_BAD = 50;
+
     public final static int TO_GRID = 0;
     public final static int TO_GPS = 1;
     public static Double latitude;
@@ -120,6 +125,7 @@ public class DustFragment extends Fragment {
                     CoordRepoResponse repo = response.body();
                     String x = Double.toString(repo.getDocuments().get(0).getX());
                     String y = Double.toString(repo.getDocuments().get(0).getY());
+                    Log.e("DustGetCoord","Success");
                     getMeasure(x, y, "json");
                 }
             }
@@ -188,6 +194,8 @@ public class DustFragment extends Fragment {
                                    Response<DustRepoResponse> response) {
                 if (response.isSuccessful()) {
                     DustRepoResponse repo = response.body();
+                    Boolean khaiRoad=true;
+                    Log.e("DustGetDust", repo.getList().get(1).getPm10Value());
                     if (repo != null) {
                         for (int i = 0; i < repo.getList().size(); i++) { // 시간 별 대기정보를 저장함.
                             DustHourData dustData = new DustHourData();
@@ -198,7 +206,8 @@ public class DustFragment extends Fragment {
                             dustData.setCoValue(repo.getList().get(i).getCoValue());
                             dustHourData.add(dustData);
                         }
-
+                        //만약 "-" 일 경우 최소한의 정보만 출력하게 설정.
+                        //최소한의 정보 : 미세먼지, 초미세먼지만 가져옴.
                         for (int i = 0; i < dustHourData.size(); i++) {
                             if (!isNullDustHourData(dustHourData.get(i))) {
                                 DustHourData list = dustHourData.get(i);
@@ -212,7 +221,21 @@ public class DustFragment extends Fragment {
                                         Integer.parseInt(list.getPm25Value()),
                                         Double.parseDouble(list.getNo2Value()),
                                         Double.parseDouble(list.getCoValue()));
+                                khaiRoad=false;
                                 break;
+                            }
+                        }
+                        Log.e("KhaiRoadState",String.valueOf(khaiRoad));
+                        if(khaiRoad) {
+                            for (int i = 0; i < dustHourData.size(); i++) {
+                                if (!isNullDustData(dustHourData.get(i))) {
+                                    DustHourData list = dustHourData.get(i);
+                                    mBinding.txtDust1.setText(list.getPm10Value().concat("㎍/㎥"));
+                                    mBinding.txtDust2.setText(list.getPm25Value().concat("㎍/㎥"));
+                                    setDustPmView(Integer.parseInt(list.getPm10Value()),
+                                            Integer.parseInt(list.getPm25Value()));
+                                    break;
+                                }
                             }
                         }
                     }
@@ -247,6 +270,7 @@ public class DustFragment extends Fragment {
                                    Response<MeasureRepoResponse> response) {
                 if (response.isSuccessful()) {
                     MeasureRepoResponse repo = response.body();
+                    Log.e("DustGetMeasure",repo.getList().get(0).getStationName());
                     getDustData(10, 1, repo.getList().get(0).getStationName(), "DAILY", "1.3");
                 }
             }
@@ -326,7 +350,6 @@ public class DustFragment extends Fragment {
         } else
             locationProvider = LocationManager.GPS_PROVIDER;
 
-        manager.requestLocationUpdates(locationProvider,10000,0,gpsListener);
         Location location = manager.getLastKnownLocation(locationProvider);
         latitude = location.getLatitude();
         longitude = location.getLongitude();
@@ -390,7 +413,17 @@ public class DustFragment extends Fragment {
                 || TextUtils.isEmpty(data.getPm25Value())
                 || TextUtils.isEmpty(data.getCoValue())
                 || TextUtils.isEmpty(data.getNo2Value())
-                || data.getKhaiValue().equals("-")
+                || data.getKhaiValue().equals("-") // 2019.07.18 구로구쪽은 khaivalue 값이 -가 대부분
+                || data.getPm10Value().equals("-")
+                || data.getPm25Value().equals("-")) // 최소 통합,미세,초미세가 "-" 이면 안된다.
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isNullDustData(DustHourData data) {
+        if (TextUtils.isEmpty(data.getPm10Value())
+                || TextUtils.isEmpty(data.getPm25Value())
                 || data.getPm10Value().equals("-")
                 || data.getPm25Value().equals("-")) // 최소 통합,미세,초미세가 "-" 이면 안된다.
             return true;
@@ -400,7 +433,6 @@ public class DustFragment extends Fragment {
 
     public void setDustView(int khaiValue, int pm10Value,
                             int pm25Value, Double no2Value, Double coValue) {
-
         if (khaiValue <= 50) {
             mBinding.layout.setBackgroundColor(Color.parseColor("#3F5AE9"));
             mBinding.txtKhaiText.setText("통합지수 : 매우좋음");
@@ -415,20 +447,20 @@ public class DustFragment extends Fragment {
             mBinding.txtKhaiText.setText("통합지수 : 매우나쁨");
         }
 
-        if (pm10Value < SMILE)
+        if (pm10Value < PM10_SMILE)
             mBinding.imgDust1.setImageResource(R.drawable.smile);
-        else if (pm10Value < NORMAL)
+        else if (pm10Value < PM10_NORMAL)
             mBinding.imgDust1.setImageResource(R.drawable.normal);
-        else if (pm10Value < BAD)
+        else if (pm10Value < PM10_BAD)
             mBinding.imgDust1.setImageResource(R.drawable.bad);
         else
             mBinding.imgDust1.setImageResource(R.drawable.worst);
 
-        if (pm25Value < SMILE)
+        if (pm25Value < PM25_SMILE)
             mBinding.imgDust2.setImageResource(R.drawable.smile);
-        else if (pm25Value < NORMAL)
+        else if (pm25Value < PM25_NORMAL)
             mBinding.imgDust2.setImageResource(R.drawable.normal);
-        else if (pm25Value < BAD)
+        else if (pm25Value < PM25_BAD)
             mBinding.imgDust2.setImageResource(R.drawable.bad);
         else
             mBinding.imgDust2.setImageResource(R.drawable.worst);
@@ -450,6 +482,36 @@ public class DustFragment extends Fragment {
             mBinding.imgDust4.setImageResource(R.drawable.bad);
         else
             mBinding.imgDust4.setImageResource(R.drawable.worst);
+    }
+
+    public void setDustPmView(int pm10Value, int pm25Value) {
+        mBinding.txtKhai.setText(String.valueOf(pm10Value));
+        if (pm10Value <= PM10_SMILE) {
+            mBinding.layout.setBackgroundColor(Color.parseColor("#3F5AE9"));
+            mBinding.imgDust1.setImageResource(R.drawable.smile);
+            mBinding.txtKhaiText.setText("미세먼지 : 매우좋음");
+        } else if (pm10Value <= PM10_NORMAL) {
+            mBinding.layout.setBackgroundColor(Color.parseColor("#57B457"));
+            mBinding.imgDust1.setImageResource(R.drawable.normal);
+            mBinding.txtKhaiText.setText("미세먼지 : 보통");
+        } else if (pm10Value <= PM10_BAD) {
+            mBinding.imgDust1.setImageResource(R.drawable.bad);
+            mBinding.layout.setBackgroundColor(Color.parseColor("#B92424"));
+            mBinding.txtKhaiText.setText("미세먼지 : 나쁨");
+        } else {
+            mBinding.imgDust1.setImageResource(R.drawable.worst);
+            mBinding.layout.setBackgroundColor(Color.parseColor("#3F3737"));
+            mBinding.txtKhaiText.setText("미세먼지 : 매우나쁨");
+        }
+
+        if (pm25Value < PM25_SMILE)
+            mBinding.imgDust2.setImageResource(R.drawable.smile);
+        else if (pm25Value < PM25_NORMAL)
+            mBinding.imgDust2.setImageResource(R.drawable.normal);
+        else if (pm25Value < PM25_BAD)
+            mBinding.imgDust2.setImageResource(R.drawable.bad);
+        else
+            mBinding.imgDust2.setImageResource(R.drawable.worst);
     }
 
     private LatXLngY convertGRID_GPS(int mode, double lat_X, double lng_Y) {
