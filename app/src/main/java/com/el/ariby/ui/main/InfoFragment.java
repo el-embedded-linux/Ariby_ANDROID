@@ -1,5 +1,6 @@
 package com.el.ariby.ui.main;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -73,7 +74,10 @@ public class InfoFragment extends Fragment {
                 if (user != null) {
                     String name = user.getDisplayName();
                     uri = user.getPhotoUrl();
-                    Glide.with(getActivity()).load(uri).apply(RequestOptions.circleCropTransform()).into(photo); //이미지를 둥글게 처리
+                    Glide.with(getActivity())
+                            .load(uri)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(photo); //이미지를 둥글게 처리
                     displayName.setText(name);
                     photo.setImageURI(uri);
                     following_num.setText(following);
@@ -132,6 +136,10 @@ public class InfoFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && data != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("업로드 중");
+            progressDialog.show();
             FirebaseStorage storage = FirebaseStorage.getInstance();
             final StorageReference storageRef = storage.getReference();
 
@@ -150,8 +158,7 @@ public class InfoFragment extends Fragment {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     storageRef.child("profile/" + user.getUid()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onSuccess(Uri uri) {
-
+                        public void onSuccess(final Uri uri) {
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                     .setPhotoUri(uri)
                                     .build();
@@ -159,13 +166,16 @@ public class InfoFragment extends Fragment {
                             user = FirebaseAuth.getInstance().getCurrentUser();
 
                             String uid = user.getUid();
-                            Log.d("URI", String.valueOf(uri) + "\nref" + ref + "\n" + uid);
+                            Log.d("URI", uri + "\nref" + ref + "\n" + uid);
                             ref.child(uid).child("userImageURL").setValue(String.valueOf(uri));
-
-
                             user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+                                    Glide.with(getActivity())
+                                            .load(uri)
+                                            .apply(RequestOptions.circleCropTransform())
+                                            .into(photo); //이미지를 둥글게 처리
+                                    progressDialog.dismiss();
                                 }
                             });
                         }
