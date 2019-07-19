@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,10 +37,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import javax.security.auth.callback.Callback;
-
 public class InfoFragment extends Fragment {
-    DatabaseReference ref,numberref;
+    DatabaseReference ref, numberref;
     FirebaseDatabase database;
     TextView displayName, following_num, followers_num;
     ImageView photo;
@@ -84,7 +81,6 @@ public class InfoFragment extends Fragment {
                 }
             }
         });
-
 
 
         photo.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +130,8 @@ public class InfoFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && data != null) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             final StorageReference storageRef = storage.getReference();
 
@@ -143,7 +140,6 @@ public class InfoFragment extends Fragment {
             final StorageReference riversRef = storageRef.child("profile/" + user.getUid());
             UploadTask uploadTask = riversRef.putFile(file);
 
-            // Register observers to listen for when the download is done or if it fails
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
@@ -190,23 +186,23 @@ public class InfoFragment extends Fragment {
     }
 
 
-        public void doWork(final Callback mCallback) {
-            numberref.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+    public void doWork(final Callback mCallback) {
+        numberref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    String userUid = user.getUid();
-                    following = String.valueOf(dataSnapshot.child("following").child(userUid).getChildrenCount());
-                    follower = String.valueOf(dataSnapshot.child("follower").child(userUid).getChildrenCount());
-                    Log.d("asd11", following + "asd11" + follower);
-                    mCallback.callback();
-                }
+                String userUid = user.getUid();
+                following = String.valueOf(dataSnapshot.child("following").child(userUid).getChildrenCount());
+                follower = String.valueOf(dataSnapshot.child("follower").child(userUid).getChildrenCount());
+                Log.d("asd11", following + "asd11" + follower);
+                mCallback.callback();
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
-        }
+            }
+        });
+    }
 }
 
