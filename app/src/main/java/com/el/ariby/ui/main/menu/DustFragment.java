@@ -313,7 +313,7 @@ public class DustFragment extends Fragment {
                                     .getItem().get(i).getCategory().equals("T1H")) {
                                 int fcstValue = repo.getResponse().getBody().getItems()
                                         .getItem().get(i).getFcstValue();
-                                mBinding.btnWeather.setText(String.valueOf(fcstValue));
+                                mBinding.btnWeather.setText(fcstValue+"°");
                                 break;
                             }
                         }
