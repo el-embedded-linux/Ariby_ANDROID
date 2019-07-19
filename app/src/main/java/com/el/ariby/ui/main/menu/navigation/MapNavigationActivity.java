@@ -79,14 +79,14 @@ public class MapNavigationActivity extends AppCompatActivity implements
         progressDialog.dismiss();
 
         MapPOIItem marker = new MapPOIItem(); // 마커 생성
-        marker.setItemName("Dafault Market");
+        marker.setItemName("출발지");
         marker.setTag(0);
         marker.setMapPoint(markerPointStart);
         marker.setMarkerType(MapPOIItem.MarkerType.BluePin);
         marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
 
         MapPOIItem marker2 = new MapPOIItem(); // 마커 생성
-        marker2.setItemName("Dafault Market");
+        marker2.setItemName("도착지");
         marker2.setTag(1);
         marker2.setMapPoint(markerPointEnd);
         marker2.setMarkerType(MapPOIItem.MarkerType.BluePin);
@@ -152,6 +152,14 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         mapNaviView.addPOIItem(marker5);
 
                         polyline.addPoint(MapPoint.mapPointWithGeoCoord(point.getY(), point.getX()));
+
+                        if(i==(featuresSize-1)) {
+                            member.setTime(0);
+                            member.setDistance(0);
+                            member.setDescription(repo.getFeatures().get(i).getProperties().getDescription());
+                            naviMembers.add(member);
+                            Log.e("NaviDescription", member.description);
+                        }
                     } else if (type.equals("LineString")) {
                         List<Object> list = repo.getFeatures().get(i).getGeometry().getCoordinates();
                         for (int k = 0; k < list.size(); k++) { // k
@@ -164,9 +172,10 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         member.setDescription(repo.getFeatures().get(i).getProperties().getDescription());
                         member.setDistance(repo.getFeatures().get(i).getProperties().getDistance());
                         member.setTime(repo.getFeatures().get(i).getProperties().getTime());
+                        Log.e("NaviDescription", repo.getFeatures().get(i).getProperties().getDescription());
                         naviMembers.add(member);
-                        member = new NaviMember();
                     }
+                    member = new NaviMember();
                 }
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));
                 mapNaviView.addPolyline(polyline);
