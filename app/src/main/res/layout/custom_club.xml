@@ -48,15 +48,15 @@
 
             <TextView
                 android:id="@+id/txt_nickname"
-                android:layout_width="50dp"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/img_nick"
                 android:layout_marginRight="10dp"
                 android:layout_toRightOf="@+id/img_nick"
-                android:text="nickname"
                 android:singleLine="true"
-                android:textSize="16dp"
-                android:textColor="#000" />
+                android:text="nickname"
+                android:textColor="#000"
+                android:textSize="16dp" />
 
             <ImageView
                 android:id="@+id/img_perlogo"
