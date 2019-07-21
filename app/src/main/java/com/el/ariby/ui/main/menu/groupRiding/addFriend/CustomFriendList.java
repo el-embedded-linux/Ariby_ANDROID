@@ -31,5 +31,4 @@ public class CustomFriendList extends LinearLayout {
        nickname = findViewById(R.id.txt_friend_nick);
        profile = findViewById(R.id.img_Prof);
    }
-
 }

@@ -59,6 +59,7 @@
         <activity android:name=".ui.main.menu.groupRiding.CreateGroupActivity" />
         <activity android:name=".ui.main.menu.groupRiding.SingleRideActivity" />
         <activity android:name=".ui.main.menu.groupRiding.AddFriendActivity" />
+        <activity android:name=".ui.main.menu.groupRiding.groupRidingMap.Group_MapActivity"/>
     </application>
 
 </manifest>

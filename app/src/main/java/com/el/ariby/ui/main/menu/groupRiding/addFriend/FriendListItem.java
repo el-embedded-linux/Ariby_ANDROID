@@ -14,21 +14,26 @@ public class FriendListItem implements Serializable {
         return profile;
     }
 
+   public String getfUid() {return fUid;}
+
+    public FriendListItem(String friend_nick, String profile, String fUid) {
+        this.friend_nick = friend_nick;
+        this.profile = profile;
+        this.fUid = fUid;
+    }
+
+
     @Override
     public String toString() {
         return "FriendListItem{" +
                 "friend_nick='" + friend_nick + '\'' +
                 ", profile='" + profile + '\'' +
+                ", fUid='" + fUid + '\'' +
                 '}';
     }
 
-    public FriendListItem(String friend_nick, String profile) {
-        this.friend_nick = friend_nick;
-        this.profile = profile;
-    }
-
-
     String friend_nick;
     String profile;
+    String fUid;
 
 }

@@ -85,12 +85,13 @@ public class RecyclerView_Fragment extends Fragment {
                                 if(followUid.equals(user)){
                                     String url = (String)snapshot1.child("userImageURL").getValue();
                                     String nickname = dataSnapshot.child(user).child("nickname").getValue().toString();
+                                    String fUid = dataSnapshot.child(user).getKey();
                                     Log.d("url",url+"  nick : "+nickname);
                                     if(url == null)
                                     {
                                         url = "https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/profile%2Fprofile.png?alt=media&token=b65b2e7b-e58b-4ff5-a38d-99ce048ec97a";
                                     }
-                                    item_models.add(new FriendListItem(nickname,url));
+                                    item_models.add(new FriendListItem(nickname,url, fUid));
                                     Log.e("str : ", item_models.get(i).toString());
                                     i = i+1;
                                 }

@@ -2,6 +2,7 @@ package com.el.ariby.ui.main.menu.groupRiding;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -28,8 +29,6 @@ public class GroupRideActivity extends AppCompatActivity {
     ArrayList<GroupRideItem> groupRideItems = new ArrayList<GroupRideItem>();
 
     FirebaseDatabase database;
-    DatabaseReference userRef;
-    String uid;
     DatabaseReference ref;
 
     int i=0;

@@ -1,9 +1,11 @@
 package com.el.ariby.ui.main.menu.groupRiding;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -112,15 +114,21 @@ public class CreateGroupActivity extends AppCompatActivity {
         }
     }
 
-    public void UploadGroupInfoToFirebase(){
+    public void UploadGroupInfoToFirebase() {
         FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         userRef = database.getReference("USER").child(mUser.getUid());
 
+        SharedPreferences getList = getSharedPreferences("com.el.ariby_preferences", MODE_PRIVATE);
+        int count = getList.getInt("count", 0);
+        String str = getList.getString("members", "none");
+        Log.d("members : ", str);
+        Log.d("count : ", String.valueOf(count));
         final String group_name = groupName.getText().toString();
         String start = inputStart.getText().toString();
         String end = inputEnd.getText().toString();
         String note = inputInfo.getText().toString();
 
+        String[] array = str.split("\\*");
         //출발지
         ref.child("GROUP_RIDING").child(group_name).child("startPoint").child("name").setValue(start);
         ref.child("GROUP_RIDING").child(group_name).child("startPoint").child("lat").setValue(startY);
@@ -146,15 +154,14 @@ public class CreateGroupActivity extends AppCompatActivity {
 
             }
         });
-
         //멤버 정보 (리더, 멤버)
-        ref.child("GROUP_RIDING").child(group_name).child("members").child("leader").setValue(mUser.getUid());
-        //ref.child("GROUP_RIDING").child(group_name).child("members").child("nickname").setValue("haha"); //나중에 uid로 넣기
+        ref.child("GROUP_RIDING").child(group_name).child("members").child("leader").child(mUser.getUid()).setValue("true");
 
-
-
-
-
+        for (int i = 0; i < count+2 ; i=i+2)
+        {
+            Log.e("print", array[i]);
+            //ref.child("GROUP_RIDING").child(group_name).child("members").setValue(array[i]);
+            ref.child("GROUP_RIDING").child(group_name).child("members").child(array[i]).child(array[i+1]).setValue("true");
+        }
     }
-
 }

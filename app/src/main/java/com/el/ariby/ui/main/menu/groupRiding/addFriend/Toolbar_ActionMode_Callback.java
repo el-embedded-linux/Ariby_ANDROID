@@ -70,15 +70,18 @@ public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
                         //선택된 데이터 가져오기
                         FriendListItem model = items.get(selected.keyAt(i));
                         String nickname = model.getFriend_nick();
-                        Log.e("선택된 아이템 : ",nickname);
-                        str.append(nickname+"*");
+                        String fUid = model.getfUid();
+                        Log.e("selected",nickname+", "+fUid);
+                        str.append(nickname+"*"+fUid+"*");
                     }
                 }
+                Log.e("string : ", String.valueOf(str));
                 Toast.makeText(context, selectedMessageSize+"명의 친구를 초대했습니다.", Toast.LENGTH_SHORT).show();
                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this.context);
                 //editor 얻기
                 SharedPreferences.Editor editor = sharedPref.edit();
                 //value 넣기
+                editor.putInt("count", selectedMessageSize);
                 editor.putString("members",str.toString());
                 editor.commit();
                 mode.finish();

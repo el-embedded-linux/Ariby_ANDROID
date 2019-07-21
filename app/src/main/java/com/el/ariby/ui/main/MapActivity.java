@@ -119,7 +119,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
 
-    private class GPSListener implements LocationListener {
+    public class GPSListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
             Double latitude = location.getLatitude();
