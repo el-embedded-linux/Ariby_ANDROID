@@ -79,17 +79,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                                 endX = snapshot.child("endPoint").child("lon").getValue().toString();
                                 endY = snapshot.child("endPoint").child("lat").getValue().toString();
                                 Log.e("Adapter : ", startX+",   "+startY);
+
+                                Intent intent = new Intent(context, Group_MapActivity.class);
+                                intent.putExtra("groupName", nameCom);
+                                intent.putExtra("startX", startX);
+                                intent.putExtra("startY", startY);
+
+                                intent.putExtra("endX", endX);
+                                intent.putExtra("endY", endY);
+
+                                context.startActivity(intent);
+
                             }
                         }
-                        Intent intent = new Intent(context, Group_MapActivity.class);
-                        intent.putExtra("groupName", nameCom);
-                        intent.putExtra("startX", startX);
-                        intent.putExtra("startY", startY);
 
-                        intent.putExtra("endX", endX);
-                        intent.putExtra("endY", endY);
-
-                        context.startActivity(intent);
                     }
 
                     @Override

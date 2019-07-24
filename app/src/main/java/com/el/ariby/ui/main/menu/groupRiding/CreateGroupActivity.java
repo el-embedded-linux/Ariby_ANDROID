@@ -155,13 +155,19 @@ public class CreateGroupActivity extends AppCompatActivity {
             }
         });
         //멤버 정보 (리더, 멤버)
-        ref.child("GROUP_RIDING").child(group_name).child("members").child("leader").child(mUser.getUid()).setValue("true");
+        ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("uid").setValue(mUser.getUid());
+        ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("nickname").setValue("leader");
+        ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("state").setValue("true");
 
+        int a = 1;
         for (int i = 0; i < count+2 ; i=i+2)
         {
             Log.e("print", array[i]);
             //ref.child("GROUP_RIDING").child(group_name).child("members").setValue(array[i]);
-            ref.child("GROUP_RIDING").child(group_name).child("members").child(array[i]).child(array[i+1]).setValue("true");
+            ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("uid").setValue(array[i+1]);
+            ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("nickname").setValue(array[i]);
+            ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("state").setValue("true");
+            a++;
         }
     }
 }

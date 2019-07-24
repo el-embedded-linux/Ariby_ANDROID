@@ -58,7 +58,7 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
         Intent intent = getIntent();
         final String groupName = intent.getStringExtra("groupName");
         String startX = intent.getStringExtra("startY");
-        String startY = intent.getStringExtra("startX");
+        final String startY = intent.getStringExtra("startX");
         String endX = intent.getStringExtra("endY");
         String endY = intent.getStringExtra("endX");
         Log.e("intents : ", startX+", "+startY);
@@ -66,45 +66,14 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("GROUP_RIDING");
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String nameCom = null;
-                int i=0;
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    nameCom = snapshot.getKey();
-                    PointDouble points = null;
-                    if(groupName.equals(nameCom)){
-                        Log.e("group_activity :",nameCom);
-                        i++;
-                        //String nick = snapshot.child(groupName).child("members").child().getKey();
-                       // Log.e("show nicknames : ", nick);
-                        String getLat = snapshot.child("members").child("leader").child("lat").getValue().toString();
-                        String getLon = snapshot.child("members").child("leader").child("lon").getValue().toString();
-                        Log.e("getLat + getLon : ", getLat+",   "+getLon);
-                        MapPoint markPoint3 = MapPoint.mapPointWithCONGCoord(Double.parseDouble(getLat), Double.parseDouble(getLon));
-                        //memberPoints.add(points);
-                        MapPOIItem marker2 = new MapPOIItem();
-                        marker2.setItemName(String.valueOf(i));
-                        marker2.setTag(3);
-                        marker2.setMapPoint(markPoint3);
-                        marker2.setMarkerType(MapPOIItem.MarkerType.BluePin);
-                        mapView.addPOIItem(marker2);
-                    }
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
         getMapFind(startX, startY, endX, endY);
 
         //getMapFind(startY, startY, endY, endX);
         MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(startY), Double.parseDouble(startX));
+        Log.e("MapPoint : ", "Y: "+startY);
 
         MapPoint markerPointEnd = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(endY), Double.parseDouble(endX));
@@ -126,9 +95,49 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
 
         mapView.addPOIItem(marker);
         mapView.addPOIItem(marker1);
+
+        final MapPOIItem marker2 = new MapPOIItem();
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String nameCom = null;
+                int i=2, a = 1;
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    nameCom = snapshot.getKey();
+                    if(groupName.equals(nameCom)){
+                        int memberCount = (int) snapshot.child("members").getChildrenCount();
+                        Log.d("memberCount", String.valueOf(memberCount));
+                        for(a = 0; a<memberCount; a++) {
+                            Log.e("group_activity :", nameCom);
+                            Log.e("haha : ", snapshot.child("members").getChildren().toString());
+                            String getLat = snapshot.child("members").child(String.valueOf(a)).child("lat").getValue().toString();
+                            String getLon = snapshot.child("members").child(String.valueOf(a)).child("lon").getValue().toString();
+                            Log.e("getLat + getLon : ", getLat + ",   " + getLon);
+                            MapPoint markPoint3 = MapPoint.mapPointWithGeoCoord(Double.parseDouble(getLat), Double.parseDouble(getLon));
+
+                            marker2.setItemName(String.valueOf(i));
+                            marker2.setTag(i);
+                            marker2.setMapPoint(markPoint3);
+                            marker2.setMarkerType(MapPOIItem.MarkerType.YellowPin);
+                            mapView.addPOIItem(marker2);
+                            i++;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         mapView.setHDMapTileEnabled(true); // HD 타일 사용여부
         mapView.setMapTilePersistentCacheEnabled(true);//다운한 지도 데이터를 단말의 영구 캐쉬 영역에 저장하는 기능
         mapView.setCurrentLocationEventListener(this);
+
+
 
         /*MapPolyline polyline = new MapPolyline();
         polyline.setTag(1000);
