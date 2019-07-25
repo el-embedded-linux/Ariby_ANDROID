@@ -132,6 +132,17 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(
                         Double.parseDouble(startY), Double.parseDouble(startX)));
+
+                Double kilo = repo.getFeatures().get(0).getProperties().
+                        getTotalDistance().doubleValue()/1000;
+                Double time2=(kilo/13.0)*60; // 자전거 소요시간 공식 (거리/속도)*분
+                mBinding.txtNaviTime.setText("남은시간 : " + Math.round(time2)+"분");
+
+                if(kilo>=1.0) //
+                    mBinding.txtNaviDistance.setText("남은거리 : " + Math.round(kilo*10)/10.0+"km");
+                else
+                    mBinding.txtNaviDistance.setText("남은거리 : " + Math.round(kilo*1000)+"m");
+
                 NaviMember member = new NaviMember();
                 for (int i = 0; i < featuresSize; i++) {
                     String type = repo.getFeatures().get(i).getGeometry().getType();
@@ -154,6 +165,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         polyline.addPoint(MapPoint.mapPointWithGeoCoord(point.getY(), point.getX()));
 
                         if(i==(featuresSize-1)) {
+                            member.setPoint(point);
                             member.setTime(0);
                             member.setDistance(0);
                             member.setDescription(repo.getFeatures().get(i).getProperties().getDescription());
@@ -196,12 +208,24 @@ public class MapNavigationActivity extends AppCompatActivity implements
     @Override
     public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
         MapPoint.GeoCoordinate mapPointGeo = mapPoint.getMapPointGeoCoord();
+        int naviMemberSize = naviMembers.size();
         // 킬로미터(Kilo Meter) 단위
         double distanceKiloMeter =
                 distance(mapPointGeo.latitude, mapPointGeo.longitude,
                         naviMembers.get(naviCount).getPoint().y,
                         naviMembers.get(naviCount).getPoint().x, "meter");
+
+        double distanceKiloMeter2 =
+                distance(mapPointGeo.latitude, mapPointGeo.longitude,
+                        naviMembers.get(naviMemberSize-1).getPoint().y,
+                        naviMembers.get(naviMemberSize-1).getPoint().x, "meter");
+
         mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
+
+        if(distanceKiloMeter2 >= 1.0)
+            mBinding.txtNaviDistance.setText((int) distanceKiloMeter2 + "m");
+        else
+            mBinding.txtNaviDistance.setText((int) (distanceKiloMeter2*10)/10.0 + "km");
         if (distanceKiloMeter <= 3.0) {
             ++naviCount;
 
@@ -216,9 +240,9 @@ public class MapNavigationActivity extends AppCompatActivity implements
                     }
                 });
                 builder.show();*/
-            } else
+            } else {
                 mBinding.txtNaviMap.setText(naviMembers.get(naviCount).getDescription());
-
+            }
         }
 
         Log.d("currentDistance", String.valueOf(distanceKiloMeter));

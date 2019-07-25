@@ -54,6 +54,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
     ArrayList<PointDouble> naviPoints = new ArrayList<>();
     ImageButton imgBtnStart;
     RelativeLayout layout;
+    Double kilo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,7 +217,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
                 int padding = 150; // px
                 mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
-                Double kilo = repo.getFeatures().get(0).getProperties().
+                kilo = repo.getFeatures().get(0).getProperties().
                         getTotalDistance().doubleValue()/1000;
                 Double time2=(kilo/13.0)*60; // 자전거 소요시간 공식 (거리/속도)*분
 
@@ -317,6 +318,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                     intent.putExtra("startY",startY);
                     intent.putExtra("endX", endX);
                     intent.putExtra("endY",endY);
+                    intent.putExtra("kilo",kilo);
                     layout.removeAllViews();
                     startActivity(intent);
 

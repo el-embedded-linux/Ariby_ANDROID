@@ -36,8 +36,36 @@
     <RelativeLayout
         android:id="@+id/map_navi_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_weight="150">
 
     </RelativeLayout>
+    <LinearLayout
+        android:paddingTop="5dp"
+        android:paddingBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2">
+        <TextView
+            android:id="@+id/txt_navi_time"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="#000"
+            android:text="도착시간 : 500m "/>
+        <TextView
+            android:id="@+id/txt_navi_distance"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="#000"
+            android:text="남은거리 : 500m "/>
+    </LinearLayout>
 </LinearLayout>
 </layout>
