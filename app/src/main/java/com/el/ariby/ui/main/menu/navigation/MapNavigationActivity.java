@@ -145,12 +145,15 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
                 NaviMember member = new NaviMember();
                 for (int i = 0; i < featuresSize; i++) {
-                    String type = repo.getFeatures().get(i).getGeometry().getType();
+                    MapFindRepoResponse.Geometry geometry = repo.getFeatures().get(i).getGeometry();
+                    MapFindRepoResponse.Properties properties = repo.getFeatures().get(i).getProperties();
                     PointDouble point;
-                    if (type.equals("Point")) {
+                    Log.i("Navigation Array info","index = "+properties.getIndex()+" type = "+geometry.getType());
+
+                    if (geometry.getType().equals("Point")) {
                         point = new PointDouble(
-                                (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0),
-                                (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1));
+                                (Double) geometry.getCoordinates().get(0),
+                                (Double) geometry.getCoordinates().get(1));
 
                         MapPoint marketPoint3 = MapPoint.mapPointWithGeoCoord(point.getY(), point.getX());
                         naviPoints.add(point);
@@ -161,19 +164,32 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         marker5.setMarkerType(MapPOIItem.MarkerType.RedPin);
 
                         mapNaviView.addPOIItem(marker5);
-
                         polyline.addPoint(MapPoint.mapPointWithGeoCoord(point.getY(), point.getX()));
 
                         if(i==(featuresSize-1)) {
                             member.setPoint(point);
                             member.setTime(0);
                             member.setDistance(0);
-                            member.setDescription(repo.getFeatures().get(i).getProperties().getDescription());
+                            member.setDescription(properties.getDescription());
                             naviMembers.add(member);
-                            Log.e("NaviDescription", member.description);
                         }
-                    } else if (type.equals("LineString")) {
-                        List<Object> list = repo.getFeatures().get(i).getGeometry().getCoordinates();
+                        Log.i("Navigation Array","trunType = "+properties.getTurnType());
+
+                        //이전 LineString중 TrunType정보가 없는 객체에 현재의 TurnType정보를 저장
+                        for (int j = naviMembers.size()-1; j>=0; j--){
+                            NaviMember temp = naviMembers.get(j);
+                            if(temp.getTurnType()==0){
+                                temp.setTurnType(properties.getTurnType());
+                                naviMembers.add(j,temp);
+                            }
+                            else{
+                                break;
+                            }
+                        }
+
+                        //Log.e("NaviDescription", member.description);
+                    } else if (geometry.getType().equals("LineString")) {
+                        List<Object> list = geometry.getCoordinates();
                         for (int k = 0; k < list.size(); k++) { // k
                             String[] lit = String.valueOf(list.get(k)).split(" ");
                             Double lineX = Double.parseDouble(lit[0].substring(1, lit[0].length() - 1));
@@ -181,10 +197,11 @@ public class MapNavigationActivity extends AppCompatActivity implements
                             polyline.addPoint(MapPoint.mapPointWithGeoCoord(lineY, lineX));
                             member.setPoint(new PointDouble(lineX, lineY));
                         }
-                        member.setDescription(repo.getFeatures().get(i).getProperties().getDescription());
-                        member.setDistance(repo.getFeatures().get(i).getProperties().getDistance());
-                        member.setTime(repo.getFeatures().get(i).getProperties().getTime());
-                        Log.e("NaviDescription", repo.getFeatures().get(i).getProperties().getDescription());
+                        member.setDescription(properties.getDescription());
+                        member.setDistance(properties.getDistance());
+                        member.setTime(properties.getTime());
+                        member.setTurnType(0);
+                        Log.i("Navigation Array", "description = "+member.getDescription()+" Distance = "+member.getDistance()+" time = "+member.getTime());
                         naviMembers.add(member);
                     }
                     member = new NaviMember();
@@ -195,7 +212,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         distance(Double.valueOf(startY), Double.valueOf(startX),
                                 naviMembers.get(0).getPoint().y, naviMembers.get(0).getPoint().x, "meter");
                 mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
-                mBinding.txtNaviMap.setText(naviMembers.get(0).description);
+                mBinding.txtNaviMap.setText(naviMembers.get(0).description + "턴타입 : "+naviMembers.get(0).getTurnType());
             }
 
             @Override
@@ -241,7 +258,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 });
                 builder.show();*/
             } else {
-                mBinding.txtNaviMap.setText(naviMembers.get(naviCount).getDescription());
+                mBinding.txtNaviMap.setText("다음 "+naviMembers.get(naviCount).getDescription()+"/"+naviMembers.get(naviCount).getTrunTypeByText());
             }
         }
 
@@ -303,6 +320,91 @@ class NaviMember {
     PointDouble point;
     int distance;
     int time;
+    int turnType = 0;
+
+    public int getTurnType() {
+        return turnType;
+    }
+
+    public void setTurnType(int turnType) {
+        this.turnType = turnType;
+    }
+
+    public String getTrunTypeByText(){
+        switch (turnType){
+            case 0:
+                return "초기화 오류";
+            case 1:
+            case 2:
+            case 3:
+            case 5:
+            case 6:
+            case 7:
+                return "안내 없음 ";
+            case 11:
+                return "직진";
+            case 12:
+                return "좌회전";
+            case 13:
+                return "우회전";
+            case 14:
+                return "U-turn";
+            case 16:
+                return "8시 방향 좌회전";
+            case 17:
+                return "10시 방향 좌회전";
+            case 18:
+                return "2시 방향 우회전";
+            case 19:
+                return "4시 방향 우회전";
+            case 184:
+                return "경유지";
+            case 185:
+                return "첫번째 경유지";
+            case 186:
+                return "두번째 경유지";
+            case 187:
+                return "세번째 경유지";
+            case 188:
+                return "네번째 경유지";
+            case 189:
+                return "다섯번째 경유지";
+            case 125:
+                return "육교";
+            case 126:
+                return "지하보도";
+            case 127:
+                return "계단 진입";
+            case 128:
+                return "경사로 진입";
+            case 129:
+                return "계단+경사로 진입";
+            case 200:
+                return "출발지";
+            case 201:
+                return "목적지";
+            case 211:
+                return "횡단보도 ";
+            case 212:
+                return "좌측 횡단보도";
+            case 213:
+                return "우측 횡단보도";
+            case 214:
+                return "8시 방향 횡단보도";
+            case 215:
+                return "10시 방향 횡단보도";
+            case 216:
+                return "2시 방향 횡단보도";
+            case 217:
+                return "4시 방향 횡단보도";
+            case 218:
+                return "엘리베이터";
+            case 233:
+                return "직진 임시";
+            default:
+                return "알수없는 코드";
+        }
+    }
 
     public String getDescription() {
         return description;
