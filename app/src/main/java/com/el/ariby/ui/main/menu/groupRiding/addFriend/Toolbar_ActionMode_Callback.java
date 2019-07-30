@@ -71,8 +71,9 @@ public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
                         FriendListItem model = items.get(selected.keyAt(i));
                         String nickname = model.getFriend_nick();
                         String fUid = model.getfUid();
-                        Log.e("selected",nickname+", "+fUid);
-                        str.append(nickname+"*"+fUid+"*");
+                        String profile = model.getProfile();
+                        Log.e("selected",nickname+", "+fUid+", "+profile);
+                        str.append(nickname+"*"+fUid+"*"+profile+"*");
                     }
                 }
                 Log.e("string : ", String.valueOf(str));

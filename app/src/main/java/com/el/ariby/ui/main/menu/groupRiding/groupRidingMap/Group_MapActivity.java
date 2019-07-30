@@ -1,17 +1,26 @@
 package com.el.ariby.ui.main.menu.groupRiding.groupRidingMap;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
-import android.os.Build;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.el.ariby.R;
 import com.el.ariby.ui.api.MapFindApi;
@@ -31,6 +40,10 @@ import net.daum.mf.map.api.MapPointBounds;
 import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +58,18 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
     ArrayList<PointDouble> memberPoints = new ArrayList<>();
     FirebaseDatabase database;
     DatabaseReference ref;
+    String groupName;
+    int count = 100;
+    private CountDownTimer countDownTimer;
+
+    ArrayList<Double> coordinates;
+    Intent intent;
+    String startX, startY, endX, endY;
+
+    int memberTag =1;
+    MapPOIItem[] items;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,21 +80,23 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
         final ViewGroup mapViewContainer = findViewById(R.id.group_map_view);
         mapViewContainer.addView(mapView);
 
-        Intent intent = getIntent();
-        final String groupName = intent.getStringExtra("groupName");
-        String startX = intent.getStringExtra("startY");
-        final String startY = intent.getStringExtra("startX");
-        String endX = intent.getStringExtra("endY");
-        String endY = intent.getStringExtra("endX");
+        coordinates = startLocationService();
+
+        intent = getIntent();
+        groupName = intent.getStringExtra("groupName");
+        startX = intent.getStringExtra("startY");
+        startY = intent.getStringExtra("startX");
+        endX = intent.getStringExtra("endY");
+        endY = intent.getStringExtra("endX");
         Log.e("intents : ", startX+", "+startY);
 
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("GROUP_RIDING");
 
-
+        countDownTimer();
+        countDownTimer.start();
 
         getMapFind(startX, startY, endX, endY);
-
         //getMapFind(startY, startY, endY, endX);
         MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(startY), Double.parseDouble(startX));
@@ -79,30 +106,42 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
                 Double.parseDouble(endY), Double.parseDouble(endX));
 
         mapView.setMapCenterPoint(markerPointStart, true);
-        MapPOIItem marker = new MapPOIItem(); // 마커 생성
-        marker.setItemName("start");
-        marker.setTag(0);
-        marker.setMapPoint(markerPointStart);
-        marker.setMarkerType(MapPOIItem.MarkerType.BluePin);
-        marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
+        MapPOIItem startMarker = new MapPOIItem(); // 마커 생성
+        startMarker.setItemName("start");
+        startMarker.setTag(100); //start pin tag
+        startMarker.setMapPoint(markerPointStart);
+        startMarker.setMarkerType(MapPOIItem.MarkerType.BluePin);
+        startMarker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
 
-        MapPOIItem marker1 = new MapPOIItem(); // 마커 생성
-        marker1.setItemName("end");
-        marker1.setTag(1);
-        marker1.setMapPoint(markerPointEnd);
-        marker1.setMarkerType(MapPOIItem.MarkerType.BluePin);
-        marker1.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
+        MapPOIItem endMarker = new MapPOIItem(); // 마커 생성
+        endMarker.setItemName("end");
+        endMarker.setTag(101); //end pin tag
+        endMarker.setMapPoint(markerPointEnd);
+        endMarker.setMarkerType(MapPOIItem.MarkerType.BluePin);
+        endMarker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
 
-        mapView.addPOIItem(marker);
-        mapView.addPOIItem(marker1);
+        mapView.addPOIItem(startMarker);
+        mapView.addPOIItem(endMarker);
 
-        final MapPOIItem marker2 = new MapPOIItem();
+        MapPoint myPoint = MapPoint.mapPointWithGeoCoord(coordinates.get(0), coordinates.get(1));
+        MapPOIItem myMarker = new MapPOIItem();
+        myMarker.setItemName("내 위치");
+        myMarker.setTag(0); //내 위치 pin tag : 0
+        myMarker.setMapPoint(myPoint);
+        myMarker.setMarkerType(MapPOIItem.MarkerType.YellowPin);
+        myMarker.setSelectedMarkerType(MapPOIItem.MarkerType.BluePin);
+        mapView.addPOIItem(myMarker);
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+
+       ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String nameCom = null;
-                int i=2, a = 1;
+                memberTag =1;
+                int a = 1;
+                // URL url =  new URL("https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/profile%2Fprofile.png?alt=media&token=b65b2e7b-e58b-4ff5-a38d-99ce048ec97a");;
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     nameCom = snapshot.getKey();
                     if(groupName.equals(nameCom)){
@@ -113,15 +152,22 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
                             Log.e("haha : ", snapshot.child("members").getChildren().toString());
                             String getLat = snapshot.child("members").child(String.valueOf(a)).child("lat").getValue().toString();
                             String getLon = snapshot.child("members").child(String.valueOf(a)).child("lon").getValue().toString();
-                            Log.e("getLat + getLon : ", getLat + ",   " + getLon);
+                            String getProf = snapshot.child("members").child(String.valueOf(a)).child("profile").getValue().toString();
+                            String getNick = snapshot.child("members").child(String.valueOf(a)).child("nickname").getValue().toString();
+                            Log.e("getLat + getLon : ", getLat + ",   " + getLon+",   "+getProf);
                             MapPoint markPoint3 = MapPoint.mapPointWithGeoCoord(Double.parseDouble(getLat), Double.parseDouble(getLon));
-
-                            marker2.setItemName(String.valueOf(i));
-                            marker2.setTag(i);
+                            final MapPOIItem marker2 = new MapPOIItem();
+                            marker2.setItemName(String.valueOf(memberTag));
+                            marker2.setTag(memberTag);
                             marker2.setMapPoint(markPoint3);
                             marker2.setMarkerType(MapPOIItem.MarkerType.YellowPin);
+                            marker2.setSelectedMarkerType(MapPOIItem.MarkerType.YellowPin);
+
+                            // marker2.setCustomImageResourceId();
+                            // marker2.setCustomImageAutoscale(false);
+                            // marker2.setCustomImageAnchor(0.5f, 1.0f);
                             mapView.addPOIItem(marker2);
-                            i++;
+                            memberTag++;
                         }
                     }
                 }
@@ -133,29 +179,78 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
             }
         });
 
+        /*MapPOIItem[] items = mapView.getPOIItems();
+        int z = 0;
+        if(items.length > 0){
+            mapView.selectPOIItem(items[z], false);
+            z++;
+        }*/
+
         mapView.setHDMapTileEnabled(true); // HD 타일 사용여부
         mapView.setMapTilePersistentCacheEnabled(true);//다운한 지도 데이터를 단말의 영구 캐쉬 영역에 저장하는 기능
         mapView.setCurrentLocationEventListener(this);
-
-
-
-        /*MapPolyline polyline = new MapPolyline();
-        polyline.setTag(1000);
-        polyline.setLineColor(Color.argb(128,255,51,0));
-        polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(startY), Double.parseDouble(startX)));
-        polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));
-
-        mapView.addPolyline(polyline);
-
-        MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
-        int padding = 100;
-        mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));*/
     }
-
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    public void countDownTimer(){
+        countDownTimer = new CountDownTimer(11*100000, 10000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.e("countdownTimer : ", String.valueOf(count));
+                count--;
+                items = mapView.getPOIItems();
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String nameCom = null;
+                        //memberTag =1;
+                        int a = 1;
+
+                        for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            nameCom = snapshot.getKey();
+                            if(groupName.equals(nameCom)){
+                                int memberCount = (int) snapshot.child("members").getChildrenCount();
+                                Log.d("memberCount", String.valueOf(memberCount));
+                                for(a = 0; a<memberCount; a++) {
+                                    Log.e("group_activity :", nameCom);
+                                    String getLat = snapshot.child("members").child(String.valueOf(a)).child("lat").getValue().toString();
+                                    String getLon = snapshot.child("members").child(String.valueOf(a)).child("lon").getValue().toString();
+
+                                    Log.e("getLat + getLon : ", getLat + ",   " + getLon);
+                                    /*MapPoint markPoint = MapPoint.mapPointWithGeoCoord(Double.parseDouble(getLat), Double.parseDouble(getLon));
+                                    MapPOIItem poiItem = mapView.findPOIItemByTag(memberTag);
+                                    poiItem.setItemName("hahaha");*/
+
+
+                                    for(int i = 0; i < 3; i++){
+                                        Log.e("poiItems : ", items[i].getItemName()+", tag : "+items[i].getTag());
+                                    }
+
+                                    memberTag++;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void onFinish() {
+                Log.d("finished", "finished");
+                countDownTimer.start();
+            }
+        };
     }
 
     private void getMapFind(final String startX, final String startY, final String endX, final String endY) {
@@ -189,7 +284,7 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
                         memberPoints.add(points);
                         MapPOIItem marker3 = new MapPOIItem(); // 마커 생성
                         marker3.setItemName(repo.getFeatures().get(i).getProperties().getDescription());
-                        marker3.setTag(3);
+                        marker3.setTag(103);
                         marker3.setMapPoint(marketPoint3);
                         marker3.setMarkerType(MapPOIItem.MarkerType.RedPin);
 
@@ -278,6 +373,69 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
     @Override
     public void onCurrentLocationUpdateCancelled(MapView mapView) {
 
+    }
+
+    private ArrayList<Double> startLocationService() {
+        GPSListener gpsListener = new GPSListener();
+        long minTime = 10000;
+        float minDistance = 0;
+
+        LocationManager manager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getApplicationContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+
+        }
+
+        Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Double latitude = location.getLatitude();
+        Double longitude = location.getLongitude();
+        ArrayList<Double> list = new ArrayList<>();
+        list.add(latitude);
+        list.add(longitude);
+
+        String msg = "Group_Last Known Location -> Latitude : " +
+                location.getLatitude() +
+                "\nLongitude : " + location.getLongitude();
+        Log.i("Group_SampleLocation ", msg);
+
+        manager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                minTime, minDistance, gpsListener);
+
+        return list;
+    }
+
+    public class GPSListener implements LocationListener {
+        @Override
+        public void onLocationChanged(Location location) {
+            Double latitude = location.getLatitude();
+            Double longitude = location.getLongitude();
+
+            String msg = "Latitude : " + latitude + "\nLongitude : " + longitude;
+            Toast.makeText(Group_MapActivity.this, msg, Toast.LENGTH_SHORT).show();
+            Log.i("Group_GPSListener11", msg);
+            ref.child(groupName).child("leader").child("lat").setValue(latitude);
+            ref.child(groupName).child("leader").child("lon").setValue(longitude);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
     }
 
 }

@@ -147,6 +147,7 @@ public class CreateGroupActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ref.child("GROUP_RIDING").child(group_name).child("leader_nick").setValue(dataSnapshot.child("nickname").getValue());
+                ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("profile").setValue(dataSnapshot.child("userImageURL").getValue());
             }
 
             @Override
@@ -159,14 +160,14 @@ public class CreateGroupActivity extends AppCompatActivity {
         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("nickname").setValue("leader");
         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("state").setValue("true");
 
-        int a = 1;
-        for (int i = 0; i < count+2 ; i=i+2)
+        int a = 0;
+        for (int i = 0; i < count+6 ; i=i+3)
         {
             Log.e("print", array[i]);
-            //ref.child("GROUP_RIDING").child(group_name).child("members").setValue(array[i]);
             ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("uid").setValue(array[i+1]);
             ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("nickname").setValue(array[i]);
             ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("state").setValue("true");
+            ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("profile").setValue(array[i+2]);
             a++;
         }
     }
