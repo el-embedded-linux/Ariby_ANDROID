@@ -322,6 +322,15 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                     layout.removeAllViews();
                     startActivity(intent);
 
+                } else if(which == 1) {
+                    Intent intent = new Intent(getApplicationContext(),MapNavigationRaspberryActivity.class);
+                    intent.putExtra("startX",startX);
+                    intent.putExtra("startY",startY);
+                    intent.putExtra("endX", endX);
+                    intent.putExtra("endY",endY);
+                    intent.putExtra("kilo",kilo);
+                    layout.removeAllViews();
+                    startActivity(intent);
                 }
 
             }
