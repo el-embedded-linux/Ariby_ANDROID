@@ -237,10 +237,11 @@ public class MapNavigationRaspberryActivity extends AppCompatActivity implements
 
         mBinding.txtNaviMeter2.setText((int) distanceKiloMeter + "m");
 
-        if(distanceKiloMeter2 >= 1.0)
-            mBinding.txtNaviDistance2.setText((int) distanceKiloMeter2 + "m");
+        if(distanceKiloMeter2 <= 1000)
+            mBinding.txtNaviDistance2.setText("남은거리 : " + (int) distanceKiloMeter + "m");
         else
-            mBinding.txtNaviDistance2.setText((int) (distanceKiloMeter2*10)/10.0 + "km");
+            mBinding.txtNaviDistance2.setText("남은거리 : " + (int) (distanceKiloMeter2/1000*10)/10.0 + "km");
+;
         if (distanceKiloMeter <= 3.0) {
             ++naviCount;
 

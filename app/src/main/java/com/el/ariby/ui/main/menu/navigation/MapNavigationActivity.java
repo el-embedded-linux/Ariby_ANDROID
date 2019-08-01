@@ -65,7 +65,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
         endX = intent.getStringExtra("endX");
         progressDialog = new ProgressDialog(MapNavigationActivity.this);
         progressDialog.setMessage("데이터를 로딩중입니다.");
-        progressDialog.show();
 
         getMapFind(startY, startX, endY, endX);
 
@@ -76,7 +75,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 Double.parseDouble(endX), Double.parseDouble(endY));
 
 
-        progressDialog.dismiss();
 
         MapPOIItem marker = new MapPOIItem(); // 마커 생성
         marker.setItemName("출발지");
@@ -99,7 +97,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 CameraUpdateFactory.newMapPoint(markerPointStart, -1));
         mapNaviView.zoomIn(true);
 
-
+        progressDialog.show();
         try {
             Thread.sleep(2000);
             mapNaviView.setCurrentLocationTrackingMode(
@@ -108,7 +106,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        progressDialog.dismiss();
     }
 
     private void getMapFind(final String startX, final String startY,
@@ -239,10 +237,11 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
         mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
 
-        if(distanceKiloMeter2 >= 1.0)
-            mBinding.txtNaviDistance.setText((int) distanceKiloMeter2 + "m");
+        if(distanceKiloMeter2 <= 1000)
+            mBinding.txtNaviDistance.setText("남은거리 : " + (int) distanceKiloMeter + "m");
         else
-            mBinding.txtNaviDistance.setText((int) (distanceKiloMeter2*10)/10.0 + "km");
+            mBinding.txtNaviDistance.setText("남은거리 : " + (int) (distanceKiloMeter2/1000*10)/10.0 + "km");
+
         if (distanceKiloMeter <= 3.0) {
             ++naviCount;
 
