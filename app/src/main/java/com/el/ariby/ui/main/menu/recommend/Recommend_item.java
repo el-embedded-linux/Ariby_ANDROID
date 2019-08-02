@@ -2,31 +2,49 @@ package com.el.ariby.ui.main.menu.recommend;
 
 public class Recommend_item {
 
-        String image;
-        String title;
-        String kmText;
-        String rating;
-    String getImage() {
-            return this.image;
-        }
-    String getTitle() {
-            return this.title;
-        }
+    String image;
+    String title;
+    String rating;
+    String kmText;
 
-    public String getKmText() {
-        return kmText;
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getRating() {
         return rating;
     }
 
-    Recommend_item(String image, String title,String kmText, String rating) {
-            this.image = image;
-            this.title = title;
-            this.kmText = kmText;
-            this.rating = rating;
-        }
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getKmText() {
+        return kmText;
+    }
+
+    public void setKmText(String kmText) {
+        this.kmText = kmText;
+    }
+
+    public Recommend_item(String image, String title, String kmText) {
+        this.image = image;
+        this.title = title;
+        this.kmText = kmText;
+
+    }
 
 
 }

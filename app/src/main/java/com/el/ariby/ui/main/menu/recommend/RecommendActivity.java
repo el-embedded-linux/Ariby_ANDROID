@@ -1,5 +1,6 @@
 package com.el.ariby.ui.main.menu.recommend;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -31,73 +34,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecommendActivity extends AppCompatActivity {
-    final int ITEM_SIZE = 1;
-    Button day,week,month;
-    TextView rating;
-    RatingBar ratingBar;
+    CourseAdapter adapter;
+    ArrayList<Recommend_item> RecommentItems = new ArrayList<Recommend_item>();
+
     FirebaseDatabase database;
     DatabaseReference ref;
-    ImageView image;
-    ArrayList<String> ImageUrl = new ArrayList<>();
-    List<Recommend_item> items = new ArrayList<>();
-    RecommendAdapter adapter;
-    boolean finish = false;
+
+    int i=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recommend);
-        day = findViewById(R.id.day);
-        week = findViewById(R.id.week);
-        month = findViewById(R.id.month);
-        rating = findViewById(R.id.rating);
-        ratingBar = findViewById(R.id.ratingbar);
-        image =findViewById(R.id.image);
-        database = FirebaseDatabase.getInstance();
-
-        adapter =new RecommendAdapter(getApplicationContext(), items, R.layout.activity_recommend);
-
-        final List<Recommend_item> items = new ArrayList<>();
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        adapter = new CourseAdapter();
+        final RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerview) ;
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
-        doWork(new Callback() {
-            @Override
-            public void callback(ArrayList<String> data) {
-                Log.d("data1", String.valueOf(data));
-            }
-        });
 
-            Recommend_item[] item = new Recommend_item[ITEM_SIZE];
-
-            for (int i = 0; i < ITEM_SIZE; i++) {
-                items.add(item[0] = new Recommend_item("https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/profile%2FIMG_20181223_152057010.jpg?alt=media&token=f7ef5319-3f77-4d41-894c-9470ac5bbb3e", "강촌 자전거 하이킹", "21km", "1"));
-            }
-
-        add();
-
-        recyclerView.setAdapter(new RecommendAdapter(getApplicationContext(), items, R.layout.activity_recommend));
-    }
-
-    //)
-    public interface Callback {
-        void callback(ArrayList<String> data);             // Callback 인터페이스 내의 속이 없는 껍데기 함수
-    }
-
-    public void doWork(final Callback mCallback) {
+        database = FirebaseDatabase.getInstance();
         ref = database.getReference("COURSE");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for ( DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String list = String.valueOf(snapshot.child("image").getValue());
-                    ImageUrl.add(list);
-                    Log.d("url111", ImageUrl.get(0));
-
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String image = snapshot.child("image").getValue().toString();
+                    String name = snapshot.child("name").getValue().toString();
+                    String km = snapshot.child("km").getValue().toString();
+                    RecommentItems.add(new Recommend_item(image, name, km));
                 }
-                mCallback.callback(ImageUrl);
-
+                recyclerView.setAdapter(new RecommendAdapter(getApplicationContext(), RecommentItems, R.layout.activity_recommend));
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -105,15 +72,36 @@ public class RecommendActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+
     }
-    public void add(){
+    public class CourseAdapter extends BaseAdapter {
 
-        Recommend_item[] item = new Recommend_item[ITEM_SIZE];
+        @Override
+        public int getCount() {
+            return 0;
+        }
 
-        for (int i = 0; i < ITEM_SIZE; i++) {
-            items.add(item[0] = new Recommend_item("https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/profile%2FIMG_20181223_152057010.jpg?alt=media&token=f7ef5319-3f77-4d41-894c-9470ac5bbb3e", "강촌 자전거 하이킹", "21km", "1"));
-        }adapter.notifyDataSetChanged();
-            Log.d("asd","asd11");
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final Context context = parent.getContext();
+            CustomRecommend view = new CustomRecommend(context);
+            return view;
+        }
+
+        public void addItem(Recommend_item item){ RecommentItems.add(item); }
+        //public void clearItem(){rankingItems.clear();}
     }
 }
-

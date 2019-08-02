@@ -16,6 +16,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".ui.main.menu.recommend.CourseMapActivity"></activity>
         <activity android:name=".ui.main.menu.recommend.RecommendActivity"/>
         <activity android:name=".ui.main.menu.navigation.MapNavigationActivity" />
         <activity android:name=".ui.main.menu.follow.FollowerListActivity" />
@@ -43,8 +44,8 @@
         <activity android:name=".ui.join.NicknameActivity" />
         <activity android:name=".ui.login.LoginActivity">
             <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
