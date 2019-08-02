@@ -1,20 +1,18 @@
 package com.el.ariby.ui.main.menu.navigation;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityMapNavigationBinding;
+import com.el.ariby.databinding.ActivityMapRaspberryNavigationBinding;
 import com.el.ariby.ui.api.MapFindApi;
 import com.el.ariby.ui.api.SelfCall;
 import com.el.ariby.ui.api.response.MapFindRepoResponse;
@@ -33,9 +31,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class MapNavigationActivity extends AppCompatActivity implements
+public class MapNavigationRaspberryActivity extends AppCompatActivity implements
         MapView.CurrentLocationEventListener {
-    ActivityMapNavigationBinding mBinding;
+    ActivityMapRaspberryNavigationBinding mBinding;
     MapView mapNaviView;
     String startX, startY, endX, endY;
     ArrayList<PointDouble> naviPoints = new ArrayList<>();
@@ -46,10 +44,10 @@ public class MapNavigationActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_map_navigation);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_map_raspberry_navigation);
 
         mapNaviView = new MapView(this);
-        ViewGroup mapViewContainer = findViewById(R.id.map_navi_view);
+        ViewGroup mapViewContainer = findViewById(R.id.map_navi_view2);
         mapViewContainer.addView(mapNaviView);
         mapNaviView.setHDMapTileEnabled(true); // HD 타일 사용여부
         mapNaviView.setMapTilePersistentCacheEnabled(true);
@@ -63,8 +61,9 @@ public class MapNavigationActivity extends AppCompatActivity implements
         startX = intent.getStringExtra("startX");
         endY = intent.getStringExtra("endY");
         endX = intent.getStringExtra("endX");
-        progressDialog = new ProgressDialog(MapNavigationActivity.this);
+        progressDialog = new ProgressDialog(MapNavigationRaspberryActivity.this);
         progressDialog.setMessage("데이터를 로딩중입니다.");
+        progressDialog.show();
 
         getMapFind(startY, startX, endY, endX);
 
@@ -75,6 +74,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 Double.parseDouble(endX), Double.parseDouble(endY));
 
 
+        progressDialog.dismiss();
 
         MapPOIItem marker = new MapPOIItem(); // 마커 생성
         marker.setItemName("출발지");
@@ -97,7 +97,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 CameraUpdateFactory.newMapPoint(markerPointStart, -1));
         mapNaviView.zoomIn(true);
 
-        progressDialog.show();
+
         try {
             Thread.sleep(2000);
             mapNaviView.setCurrentLocationTrackingMode(
@@ -106,7 +106,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        progressDialog.dismiss();
+
     }
 
     private void getMapFind(final String startX, final String startY,
@@ -134,12 +134,12 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 Double kilo = repo.getFeatures().get(0).getProperties().
                         getTotalDistance().doubleValue()/1000;
                 Double time2=(kilo/13.0)*60; // 자전거 소요시간 공식 (거리/속도)*분
-                mBinding.txtNaviTime.setText("남은시간 : " + Math.round(time2)+"분");
+                mBinding.txtNaviTime2.setText("남은시간 : " + Math.round(time2)+"분");
 
                 if(kilo>=1.0) //
-                    mBinding.txtNaviDistance.setText("남은거리 : " + Math.round(kilo*10)/10.0+"km");
+                    mBinding.txtNaviDistance2.setText("남은거리 : " + Math.round(kilo*10)/10.0+"km");
                 else
-                    mBinding.txtNaviDistance.setText("남은거리 : " + Math.round(kilo*1000)+"m");
+                    mBinding.txtNaviDistance2.setText("남은거리 : " + Math.round(kilo*1000)+"m");
 
                 NaviMember member = new NaviMember();
                 for (int i = 0; i < featuresSize; i++) {
@@ -209,8 +209,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 double distanceKiloMeter =
                         distance(Double.valueOf(startY), Double.valueOf(startX),
                                 naviMembers.get(0).getPoint().y, naviMembers.get(0).getPoint().x, "meter");
-                mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
-                mBinding.txtNaviMap.setText(naviMembers.get(0).description + "턴타입 : "+naviMembers.get(0).getTurnType());
+                mBinding.txtNaviMeter2.setText((int) distanceKiloMeter + "m");
+                mBinding.txtNaviMap2.setText(naviMembers.get(0).description + "턴타입 : "+naviMembers.get(0).getTurnType());
             }
 
             @Override
@@ -235,13 +235,13 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         naviMembers.get(naviMemberSize-1).getPoint().y,
                         naviMembers.get(naviMemberSize-1).getPoint().x, "meter");
 
-        mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
+        mBinding.txtNaviMeter2.setText((int) distanceKiloMeter + "m");
 
         if(distanceKiloMeter2 <= 1000)
-            mBinding.txtNaviDistance.setText("남은거리 : " + (int) distanceKiloMeter + "m");
+            mBinding.txtNaviDistance2.setText("남은거리 : " + (int) distanceKiloMeter + "m");
         else
-            mBinding.txtNaviDistance.setText("남은거리 : " + (int) (distanceKiloMeter2/1000*10)/10.0 + "km");
-
+            mBinding.txtNaviDistance2.setText("남은거리 : " + (int) (distanceKiloMeter2/1000*10)/10.0 + "km");
+;
         if (distanceKiloMeter <= 3.0) {
             ++naviCount;
 
@@ -257,7 +257,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 });
                 builder.show();*/
             } else {
-                mBinding.txtNaviMap.setText("다음 "+naviMembers.get(naviCount).getDescription()+"/"+naviMembers.get(naviCount).getTrunTypeByText());
+                mBinding.txtNaviMap2.setText("다음 "+naviMembers.get(naviCount).getDescription()+"/"+naviMembers.get(naviCount).getTrunTypeByText());
             }
         }
 
@@ -311,129 +311,5 @@ public class MapNavigationActivity extends AppCompatActivity implements
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
-    }
-}
-
-class NaviMember {
-    String description;
-    PointDouble point;
-    int distance;
-    int time;
-    int turnType = 0;
-
-    public int getTurnType() {
-        return turnType;
-    }
-
-    public void setTurnType(int turnType) {
-        this.turnType = turnType;
-    }
-
-    public String getTrunTypeByText(){
-        switch (turnType){
-            case 0:
-                return "초기화 오류";
-            case 1:
-            case 2:
-            case 3:
-            case 5:
-            case 6:
-            case 7:
-                return "안내 없음 ";
-            case 11:
-                return "직진";
-            case 12:
-                return "좌회전";
-            case 13:
-                return "우회전";
-            case 14:
-                return "U-turn";
-            case 16:
-                return "8시 방향 좌회전";
-            case 17:
-                return "10시 방향 좌회전";
-            case 18:
-                return "2시 방향 우회전";
-            case 19:
-                return "4시 방향 우회전";
-            case 184:
-                return "경유지";
-            case 185:
-                return "첫번째 경유지";
-            case 186:
-                return "두번째 경유지";
-            case 187:
-                return "세번째 경유지";
-            case 188:
-                return "네번째 경유지";
-            case 189:
-                return "다섯번째 경유지";
-            case 125:
-                return "육교";
-            case 126:
-                return "지하보도";
-            case 127:
-                return "계단 진입";
-            case 128:
-                return "경사로 진입";
-            case 129:
-                return "계단+경사로 진입";
-            case 200:
-                return "출발지";
-            case 201:
-                return "목적지";
-            case 211:
-                return "횡단보도 ";
-            case 212:
-                return "좌측 횡단보도";
-            case 213:
-                return "우측 횡단보도";
-            case 214:
-                return "8시 방향 횡단보도";
-            case 215:
-                return "10시 방향 횡단보도";
-            case 216:
-                return "2시 방향 횡단보도";
-            case 217:
-                return "4시 방향 횡단보도";
-            case 218:
-                return "엘리베이터";
-            case 233:
-                return "직진 임시";
-            default:
-                return "알수없는 코드";
-        }
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getDistance() {
-        return distance;
-    }
-
-    public void setDistance(int distance) {
-        this.distance = distance;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    public void setTime(int time) {
-        this.time = time;
-    }
-
-    public PointDouble getPoint() {
-        return point;
-    }
-
-    public void setPoint(PointDouble point) {
-        this.point = point;
     }
 }

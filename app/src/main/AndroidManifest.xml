@@ -18,6 +18,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".ui.main.menu.recommend.CourseMapActivity"></activity>
         <activity android:name=".ui.main.menu.recommend.RecommendActivity"/>
+        <activity android:name=".ui.main.menu.navigation.MapNavigationRaspberryActivity" />
         <activity android:name=".ui.main.menu.navigation.MapNavigationActivity" />
         <activity android:name=".ui.main.menu.follow.FollowerListActivity" />
         <activity android:name=".ui.main.menu.club.ClubSettingActivity" />
