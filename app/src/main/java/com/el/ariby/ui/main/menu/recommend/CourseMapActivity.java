@@ -2,6 +2,7 @@ package com.el.ariby.ui.main.menu.recommend;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -11,10 +12,15 @@ import android.location.LocationManager;
 import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.el.ariby.R;
@@ -22,6 +28,8 @@ import com.el.ariby.ui.api.MapFindApi;
 import com.el.ariby.ui.api.SelfCall;
 import com.el.ariby.ui.api.response.MapFindRepoResponse;
 import com.el.ariby.ui.main.menu.groupRiding.groupRidingMap.Group_MapActivity;
+import com.el.ariby.ui.main.menu.navigation.MapNavigationActivity;
+import com.el.ariby.ui.main.menu.navigation.MapNavigationRaspberryActivity;
 import com.el.ariby.ui.main.menu.navigation.PointDouble;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -48,10 +56,13 @@ public class CourseMapActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference ref;
     String courseName;
-    int count = 100;
-    private CountDownTimer countDownTimer;
+    TextView txtTakeTime;
+    TextView txtTakeKilo;
+    TextView txtTakeKcal;
+    ImageButton imgBtnStart;
+    RelativeLayout layout;
+    Double kilo;
 
-    ArrayList<Double> coordinates;
     Intent intent;
     String startX, startY, endX, endY;
 
@@ -65,6 +76,13 @@ public class CourseMapActivity extends AppCompatActivity {
         mapView = new MapView(this);
         final ViewGroup mapViewContainer = findViewById(R.id.map_view);
         mapViewContainer.addView(mapView);
+        txtTakeTime = findViewById(R.id.txt_take_time);
+        txtTakeKilo = findViewById(R.id.txt_take_kilo);
+
+        txtTakeKcal = findViewById(R.id.txt_take_kcal);
+        imgBtnStart = findViewById(R.id.imgbtn_navi_start);
+        layout=findViewById(R.id.relative);
+
         mapView.setHDMapTileEnabled(true); // HD 타일 사용여부
         mapView.setMapTilePersistentCacheEnabled(true);//다운한 지도 데이터를 단말의 영구 캐쉬 영역에 저장하는 기능
 
@@ -72,10 +90,10 @@ public class CourseMapActivity extends AppCompatActivity {
 
         intent = getIntent();
         courseName = intent.getStringExtra("courseName");
-        startX = intent.getStringExtra("startY");
-        startY = intent.getStringExtra("startX");
-        endX = intent.getStringExtra("endY");
-        endY = intent.getStringExtra("endX");
+        startX = intent.getStringExtra("startX");
+        startY = intent.getStringExtra("startY");
+        endX = intent.getStringExtra("endX");
+        endY = intent.getStringExtra("endY");
         Log.e("intents : ", startX+", "+startY);
 
 
@@ -113,8 +131,20 @@ public class CourseMapActivity extends AppCompatActivity {
 //        myMarker.setMarkerType(MapPOIItem.MarkerType.YellowPin);
 //        myMarker.setSelectedMarkerType(MapPOIItem.MarkerType.BluePin);
 //        mapView.addPOIItem(myMarker);
-
+        imgBtnStart.setOnClickListener(new View.OnClickListener() {
+                                           @Override
+                                           public void onClick(View v) {
+                                               choiceNavigation();
+                                           }
+                                       }
+        );
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     private void getMapFind(final String startX, final String startY, final String endX, final String endY) {
         Retrofit retrofit = SelfCall.createRetrofit(MapFindApi.BASEURL);
         MapFindApi apiService = retrofit.create(MapFindApi.class);
@@ -169,7 +199,18 @@ public class CourseMapActivity extends AppCompatActivity {
                 MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
                 int padding = 150; // px
                 mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
+                kilo = repo.getFeatures().get(0).getProperties().
+                        getTotalDistance().doubleValue()/1000;
+                Double time2=(kilo/13.0)*60; // 자전거 소요시간 공식 (거리/속도)*분
 
+                int kcal = (int)(72*0.0939*Math.round(time2)); // 평균 몸무게 62 + 자전거 무게 10 * 속도칼로리소비계수*분
+                txtTakeTime.setText(Math.round(time2)+"분");
+                if(kilo>=1.0) //
+                    txtTakeKilo.setText(Math.round(kilo*10)/10.0+"km");
+                else
+                    txtTakeKilo.setText(Math.round(kilo*1000)+"m");
+
+                txtTakeKcal.setText(kcal+"kcal");
             }
 
             @Override
@@ -238,5 +279,44 @@ public class CourseMapActivity extends AppCompatActivity {
         public void onProviderDisabled(String provider) {
 
         }
+    }
+
+
+
+    private void choiceNavigation() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("스마트폰");
+        list.add("라즈베리파이");
+
+        final CharSequence[] items = list.toArray(new String[list.size()]);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("디바이스 선택");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(which == 0) {
+                    Intent intent = new Intent(getApplicationContext(), MapNavigationActivity.class);
+                    intent.putExtra("startX",startY);
+                    intent.putExtra("startY",startX);
+                    intent.putExtra("endX", endY);
+                    intent.putExtra("endY",endX);
+                    intent.putExtra("kilo",kilo);
+                    layout.removeAllViews();
+                    startActivity(intent);
+
+                } else if(which == 1) {
+                    Intent intent = new Intent(getApplicationContext(), MapNavigationRaspberryActivity.class);
+                    intent.putExtra("startX",startX);
+                    intent.putExtra("startY",startY);
+                    intent.putExtra("endX", endX);
+                    intent.putExtra("endY",endY);
+                    intent.putExtra("kilo",kilo);
+                    layout.removeAllViews();
+                    startActivity(intent);
+                }
+
+            }
+        });
+        builder.show();
     }
 }

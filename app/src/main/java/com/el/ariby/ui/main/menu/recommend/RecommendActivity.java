@@ -57,11 +57,14 @@ public class RecommendActivity extends AppCompatActivity {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int number=1;
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     String image = snapshot.child("image").getValue().toString();
                     String name = snapshot.child("name").getValue().toString();
                     String km = snapshot.child("km").getValue().toString();
-                    RecommentItems.add(new Recommend_item(image, name, km));
+                    RecommentItems.add(new Recommend_item(image, name, km,String.valueOf(number)));
+                    number++;
+                    Log.d("number", String.valueOf(number));
                 }
                 recyclerView.setAdapter(new RecommendAdapter(getApplicationContext(), RecommentItems, R.layout.activity_recommend));
                 adapter.notifyDataSetChanged();

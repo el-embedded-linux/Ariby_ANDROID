@@ -17,6 +17,7 @@ import com.el.ariby.databinding.FragmentChallengeBinding;
 import com.el.ariby.ui.main.menu.challenge.challenge_child.ChallengeAdapter;
 import com.el.ariby.ui.main.menu.groupRiding.GroupRideActivity;
 import com.el.ariby.ui.main.menu.groupRiding.SingleRideActivity;
+import com.el.ariby.ui.main.menu.recommend.RecommendActivity;
 
 import java.security.acl.Group;
 
@@ -52,6 +53,13 @@ public class CourseFragment extends Fragment {
             }
         });
 
+        course.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), RecommendActivity.class);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 

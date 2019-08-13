@@ -6,6 +6,15 @@ public class Recommend_item {
     String title;
     String rating;
     String kmText;
+    String number;
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
     public String getImage() {
         return image;
@@ -39,11 +48,11 @@ public class Recommend_item {
         this.kmText = kmText;
     }
 
-    public Recommend_item(String image, String title, String kmText) {
+    public Recommend_item(String image, String title, String kmText, String number) {
         this.image = image;
         this.title = title;
         this.kmText = kmText;
-
+        this.number = number;
     }
 
 

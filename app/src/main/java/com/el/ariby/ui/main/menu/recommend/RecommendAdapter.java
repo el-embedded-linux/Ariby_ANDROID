@@ -77,11 +77,11 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.View
                             Log.e("courseName : ", snapshot.getKey());
                             if(course.equals(nameCom)){
                                 Log.d("nameCom", nameCom);
-                                startX = snapshot.child("startPoint").child("lon").getValue().toString();
-                                startY = snapshot.child("startPoint").child("lat").getValue().toString();
+                                startX = snapshot.child("startPoint").child("lat").getValue().toString();
+                                startY = snapshot.child("startPoint").child("lon").getValue().toString();
 
-                                endX = snapshot.child("endPoint").child("lon").getValue().toString();
-                                endY = snapshot.child("endPoint").child("lat").getValue().toString();
+                                endX = snapshot.child("endPoint").child("lat").getValue().toString();
+                                endY = snapshot.child("endPoint").child("lon").getValue().toString();
 
                                 Log.e("Adapter : ", startX+",   "+startY);
 
