@@ -310,9 +310,12 @@ public class DustFragment extends Fragment {
                         for (int i = 0; i < count; i++) {
                             if (repo.getResponse().getBody().getItems()
                                     .getItem().get(i).getCategory().equals("T1H")) {
-                                int fcstValue = repo.getResponse().getBody().getItems()
+                                Double fcstValue = (Double) repo.getResponse().getBody().getItems()
                                         .getItem().get(i).getFcstValue();
-                                mBinding.btnWeather.setText(fcstValue+"°");
+
+                                int fcst = fcstValue.intValue();
+
+                                mBinding.btnWeather.setText(fcst+"°");
                                 break;
                             }
                         }

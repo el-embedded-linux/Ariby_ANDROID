@@ -115,7 +115,7 @@ public class WeatherRepoResponse {
                     private String category;
                     private int fcstDate;
                     private int fcstTime;
-                    private int fcstValue;
+                    private Object fcstValue;
                     private int nx;
                     private int ny;
 
@@ -159,11 +159,11 @@ public class WeatherRepoResponse {
                         this.fcstTime = fcstTime;
                     }
 
-                    public int getFcstValue() {
+                    public Object getFcstValue() {
                         return fcstValue;
                     }
 
-                    public void setFcstValue(int fcstValue) {
+                    public void setFcstValue(Object fcstValue) {
                         this.fcstValue = fcstValue;
                     }
 
