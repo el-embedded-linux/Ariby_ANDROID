@@ -63,8 +63,7 @@ public class DustFragment extends Fragment {
     public static Double longitude;
 
     private FragmentDustBinding mBinding;
-    String openKey = "vMgzVOM7K3D3t89QY%2F%2FtYxGc7fTDhMi3AkGC" +
-            "qakZut7sDmQCzfeWtcT9NDRbrR4dK8OBJsR5d4QwhZkn%2FeTZ3w%3D%3D";
+    String openKey = "5QyVwm0GQxAdvNdc%2BRHjoLPF07dmzuYnQi%2F2BiMLpPQtGwPItZolkz4GLA4PPiS7pgTGKhGBhn5GHi8t9WRcnQ%3D%3D";
     String kakaoKey = "KakaoAK e880d656790ed7e10098f0742679154e";
 
     @Nullable
@@ -293,13 +292,13 @@ public class DustFragment extends Fragment {
                     baseTime,
                     nx,
                     ny,
-                    "10",
+                    "20",
                     "1",
                     "json");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        Log.d("call : ", call.toString());
+        Log.d("weatherCall : ", call.toString());
         call.enqueue(new Callback<WeatherRepoResponse>() {
             @Override
             public void onResponse(Call<WeatherRepoResponse> call,

@@ -199,18 +199,21 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         member.setDistance(properties.getDistance());
                         member.setTime(properties.getTime());
                         member.setTurnType(0);
-                        Log.i("Navigation Array", "description = "+member.getDescription()+" Distance = "+member.getDistance()+" time = "+member.getTime());
+                        Log.i("Navigation Array", "description = "+member.getDescription()
+                                +" Distance = "+member.getDistance()+" time = "+member.getTime());
                         naviMembers.add(member);
                     }
                     member = new NaviMember();
                 }
-                polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));
+                polyline.addPoint(
+                        MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));
                 mapNaviView.addPolyline(polyline);
                 double distanceKiloMeter =
                         distance(Double.valueOf(startY), Double.valueOf(startX),
                                 naviMembers.get(0).getPoint().y, naviMembers.get(0).getPoint().x, "meter");
                 mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
-                mBinding.txtNaviMap.setText(naviMembers.get(0).description + "턴타입 : "+naviMembers.get(0).getTurnType());
+                mBinding.txtNaviMap.setText(naviMembers.get(0).description
+                        + "턴타입 : "+naviMembers.get(0).getTurnType());
             }
 
             @Override
@@ -257,7 +260,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 });
                 builder.show();*/
             } else {
-                mBinding.txtNaviMap.setText("다음 "+naviMembers.get(naviCount).getDescription()+"/"+naviMembers.get(naviCount).getTrunTypeByText());
+                mBinding.txtNaviMap.setText("다음 "+naviMembers.get(naviCount).getDescription()+"/"+
+                        naviMembers.get(naviCount).getTrunTypeByText());
             }
         }
 
