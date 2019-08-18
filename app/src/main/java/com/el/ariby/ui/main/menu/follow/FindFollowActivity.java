@@ -48,6 +48,9 @@ public class FindFollowActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUid = user.getUid();
 
+        followingUid=null;
+        followerNumList=null;
+        followingNumList=null;
               //요소의 크기만큼 돌면서
 
 
@@ -134,7 +137,6 @@ public class FindFollowActivity extends AppCompatActivity {
         });
 
     }
-
     public interface Callback {
         void success(ArrayList<String> data, ArrayList<String[]> followerNum, ArrayList<String[]> followingNum);
 

@@ -20,17 +20,23 @@ import java.util.ArrayList;
 public class FollowerListActivity extends AppCompatActivity {
     DatabaseReference ref;
     DatabaseReference userref;
+    DatabaseReference followref,followerNumRef, follwingNumRef;
     FirebaseDatabase database;
     EditText editTextFilter;
     FollowerListAdapter adapter;
     ListView listView;
     FirebaseUser user;
     String uid,followuid;
-
+    String myUid, userUid;
+    int followCount;
+    String follower, following;
+    ArrayList<String> followingUid = new ArrayList<>();
+    ArrayList<String[]> followingNumList = new ArrayList<String[]>();
+    ArrayList<String[]> followerNumList = new ArrayList<String[]>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_follower_list);
+        setContentView(R.layout.activity_follow_list);
 
         adapter = new FollowerListAdapter();
         editTextFilter = findViewById(R.id.find);
@@ -38,50 +44,145 @@ public class FollowerListActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         database = FirebaseDatabase.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        uid = user.getUid();
-        ref = database.getReference("FRIEND").child("follower").child(uid);
+        myUid = user.getUid();
         userref = database.getReference("USER");
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        loadData(new Callback() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            public void success(ArrayList<String> data, ArrayList<String[]> followerNum, ArrayList<String[]> followingNum) {
+                followingUid=data;
+                followerNumList=followerNum;
+                followingNumList=followingNum;
 
-                    userref.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
-                                String user = snapshot1.getKey();
-                                followuid = snapshot.getKey();
-                                if(followuid.equals(user)) {
-                                    String url = (String) snapshot1.child("userImageURL").getValue();
-                                    String nickname = dataSnapshot.child(user).child("nickname").getValue().toString();
-                                    String following = snapshot1.child("following").getValue().toString();
-                                    String follower = snapshot1.child("follower").getValue().toString();
-                                    Log.d("123321", nickname);
-                                    adapter.addItem(new FollowItem(url, nickname,following,follower));
+                ref = database.getReference("USER");
+                ref.addListenerForSingleValueEvent(new ValueEventListener() { // USER
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Log.d("align", "2");
+                            userUid = snapshot.getKey();
+                            boolean a = false;
+                            Log.d("asd", userUid);
 
+                            for (int j = 0; j < followCount; j++) {
+                                if (userUid.equals(followingUid.get(j))) {
+                                    a = true;
+                                }
+                            }
+
+                            if (a) {
+                                String url = (String) snapshot.child("userImageURL").getValue();
+                                String nickname = snapshot.child("nickname").getValue().toString();
+
+                                for(int t=0; t<followingNumList.size(); t++)  {
+                                    if(followingNumList.get(t)[0].equals(userUid)){
+                                        if(followingNumList.get(t)[1].equals(null)){
+                                            following = String.valueOf(0);
+                                        } else {
+                                            following = followingNumList.get(t)[1];
+                                        }
+                                    }
+                                }
+                                //요소의 크기만큼 돌면서
+                                for(int t=0; t<followerNumList.size(); t++){
+                                    if(followerNumList.get(t)[0].equals(userUid)){
+                                        if(followerNumList.get(t)[1].equals(null)){
+                                            follower = String.valueOf(0);
+                                        } else {
+                                            follower = followerNumList.get(t)[1];
+                                        }
+                                    }
                                 }
 
+                                Log.d("getChildrenCount",follower+"\n"+following+"\n"+snapshot.getRef()+"\n"+userUid);
+                                adapter.addItem(new FollowItem(url, nickname, following, follower));
                             }
                             adapter.notifyDataSetChanged();
                         }
+                        adapter.notifyDataSetChanged();
+                    }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
-                }
-                adapter.notifyDataSetChanged();
+                    }
+                });
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void fail(String errorMessage) {
 
             }
         });
 
+
+    }
+
+
+    public interface Callback {
+        void success(ArrayList<String> data, ArrayList<String[]> followerNum, ArrayList<String[]> followingNum);
+
+        void fail(String errorMessage);
+    }
+
+    public void loadData(final Callback callback) {
+        followref = database.getReference("FRIEND").child("follower").child(myUid);
+        followerNumRef = database.getReference("FRIEND").child("follower");
+        follwingNumRef= database.getReference("FRIEND").child("following");
+
+        followref.addListenerForSingleValueEvent(new ValueEventListener() { //following
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                followCount = (int) dataSnapshot.getChildrenCount();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String list = snapshot.getKey();
+                    followingUid.add(list);
+                    Log.d("align", "1");
+                }
+
+            }
+
+            // * 내가 팔로잉 되어있는 UID를 ArrayList<String> followingUid에 추가함 *
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        follwingNumRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String uid = snapshot.getKey();
+
+                    following = String.valueOf(snapshot.getChildrenCount());
+                    followingNumList.add(new String[]{uid, following});
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        followerNumRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String uid = snapshot.getKey();
+                    follower = String.valueOf(snapshot.getChildrenCount());
+                    followerNumList.add(new String[]{uid, follower});
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        callback.success(followingUid,followingNumList,followerNumList);
 
     }
 }
