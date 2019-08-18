@@ -50,7 +50,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".SplashActivity" />
+        <activity android:name=".SplashActivity">
+
+        </activity>
         <activity android:name=".FirstActivity" />
         <activity android:name=".ui.join.HeightActivity" />
         <activity android:name=".ui.join.WeightActivity" />

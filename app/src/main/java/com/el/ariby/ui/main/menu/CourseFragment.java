@@ -36,7 +36,7 @@ public class CourseFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_group, container, false);
         single = view.findViewById(R.id.single);
         group = view.findViewById(R.id.group);
-        course = view.findViewById(R.id.cource);
+        course = view.findViewById(R.id.course);
         single.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
