@@ -9,7 +9,7 @@ public class ContentsPagerAdapter extends FragmentStatePagerAdapter {
     private DustFragment dustFragment = new DustFragment();
     private ClubFragment clubFragment=new ClubFragment();
     private RankFragment rankFragment=new RankFragment();
-    private HealthFragment healthFragment=new HealthFragment();
+    private RecommendCourseFragment recommendCourseFragment=new RecommendCourseFragment();
     private CourseFragment courseFragment=new CourseFragment();
 
     public  ContentsPagerAdapter(FragmentManager fm,int pageCount) {
@@ -27,7 +27,7 @@ public class ContentsPagerAdapter extends FragmentStatePagerAdapter {
             case 2:
                 return rankFragment;
             case 3:
-                return healthFragment;
+                return recommendCourseFragment;
             case 4:
                 return courseFragment;
             default:
