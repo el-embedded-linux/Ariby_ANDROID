@@ -1,1 +1,1 @@
-# Bycycle Riding Application
+# Bicycle Riding Application
