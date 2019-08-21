@@ -124,7 +124,7 @@ public class DustFragment extends Fragment {
                     CoordRepoResponse repo = response.body();
                     String x = Double.toString(repo.getDocuments().get(0).getX());
                     String y = Double.toString(repo.getDocuments().get(0).getY());
-                    Log.e("DustGetCoord","Success");
+                    Log.e("DustGetCoord", "Success");
                     getMeasure(x, y, "json");
                 }
             }
@@ -193,7 +193,7 @@ public class DustFragment extends Fragment {
                                    Response<DustRepoResponse> response) {
                 if (response.isSuccessful()) {
                     DustRepoResponse repo = response.body();
-                    Boolean khaiRoad=true;
+                    Boolean khaiRoad = true;
                     Log.e("DustGetDust", repo.getList().get(1).getPm10Value());
                     if (repo != null) {
                         for (int i = 0; i < repo.getList().size(); i++) { // 시간 별 대기정보를 저장함.
@@ -220,12 +220,12 @@ public class DustFragment extends Fragment {
                                         Integer.parseInt(list.getPm25Value()),
                                         Double.parseDouble(list.getNo2Value()),
                                         Double.parseDouble(list.getCoValue()));
-                                khaiRoad=false;
+                                khaiRoad = false;
                                 break;
                             }
                         }
-                        Log.e("KhaiRoadState",String.valueOf(khaiRoad));
-                        if(khaiRoad) {
+                        Log.e("KhaiRoadState", String.valueOf(khaiRoad));
+                        if (khaiRoad) {
                             for (int i = 0; i < dustHourData.size(); i++) {
                                 if (!isNullDustData(dustHourData.get(i))) {
                                     DustHourData list = dustHourData.get(i);
@@ -269,7 +269,7 @@ public class DustFragment extends Fragment {
                                    Response<MeasureRepoResponse> response) {
                 if (response.isSuccessful()) {
                     MeasureRepoResponse repo = response.body();
-                    Log.e("DustGetMeasure",repo.getList().get(0).getStationName());
+                    Log.e("DustGetMeasure", repo.getList().get(0).getStationName());
                     getDustData(10, 1, repo.getList().get(0).getStationName(), "DAILY", "1.3");
                 }
             }
@@ -315,7 +315,7 @@ public class DustFragment extends Fragment {
 
                                 int fcst = fcstValue.intValue();
 
-                                mBinding.btnWeather.setText(fcst+"°");
+                                mBinding.btnWeather.setText(fcst + "°");
                                 break;
                             }
                         }
@@ -332,10 +332,8 @@ public class DustFragment extends Fragment {
 
     private void startLocationService() {
         DustFragment.GPSListener gpsListener = new DustFragment.GPSListener();
-        long minTime = 10000;
-        float minDistance = 0;
-        String locationProvider;
         LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
         if (ActivityCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(),
@@ -346,15 +344,15 @@ public class DustFragment extends Fragment {
         }
 
         // LocationManaer.NETWORK_PROVIDER : 기지국들로부터 현재 위치 확인
-        // LocationManaer.GPS_PROVIDER : GPS들로부터 현재 위치 확인
-        if (manager.isProviderEnabled(manager.NETWORK_PROVIDER) == true) {
-            locationProvider = LocationManager.NETWORK_PROVIDER;
-        } else
-            locationProvider = LocationManager.GPS_PROVIDER;
-
-        Location location = manager.getLastKnownLocation(locationProvider);
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
+        Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (location != null) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            String msg = "Last Known Location -> Latitude : " +
+                    location.getLatitude() +
+                    "\nLongitude : " + location.getLongitude();
+            Log.i("SampleLocation ", msg);
+        }
         long now = System.currentTimeMillis(); // 현재시간
         Date date = new Date(now);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -363,17 +361,10 @@ public class DustFragment extends Fragment {
         String getTime = sdf.format(date);
         String getHourMin = hour.format(date);
 
-        String msg = "Last Known Location -> Latitude : " +
-                location.getLatitude() +
-                "\nLongitude : " + location.getLongitude();
-        Log.i("SampleLocation ", msg);
-
         manager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                minTime, minDistance, gpsListener);
+                LocationManager.GPS_PROVIDER, 0, 0, gpsListener);
         manager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                minTime, minDistance, gpsListener);
+                LocationManager.NETWORK_PROVIDER, 0, 0, gpsListener);
 
         getGeo(longitude.toString(), latitude.toString(), "WGS84");
         getCoord(longitude.toString(), latitude.toString());
@@ -383,6 +374,8 @@ public class DustFragment extends Fragment {
                 getHourMin,
                 String.valueOf((int) data.x),
                 String.valueOf((int) data.y));
+
+        manager.removeUpdates(gpsListener);
     }
 
     private class GPSListener implements LocationListener {
