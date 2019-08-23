@@ -19,4 +19,14 @@ public interface MapFindApi {
                                          @Query("endY") String endY,
                                          @Query("startName") String startName,
                                          @Query("endName") String endName);
+
+    Call<MapFindRepoResponse> getMapFind2(@Header("appKey") String key,
+                                         @Query("version") String version,
+                                         @Query("startX") String startX,
+                                         @Query("startY") String startY,
+                                         @Query("endX") String endX,
+                                         @Query("endY") String endY,
+                                         @Query("startName") String startName,
+                                         @Query("endName") String endName,
+                                          @Query("passList") String passList);
 }
