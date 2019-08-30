@@ -135,8 +135,8 @@ public class CreateGroupActivity extends AppCompatActivity {
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("nickname").setValue(array[i]);
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("state").setValue("true");
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("profile").setValue(array[i+2]);
-                    //ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lat").setValue(lat);
-                    //ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lon").setValue(lon);
+                    ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lat").setValue(lat);
+                    ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lon").setValue(lon);
                     lat = lat+0.1;
                     lon = lon+0.1;
                     a++;
