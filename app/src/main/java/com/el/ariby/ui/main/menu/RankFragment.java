@@ -195,6 +195,7 @@ public class RankFragment extends Fragment {
         });
 
 
+
         btnTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
