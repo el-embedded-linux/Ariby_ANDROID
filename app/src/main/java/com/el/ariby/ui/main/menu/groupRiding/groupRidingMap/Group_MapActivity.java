@@ -16,9 +16,15 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -55,7 +61,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class Group_MapActivity extends AppCompatActivity
-        implements MapView.CurrentLocationEventListener{
+        implements MapView.CurrentLocationEventListener, NavigationView.OnNavigationItemSelectedListener {
     MapView mapView;
     FloatingActionButton fab;
     ArrayList<PointDouble> memberPoints = new ArrayList<>();
@@ -87,7 +93,18 @@ public class Group_MapActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_map);
+        setContentView(R.layout.activity_group_riding_main);
+        Toolbar toolbar = findViewById(R.id.group_riding_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(null);
+        DrawerLayout drawerLayout = findViewById(R.id.group_drawer_layout2);
+        NavigationView navigationView = findViewById(R.id.group_nav_view);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close );
+        drawerLayout.addDrawerListener(toggle);
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorBlack));
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
+
         mapView = new MapView(this);
 
         final ViewGroup mapViewContainer = findViewById(R.id.group_map_view);
@@ -172,15 +189,15 @@ public class Group_MapActivity extends AppCompatActivity
                             marker2.setItemName(String.valueOf(memberTag));
                             marker2.setTag(memberTag);
                             marker2.setMapPoint(markPoint3);
-                            marker2.setMarkerType(MapPOIItem.MarkerType.CustomImage);
+                            /*marker2.setMarkerType(MapPOIItem.MarkerType.CustomImage);
                             marker2.setCustomImageResourceId(R.drawable.default_image);
                             marker2.setCustomImageAutoscale(true);
                             marker2.setCustomImageAnchor(0.5f, 1.0f);
-
+*/
                             //marker2.setCustomImageResourceId(drawableFromUrl(getProf));
-                            //marker2.setMarkerType(MapPOIItem.MarkerType.YellowPin);
-                           // marker2.setSelectedMarkerType(MapPOIItem.MarkerType.YellowPin);
-                            //marker.add(marker2);
+                            marker2.setMarkerType(MapPOIItem.MarkerType.YellowPin);
+                            marker2.setSelectedMarkerType(MapPOIItem.MarkerType.YellowPin);
+                            marker.add(marker2);
                            mapView.addPOIItem(marker2);
                             memberTag++;
                         }
@@ -305,6 +322,12 @@ public class Group_MapActivity extends AppCompatActivity
 
     public void onBackPressed(){
         countDownTimer.cancel();
+        DrawerLayout drawerLayout = findViewById(R.id.group_drawer_layout2);
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }else{
+            super.onBackPressed();
+        }
         super.onBackPressed();
     }
 
@@ -468,5 +491,10 @@ public class Group_MapActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
+
+        return false;
+    }
 }
