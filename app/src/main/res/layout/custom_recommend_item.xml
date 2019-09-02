@@ -5,11 +5,22 @@
     android:layout_height="match_parent"
     android:background="#fff"
     android:orientation="vertical">
-
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#666"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"></FrameLayout>
     <android.support.v7.widget.CardView
         android:id="@+id/cardview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        card_view:cardCornerRadius="0dp"
+        card_view:cardElevation="0dp"
+        card_view:cardUseCompatPadding="false">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -17,17 +28,19 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:padding="10dp"
                 android:layout_marginRight="10dp"
-                android:id="@+id/rating"
+                android:padding="10dp"
                 android:text="1" />
+
             <ImageView
                 android:id="@+id/image"
                 android:layout_width="80dp"
                 android:layout_height="80dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,34 +49,37 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="20dp">
+                    android:layout_marginLeft="10dp"
+                    android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="right"
                         android:padding="10dp"
-                        android:text="test"
-                        android:gravity="right"/>
+                        android:text="test" />
 
                 </LinearLayout>
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginLeft="20dp">
-                <TextView
-                    android:id="@+id/kmText"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="test" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="km" />
-            </LinearLayout>
+                    android:layout_marginLeft="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/kmText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="test" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="km" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

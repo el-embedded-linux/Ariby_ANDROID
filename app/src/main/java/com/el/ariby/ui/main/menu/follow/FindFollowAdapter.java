@@ -122,9 +122,8 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
                                             followref.child("following").child(user).child(addUserUid).setValue("true");
                                             followref.child("follower").child(addUserUid).child(user).setValue("true");
 
-                                            addfollow.setText("팔로우");
-                                            FollowItemList.remove(pos);
-                                            userUidList.remove(pos);
+                                            addfollow.setText("팔로잉");
+                                            addfollow.setEnabled(false);
                                             adapter.notifyDataSetChanged();
                                             Toast.makeText(context, "팔로잉 되었습니다.", Toast.LENGTH_SHORT).show();
                                             break;
@@ -247,4 +246,5 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
         });
 
     }
+
 }

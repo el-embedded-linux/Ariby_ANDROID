@@ -108,10 +108,8 @@ public class FollowListAdapter extends BaseAdapter implements Filterable {
                         Log.d("유저", uidList.get(pos));
                         followref.child("following").child(String.valueOf(user)).child(uidList.get(pos)).setValue(null);
                         followref.child("follower").child(uidList.get(pos)).child(String.valueOf(user)).setValue(null);
-
-                        FollowItemList.remove(pos);
-                        canclefollow.setText("팔로우 끊기");
-                        uidList.remove(pos);
+                        canclefollow.setText("팔로우");
+                        canclefollow.setEnabled(false);
                         adapter.notifyDataSetChanged();
 
                         Toast.makeText(context, "팔로잉이 취소 되었습니다.", Toast.LENGTH_SHORT).show();

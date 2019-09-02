@@ -48,13 +48,7 @@ public class FindFollowActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUid = user.getUid();
 
-        followingUid=null;
-        followerNumList=null;
-        followingNumList=null;
               //요소의 크기만큼 돌면서
-
-
-
 
                 loadData(new Callback() {
                     @Override
@@ -147,7 +141,6 @@ public class FindFollowActivity extends AppCompatActivity {
         followref = database.getReference("FRIEND").child("following").child(myUid);
         followerNumRef = database.getReference("FRIEND").child("follower");
         follwingNumRef= database.getReference("FRIEND").child("following");
-
         followref.addListenerForSingleValueEvent(new ValueEventListener() { //following
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -155,7 +148,6 @@ public class FindFollowActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String list = snapshot.getKey();
                     followingUid.add(list);
-                    Log.d("align", "1");
                 }
 
             }
@@ -173,8 +165,8 @@ public class FindFollowActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     String uid = snapshot.getKey();
 
-                        following = String.valueOf(snapshot.getChildrenCount());
-                        followingNumList.add(new String[]{uid, following});
+                    following = String.valueOf(snapshot.getChildrenCount());
+                    followingNumList.add(new String[]{uid, following});
                 }
             }
 
@@ -189,10 +181,9 @@ public class FindFollowActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                  for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                      String uid = snapshot.getKey();
-                         follower = String.valueOf(snapshot.getChildrenCount());
-                         followerNumList.add(new String[]{uid, follower});
-
-                }
+                        follower = String.valueOf(snapshot.getChildrenCount());
+                        followerNumList.add(new String[]{uid, follower});
+                 }
             }
 
             @Override

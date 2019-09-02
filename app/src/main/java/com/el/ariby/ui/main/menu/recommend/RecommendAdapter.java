@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.el.ariby.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -55,7 +56,7 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.View
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("COURSE");
         final Recommend_item item = items.get(position);
-        Glide.with(holder.itemView.getContext()).load(item.getImage()).into(holder.image);
+        Glide.with(holder.itemView.getContext()).load(item.getImage()).apply(RequestOptions.circleCropTransform()).into(holder.image);
         holder.title.setText(item.getTitle());
         holder.rating.setText(item.getRating());
         holder.kmText.setText(item.getKmText());

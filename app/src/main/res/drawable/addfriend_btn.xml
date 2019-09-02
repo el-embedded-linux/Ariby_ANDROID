@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:state_enabled="true"
+        android:drawable="@drawable/ic_person_black_24dp"/>
+    <!-- selector가 눌렸을때 @drawable/button01_press 를 보여준다.-->
+    <item
+        android:state_enabled="false"
+        android:drawable="@drawable/ic_check_black_24dp"/>
+
+    <!-- selector가 눌리지 않았을때 @drawable/button01_normal 를 보여준다.-->
+
+</selector>
