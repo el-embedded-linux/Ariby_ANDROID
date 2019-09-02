@@ -80,11 +80,11 @@ public class CustomRanking extends LinearLayout {
     }
 
     public void setTxtRidingDis(String txtRidingDis) {
-        String disStr = "거리 : "+txtRidingDis+"km";
+        String disStr = txtRidingDis+"km";
         this.txtRidingDis.setText(disStr); }
 
     public void setTxtRidingTime(String txtRidingTime) {
-        String timeStr = "시간 : "+txtRidingTime;
+        String timeStr = txtRidingTime;
         this.txtRidingTime.setText(timeStr); }
 
 }

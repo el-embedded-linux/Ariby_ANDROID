@@ -5,17 +5,26 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -39,6 +48,10 @@ import net.daum.mf.map.api.MapPointBounds;
 import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +60,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class Group_MapActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener {
+public class Group_MapActivity extends AppCompatActivity
+        implements MapView.CurrentLocationEventListener, NavigationView.OnNavigationItemSelectedListener {
     MapView mapView;
     FloatingActionButton fab;
     ArrayList<PointDouble> memberPoints = new ArrayList<>();
@@ -79,7 +93,18 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_map);
+        setContentView(R.layout.activity_group_riding_main);
+        Toolbar toolbar = findViewById(R.id.group_riding_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(null);
+        DrawerLayout drawerLayout = findViewById(R.id.group_drawer_layout2);
+        NavigationView navigationView = findViewById(R.id.group_nav_view);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close );
+        drawerLayout.addDrawerListener(toggle);
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorBlack));
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
+
         mapView = new MapView(this);
 
         final ViewGroup mapViewContainer = findViewById(R.id.group_map_view);
@@ -129,9 +154,20 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
                         Log.d("memberCount1", String.valueOf(memberCount));
                         for(a = 0; a<memberCount; a++) { //멤버들의 위치, 프로필, 닉네임 가져오기 (처음 로딩되었을 때 마커 뿌리기)
 
-                            String getProf = snapshot.child("members").child(String.valueOf(a)).child("profile").getValue().toString();
+                            final String getProf = snapshot.child("members").child(String.valueOf(a)).child("profile").getValue().toString();
                             String getNick = snapshot.child("members").child(String .valueOf(a)).child("nickname").getValue().toString();
                             String getState = snapshot.child("members").child(String.valueOf(a)).child("state").getValue().toString();
+                            /*new Thread() {
+                                public void run(){
+                                    try{
+                                        drawableFromUrl(getProf);
+                                    } catch(IOException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                            }.start();*/
                             memberList.add(getNick);
 
                             coordinates = startLocationService();
@@ -148,17 +184,21 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
                             MapPoint markPoint3 = MapPoint.mapPointWithGeoCoord(Double.parseDouble(getLat), Double.parseDouble(getLon));
                             MapPOIItem marker2 = new MapPOIItem();
 
-                            /*if(getNick.equals(myNick) || getState.equals("false")){
-                                continue;
-                            }*/
+
                             Log.e("getLat + getLon : ", getLat + ",   " + getLon+",   "+getProf);
                             marker2.setItemName(String.valueOf(memberTag));
                             marker2.setTag(memberTag);
                             marker2.setMapPoint(markPoint3);
+                            /*marker2.setMarkerType(MapPOIItem.MarkerType.CustomImage);
+                            marker2.setCustomImageResourceId(R.drawable.default_image);
+                            marker2.setCustomImageAutoscale(true);
+                            marker2.setCustomImageAnchor(0.5f, 1.0f);
+*/
+                            //marker2.setCustomImageResourceId(drawableFromUrl(getProf));
                             marker2.setMarkerType(MapPOIItem.MarkerType.YellowPin);
                             marker2.setSelectedMarkerType(MapPOIItem.MarkerType.YellowPin);
                             marker.add(marker2);
-                            mapView.addPOIItem(marker2);
+                           mapView.addPOIItem(marker2);
                             memberTag++;
                         }
                         items = mapView.getPOIItems();
@@ -172,7 +212,7 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
                         break;
                     }
                 }
-            }
+            } 
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -217,13 +257,23 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
         countDownTimer.start();
     }
 
+    public static BitmapDrawable drawableFromUrl (String url) throws IOException{
+        Bitmap bitmap;
+        HttpURLConnection connection = (HttpURLConnection)new URL(url).openConnection();
+        connection.connect();
+        InputStream input = connection.getInputStream();
+        bitmap = BitmapFactory.decodeStream(input);
+        return new BitmapDrawable(Resources.getSystem(), bitmap);
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
     }
 
     public void countDownTimer(){
-        countDownTimer = new CountDownTimer(11*100000, 6000) {
+        countDownTimer = new CountDownTimer(11*1000, 6000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 Log.e("countdownTimer : ", String.valueOf(count));
@@ -247,14 +297,9 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
                                     String getLat = snapshot.child("members").child(String.valueOf(a)).child("lat").getValue().toString();
                                     String getLon = snapshot.child("members").child(String.valueOf(a)).child("lon").getValue().toString();
                                     String getNick = snapshot.child("members").child(String.valueOf(a)).child("nickname").getValue().toString();
-
                                     MapPoint markPoint3 = MapPoint.mapPointWithGeoCoord(Double.parseDouble(getLat), Double.parseDouble(getLon));
                                     MapPOIItem poiItemByTag = mapView.findPOIItemByTag(a);
-                                    Log.d("poiitemByTag : ", poiItemByTag+"  "+a);
-                                    Log.e("poiItems : ", items[a+2].getItemName()+", tag : "+items[a+2].getTag()+" nickNAme : "+getNick);
-
                                     poiItemByTag.setMapPoint(markPoint3);
-
                                 }
                             }
                         }
@@ -270,9 +315,20 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
             @Override
             public void onFinish() {
                 Log.d("finished", "finished");
-                countDownTimer.start();
+                //countDownTimer.start();
             }
         };
+    }
+
+    public void onBackPressed(){
+        countDownTimer.cancel();
+        DrawerLayout drawerLayout = findViewById(R.id.group_drawer_layout2);
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }else{
+            super.onBackPressed();
+        }
+        super.onBackPressed();
     }
 
     private void getMapFind(final String startX, final String startY, final String endX, final String endY) { //레트로핏 경로 가져오기
@@ -435,4 +491,10 @@ public class Group_MapActivity extends AppCompatActivity implements MapView.Curr
     }
 
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+
+        return false;
+    }
 }

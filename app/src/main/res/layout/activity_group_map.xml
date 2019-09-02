@@ -1,80 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/group_layout_map"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.main.MapActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/group_map_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.menu.groupRiding.groupRidingMap.Group_MapActivity"
+    tools:showIn="@layout/group_app_bar_main">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/group_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:elevation="5dp"
-            android:background="#fff">
-
-            <TextView
-                android:id="@+id/group_textView7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="15dp"
-                android:text="검색"
-                android:textSize="20dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_below="@+id/layout"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="13dp"
-                android:layout_marginEnd="14dp"
-                android:layout_marginBottom="13dp"
-                android:background="#EBEAEA"
-                android:hint="　장소, 주소 검색"
-                android:textSize="14dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/group_img_navi"
-                app:layout_constraintStart_toEndOf="@+id/textView7"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/group_img_navi"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="14dp"
-                android:src="@drawable/ic_navigation_black_24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
-
-        <RelativeLayout
+    <!-- <RelativeLayout
             android:id="@+id/group_map_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/layout">
+            android:layout_height="match_parent"
+            >
 
-        </RelativeLayout>
+        </RelativeLayout>-->
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/group_fab_focus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="15dp"
-            android:src="@drawable/ic_my_location_black_24dp"
-            app:backgroundTint="#fff" />
-    </RelativeLayout>
-</layout>
+
+</android.support.constraint.ConstraintLayout>
