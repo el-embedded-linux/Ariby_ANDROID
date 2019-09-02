@@ -11,4 +11,7 @@
 
     <!--Action Mode Menu Items-->
     <string name="invite">Invite</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>
