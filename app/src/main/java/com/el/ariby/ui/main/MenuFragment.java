@@ -32,7 +32,7 @@ public class MenuFragment extends Fragment {
         mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("대기정보"));
         mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("클럽"));
         mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("랭킹"));
-        mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("헬스"));
+        mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("추천경로"));
         mBinding.layoutTab.addTab(mBinding.layoutTab.newTab().setText("라이딩"));
 
         mContentPagerAdapter = new ContentsPagerAdapter(
