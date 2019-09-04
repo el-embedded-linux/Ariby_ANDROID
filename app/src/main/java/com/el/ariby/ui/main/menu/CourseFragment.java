@@ -4,22 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.el.ariby.R;
-import com.el.ariby.databinding.FragmentChallengeBinding;
-import com.el.ariby.ui.main.menu.challenge.challenge_child.ChallengeAdapter;
 import com.el.ariby.ui.main.menu.groupRiding.GroupRideActivity;
 import com.el.ariby.ui.main.menu.groupRiding.SingleRideActivity;
-import com.el.ariby.ui.main.menu.recommend.RecommendActivity;
-
-import java.security.acl.Group;
 
 
 public class CourseFragment extends Fragment {
@@ -53,13 +46,6 @@ public class CourseFragment extends Fragment {
             }
         });
 
-        course.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), RecommendActivity.class);
-                startActivity(intent);
-            }
-        });
         return view;
     }
 
