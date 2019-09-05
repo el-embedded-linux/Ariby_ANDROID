@@ -27,6 +27,8 @@ import net.daum.mf.map.api.MapView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,6 +44,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
     int naviCount = 0;
     ProgressDialog progressDialog;
     ArrayList<NaviMember> naviMembers = new ArrayList<>();
+    int time = 0; // 운행시간 체크
+    Timer timer = new Timer(); // 운행시간 체크
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +111,22 @@ public class MapNavigationActivity extends AppCompatActivity implements
             e.printStackTrace();
         }
         progressDialog.dismiss();
+
+        TimerTask tt = new TimerTask() {
+            @Override
+            public void run() {
+                Log.d("timer : ", time+"");
+                time++;
+            }
+        };
+
+        timer.schedule(tt,0,1000);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
     }
 
     private void getMapFind(final String startX, final String startY,
