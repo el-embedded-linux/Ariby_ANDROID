@@ -62,7 +62,6 @@ public class FollowerListActivity extends AppCompatActivity {
                             Log.d("align", "2");
                             userUid = snapshot.getKey();
                             boolean a = false;
-                            Log.d("asd", userUid);
 
                             for (int j = 0; j < followCount; j++) {
                                 if (userUid.equals(followingUid.get(j))) {
@@ -96,10 +95,9 @@ public class FollowerListActivity extends AppCompatActivity {
 
                                 Log.d("getChildrenCount",follower+"\n"+following+"\n"+snapshot.getRef()+"\n"+userUid);
                                 adapter.addItem(new FollowItem(url, nickname, following, follower));
+                                adapter.notifyDataSetChanged();
                             }
-                            adapter.notifyDataSetChanged();
                         }
-                        adapter.notifyDataSetChanged();
                     }
 
                     @Override

@@ -72,21 +72,23 @@ public class FindFollowActivity extends AppCompatActivity {
                                             a = false;
                                         }
                                     }
-
+                                    if (myUid.equals(userUid)) {
+                                        a = false;
+                                    }
                                     if (a) {
                                         String url = (String) snapshot.child("userImageURL").getValue();
                                         String nickname = snapshot.child("nickname").getValue().toString();
 
                                         for(int t=0; t<followingNumList.size(); t++)  {
                                             if(followingNumList.get(t)[0].equals(userUid)){
-                                                Log.d("userUid1", String.valueOf(followingNumList.get(t)));
+                                                Log.d("userUid1", String.valueOf(followingNumList.get(t)[1]));
                                                 following = followingNumList.get(t)[1];
                                             }
                                         }
                                             //요소의 크기만큼 돌면서
                                         for(int t=0; t<followerNumList.size(); t++){
                                             if(followerNumList.get(t)[0].equals(userUid)){
-                                                Log.d("userUid2", String.valueOf(followerNumList.get(t)));
+                                                Log.d("userUid2", String.valueOf(followerNumList.get(t)[1]));
                                                 follower = followerNumList.get(t)[1];
                                             }
                                         }

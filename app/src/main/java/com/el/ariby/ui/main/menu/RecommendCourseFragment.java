@@ -34,6 +34,12 @@ public class RecommendCourseFragment extends Fragment {
 
     int i = 0;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        RecommentItems.clear();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,

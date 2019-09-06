@@ -230,7 +230,9 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
                             a = false;
                         }
                     }
-
+                    if (user.equals(userUid)) {
+                        a = false;
+                    }
                     if(a){
                         userUidList.add(userUid);
                     }

@@ -30,6 +30,7 @@ public class FollowListAdapter extends BaseAdapter implements Filterable {
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
     ArrayList<FollowItem> FollowItemList = new ArrayList<FollowItem>();
     ArrayList<FollowItem> filteredItemList = FollowItemList;
+    ArrayList<String> uidList = new ArrayList<>();
     DatabaseReference ref, followref;
     FirebaseDatabase database;
     FirebaseUser auth;
@@ -86,28 +87,40 @@ public class FollowListAdapter extends BaseAdapter implements Filterable {
         followerNum.setText(item.getFollowerNum());
         canclefollow.setTag(position);
 
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int i=0;
+                String uid = null;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    uid = snapshot.getKey();
+                    Log.d("유저", uid + "position" + pos);
+
+                    uidList.add(uid);
+                    i++;
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         canclefollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final int pos = (Integer)v.getTag();
-                final ArrayList<String> uidList = new ArrayList<>();
+
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        int i=0;
-                        String uid = null;
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-                            uid = snapshot.getKey();
-                            Log.d("유저", uid + "position" + pos);
-
-                            uidList.add(uid);
-                            i++;
-                        }
 
                         Log.d("유저", uidList.get(pos));
-                        followref.child("following").child(String.valueOf(user)).child(uidList.get(pos)).setValue(null);
-                        followref.child("follower").child(uidList.get(pos)).child(String.valueOf(user)).setValue(null);
+                        followref.child("following").child((user)).child(uidList.get(pos)).setValue(null);
+                        followref.child("follower").child(uidList.get(pos)).child((user)).setValue(null);
                         canclefollow.setText("팔로우");
                         canclefollow.setEnabled(false);
                         adapter.notifyDataSetChanged();
