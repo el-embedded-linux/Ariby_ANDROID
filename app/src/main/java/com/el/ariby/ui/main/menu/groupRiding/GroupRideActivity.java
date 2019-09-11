@@ -30,6 +30,7 @@ public class GroupRideActivity extends AppCompatActivity {
 
     FirebaseDatabase database;
     DatabaseReference ref;
+    int leaderNo = 0;
 
     int i=0;
     @Override
@@ -53,7 +54,7 @@ public class GroupRideActivity extends AppCompatActivity {
                     String groupName = snapshot.getKey();
                     String startPoint = snapshot.child("startPoint").child("name").getValue().toString();
                     String endPoint = snapshot.child("endPoint").child("name").getValue().toString();
-                    String leader = snapshot.child("leader_nick").getValue().toString();
+                    String leader = snapshot.child("members").child("0").child("nickname").getValue().toString();
                     groupRideItems.add(new GroupRideItem(groupName, startPoint, endPoint, leader));
                 }
                 recyclerView.setAdapter(new RecyclerAdapter(getApplicationContext(), groupRideItems, R.layout.activity_group));

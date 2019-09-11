@@ -105,12 +105,10 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                         Log.d("userRef str : ", String.valueOf(userInfo));
 
-                        ref.child("GROUP_RIDING").child(group_name).child("leader_nick").setValue(userInfo[1]);
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("uid").setValue(userInfo[0]);
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("nickname").setValue(userInfo[1]);
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("state").setValue("leader");
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("profile").setValue(userInfo[2]);
-
                     }
 
                     @Override
@@ -120,15 +118,12 @@ public class CreateGroupActivity extends AppCompatActivity {
                 });
 
 
-
-
-
                 int a = 1;
                 //TODO. lat, lon 자동완성 지우기
                 double lon = 127.0442899;
                 double lat = 37.6675547;
 
-                for (int i = 0; i < count+6 ; i=i+3)
+                for (int i = 0; i < count*3 ; i=i+3)
                 {
                     Log.e("print", array[i]);
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("uid").setValue(array[i+1]);
