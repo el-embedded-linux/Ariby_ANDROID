@@ -25,7 +25,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.el.ariby.R;
@@ -72,10 +77,10 @@ public class Group_MapActivity extends AppCompatActivity
     int count = 100;
     private CountDownTimer countDownTimer;
 
+    //좌표
     ArrayList<Double> coordinates;
     Intent intent;
     String startX, startY, endX, endY;
-
     int memberTag =1;
     MapPOIItem[] items;
 
@@ -89,6 +94,12 @@ public class Group_MapActivity extends AppCompatActivity
     Double latitude = 37.66739;
     Double longitude = 127.03892;
 
+    ListView listView = null;
+
+    //drawer
+    ArrayList<MemberListItem> memberListItems = new ArrayList<>();
+    MemberListAdapter memberListAdapter;
+
     int myPosition;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +110,8 @@ public class Group_MapActivity extends AppCompatActivity
         getSupportActionBar().setTitle(null);
         DrawerLayout drawerLayout = findViewById(R.id.group_drawer_layout2);
         NavigationView navigationView = findViewById(R.id.group_nav_view);
+        TextView txtGroupName = findViewById(R.id.group_navi_groupname);
+        listView = findViewById(R.id.group_nav_member_list);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close );
         drawerLayout.addDrawerListener(toggle);
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorBlack));
@@ -106,6 +119,8 @@ public class Group_MapActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mapView = new MapView(this);
+        memberListAdapter = new MemberListAdapter();
+        listView.setAdapter(memberListAdapter);
 
         final ViewGroup mapViewContainer = findViewById(R.id.group_map_view);
         mapViewContainer.addView(mapView);
@@ -140,6 +155,7 @@ public class Group_MapActivity extends AppCompatActivity
         });
 
 
+
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -157,19 +173,8 @@ public class Group_MapActivity extends AppCompatActivity
                             final String getProf = snapshot.child("members").child(String.valueOf(a)).child("profile").getValue().toString();
                             String getNick = snapshot.child("members").child(String .valueOf(a)).child("nickname").getValue().toString();
                             String getState = snapshot.child("members").child(String.valueOf(a)).child("state").getValue().toString();
-                            /*new Thread() {
-                                public void run(){
-                                    try{
-                                        drawableFromUrl(getProf);
-                                    } catch(IOException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                            }.start();*/
                             memberList.add(getNick);
-
+                            memberListAdapter.addItem(new MemberListItem(getProf, getNick));
                             coordinates = startLocationService();
 
                             if(memberList.get(a).equals(myNick)){
@@ -212,6 +217,7 @@ public class Group_MapActivity extends AppCompatActivity
                         break;
                     }
                 }
+                memberListAdapter.notifyDataSetChanged();
             } 
 
             @Override
@@ -219,8 +225,6 @@ public class Group_MapActivity extends AppCompatActivity
 
             }
         });
-
-
 
         getMapFind(startX, startY, endX, endY);
         //getMapFind(startY, startY, endY, endX);
@@ -264,7 +268,6 @@ public class Group_MapActivity extends AppCompatActivity
         InputStream input = connection.getInputStream();
         bitmap = BitmapFactory.decodeStream(input);
         return new BitmapDrawable(Resources.getSystem(), bitmap);
-
     }
 
     @Override
@@ -496,5 +499,36 @@ public class Group_MapActivity extends AppCompatActivity
 
 
         return false;
+    }
+
+    public class MemberListAdapter extends BaseAdapter{
+
+        @Override
+        public int getCount() {
+            return memberListItems.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return memberListItems.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+           return position;
+        }
+
+        public void addItem(MemberListItem item){ memberListItems.add(item);}
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final Context context = parent.getContext();
+            CustomMemberList view = new CustomMemberList(context);
+            MemberListItem item = memberListItems.get(position);
+            view.setNickname(item.getNickname());
+            view.setProfile(item.getProfile());
+            return view;
+        }
+        public void clearItem(){memberListItems.clear();}
     }
 }

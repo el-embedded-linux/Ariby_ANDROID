@@ -1129,8 +1129,6 @@ public void dailyRank(){
             view.setTxtRidingDis(item.getRidingDis());
             view.setTxtUpDown(item.getTxtUpDown());
             view.setImgUpDown(item.getImgUpDown());
-
-            //ToDo. RankingItem  채우고 마저 하기.
             return view;
         }
 
