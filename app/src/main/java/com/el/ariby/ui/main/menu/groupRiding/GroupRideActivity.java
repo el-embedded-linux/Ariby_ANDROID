@@ -1,5 +1,6 @@
 package com.el.ariby.ui.main.menu.groupRiding;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import com.el.ariby.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,8 +32,10 @@ public class GroupRideActivity extends AppCompatActivity {
 
     FirebaseDatabase database;
     DatabaseReference ref;
+    DatabaseReference myGroupRef;
+    DatabaseReference userRef;
+    final ArrayList<String> myGroupList = new ArrayList<>();
     int leaderNo = 0;
-
     int i=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,18 +48,50 @@ public class GroupRideActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         createGroup = findViewById(R.id.btn_createG);
 
+        final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("GROUP_RIDING");
+        myGroupRef = database.getReference("GROUP_RIDING_MEMBERS");
+        final String myUid = mUser.getUid();
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        myGroupRef.child(myUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    String groupName = snapshot.getKey();
-                    String startPoint = snapshot.child("startPoint").child("name").getValue().toString();
-                    String endPoint = snapshot.child("endPoint").child("name").getValue().toString();
-                    String leader = snapshot.child("members").child("0").child("nickname").getValue().toString();
-                    groupRideItems.add(new GroupRideItem(groupName, startPoint, endPoint, leader));
+                int i = 0;
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        String groupName = dataSnapshot1.getValue().toString();
+                        Log.d("내 그룹 : ", groupName);
+                        myGroupList.add(groupName);
+                        //i++;
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            int index = 0;
+            @SuppressLint("LongLogTag")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(int i=0 ; i < myGroupList.size(); i++ ) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String groupName = snapshot.getKey();
+                        Log.d("myGroupList.get(index) : ", myGroupList.get(1));
+                        if (myGroupList.get(index).equals(groupName)) {
+                            Log.e("hhhh", groupName);
+                            String startPoint = snapshot.child("startPoint").child("name").getValue().toString();
+                            String endPoint = snapshot.child("endPoint").child("name").getValue().toString();
+                            String leader = snapshot.child("members").child("0").child("nickname").getValue().toString();
+                            groupRideItems.add(new GroupRideItem(groupName, startPoint, endPoint, leader));
+                            index++;
+                            break;
+                        }
+                    }
                 }
                 recyclerView.setAdapter(new RecyclerAdapter(getApplicationContext(), groupRideItems, R.layout.activity_group));
                 adapter.notifyDataSetChanged();

@@ -34,12 +34,13 @@ public class CreateGroupActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference ref;
     DatabaseReference userRef;
+    DatabaseReference memberRef;
 
     String startX;
     String startY;
-
     String endX;
     String endY;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +54,15 @@ public class CreateGroupActivity extends AppCompatActivity {
         inputInfo = findViewById(R.id.input_info);
 
         database = FirebaseDatabase.getInstance();
+        final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+        userRef = database.getReference("USER").child(mUser.getUid());
         ref = database.getReference();
+        memberRef = database.getReference("GROUP_RIDING_MEMBERS");
 
         makeGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //UploadGroupInfoToFirebase();
-                final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-                userRef = database.getReference("USER").child(mUser.getUid());
 
                 SharedPreferences getList = getSharedPreferences("com.el.ariby_preferences", MODE_PRIVATE);
                 int count = getList.getInt("count", 0);
@@ -75,7 +77,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                 final String userInfo[] = new String[3];
 
 
-                String[] array = str.split("\\*");
+                final String[] array = str.split("\\*");
                 //출발지
                 ref.child("GROUP_RIDING").child(group_name).child("startPoint").child("name").setValue(start);
                 ref.child("GROUP_RIDING").child(group_name).child("startPoint").child("lat").setValue(startY);
@@ -96,6 +98,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        final long[] group_num1 = new long[1];
                         //멤버 정보 (리더, 멤버)
                         Log.d("userRef", "userRef works");
 
@@ -109,6 +112,30 @@ public class CreateGroupActivity extends AppCompatActivity {
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("nickname").setValue(userInfo[1]);
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("state").setValue("leader");
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("profile").setValue(userInfo[2]);
+
+                        //group_riding_members
+                        //long groupCount = returnGroupCount(userInfo[0]);
+                        memberRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                    String uidStr = dataSnapshot1.getKey();
+                                    Log.d("uidStr : ", uidStr);
+                                    if(uidStr.equals(userInfo[0])) {
+                                        group_num1[0] = dataSnapshot1.getChildrenCount();
+                                        Log.e("group_num : ", userInfo[0] + ",  "+ String.valueOf(group_num1[0]));
+                                        ref.child("GROUP_RIDING_MEMBERS").child(mUser.getUid()).child(String.valueOf(group_num1[0])).setValue(group_name);
+                                        break;
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
                     }
 
                     @Override
@@ -123,8 +150,10 @@ public class CreateGroupActivity extends AppCompatActivity {
                 double lon = 127.0442899;
                 double lat = 37.6675547;
 
-                for (int i = 0; i < count*3 ; i=i+3)
+                for (int i = 0; i < count*3 ; i += 3)
                 {
+                    final long[] group_num2 = new long[1];
+                    final int index = i;
                     Log.e("print", array[i]);
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("uid").setValue(array[i+1]);
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("nickname").setValue(array[i]);
@@ -132,6 +161,30 @@ public class CreateGroupActivity extends AppCompatActivity {
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("profile").setValue(array[i+2]);
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lat").setValue(lat);
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lon").setValue(lon);
+
+                    //group_riding_members
+                    memberRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+
+                                String uidStr = dataSnapshot1.getKey();
+                                Log.d("uidStr : ", uidStr);
+                                if(uidStr.equals(array[index+1])) {
+                                    group_num2[0] = dataSnapshot1.getChildrenCount();
+                                    Log.d("groupCount : ", array[index+1]+",,  "+group_num2[0]);
+                                    ref.child("GROUP_RIDING_MEMBERS").child(array[index+1]).child(String.valueOf(group_num2[0])).setValue(group_name);
+                                    break;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
                     lat = lat+0.1;
                     lon = lon+0.1;
                     a++;
@@ -142,6 +195,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
 
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,7 +243,5 @@ public class CreateGroupActivity extends AppCompatActivity {
         }
     }
 
-    public void UploadGroupInfoToFirebase() {
 
-    }
 }
