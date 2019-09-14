@@ -93,7 +93,6 @@ public class Group_MapActivity extends AppCompatActivity
     //TODO. test
     Double latitude = 37.66739;
     Double longitude = 127.03892;
-
     ListView listView = null;
 
     //drawer
@@ -101,6 +100,7 @@ public class Group_MapActivity extends AppCompatActivity
     MemberListAdapter memberListAdapter;
 
     int myPosition;
+    int memberCount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +110,8 @@ public class Group_MapActivity extends AppCompatActivity
         getSupportActionBar().setTitle(null);
         DrawerLayout drawerLayout = findViewById(R.id.group_drawer_layout2);
         NavigationView navigationView = findViewById(R.id.group_nav_view);
-        TextView txtGroupName = findViewById(R.id.group_navi_groupname);
+        final TextView txtGroupName = findViewById(R.id.group_navi_groupname);
+        final TextView txtMemberCount = findViewById(R.id.group_navi_members);
         listView = findViewById(R.id.group_nav_member_list);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close );
         drawerLayout.addDrawerListener(toggle);
@@ -141,6 +142,7 @@ public class Group_MapActivity extends AppCompatActivity
         userRef = database.getReference("USER").child(firebaseUser.getUid());
         marker = new ArrayList<MapPOIItem>();
 
+
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -154,8 +156,6 @@ public class Group_MapActivity extends AppCompatActivity
             }
         });
 
-
-
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -166,7 +166,7 @@ public class Group_MapActivity extends AppCompatActivity
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     nameCom = snapshot.getKey();
                     if(groupName.equals(nameCom)){
-                        int memberCount = (int) snapshot.child("members").getChildrenCount();
+                        memberCount = (int) snapshot.child("members").getChildrenCount();
                         Log.d("memberCount1", String.valueOf(memberCount));
                         for(a = 0; a<memberCount; a++) { //멤버들의 위치, 프로필, 닉네임 가져오기 (처음 로딩되었을 때 마커 뿌리기)
 
@@ -217,6 +217,8 @@ public class Group_MapActivity extends AppCompatActivity
                         break;
                     }
                 }
+                txtGroupName.setText(groupName);
+                txtMemberCount.setText("인원 : "+memberCount);
                 memberListAdapter.notifyDataSetChanged();
             } 
 
@@ -293,7 +295,7 @@ public class Group_MapActivity extends AppCompatActivity
                         for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                             nameCom = snapshot.getKey();
                             if(groupName.equals(nameCom)){
-                                int memberCount = (int) snapshot.child("members").getChildrenCount();
+                                memberCount = (int) snapshot.child("members").getChildrenCount();
                                 Log.d("memberCount", String.valueOf(memberCount));
                                 items = mapView.getPOIItems();
                                 for(a = 0; a<memberCount; a++) {
