@@ -2,27 +2,22 @@ package com.el.ariby.ui.main.menu.groupRiding.addFriend;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-import android.support.v7.view.ActionMode;
 
 import com.el.ariby.R;
 import com.el.ariby.ui.main.menu.groupRiding.AddFriendActivity;
-import com.el.ariby.ui.main.menu.groupRiding.CreateGroupActivity;
 
 import java.util.ArrayList;
-
-import static com.el.ariby.ui.main.menu.groupRiding.AddFriendActivity.*;
-import static com.el.ariby.ui.main.menu.groupRiding.addFriend.RecyclerView_Fragment.fa;
 
 public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
     public Toolbar_ActionMode_Callback(Context context, FriendListRecyclerAdapter recyclerAdapter, ArrayList<FriendListItem> items) {
@@ -46,9 +41,9 @@ public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         //Sometimes the menu will not be visible so for that we need to set their visibility manually in this method
         //So here show action menu according to SDK Levels
-        if(Build.VERSION.SDK_INT < 11){
+        if (Build.VERSION.SDK_INT < 11) {
             MenuItemCompat.setShowAsAction(menu.findItem(R.id.action_invite), MenuItemCompat.SHOW_AS_ACTION_NEVER);
-        }else {
+        } else {
             menu.findItem(R.id.action_invite).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
         return false;
@@ -56,7 +51,7 @@ public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_invite:
                 //Check if current action mode if from
                 SparseBooleanArray selected;
@@ -64,29 +59,28 @@ public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
                 int selectedMessageSize = selected.size();
                 StringBuilder str = new StringBuilder();
                 //loop
-                for(int i = (selectedMessageSize -1); i>=0;i--){
-                    if(selected.valueAt(i))
-                    {
+                for (int i = (selectedMessageSize - 1); i >= 0; i--) {
+                    if (selected.valueAt(i)) {
                         //선택된 데이터 가져오기
                         FriendListItem model = items.get(selected.keyAt(i));
                         String nickname = model.getFriend_nick();
                         String fUid = model.getfUid();
                         String profile = model.getProfile();
-                        Log.e("selected",nickname+", "+fUid+", "+profile);
-                        str.append(nickname+"*"+fUid+"*"+profile+"*");
+                        Log.e("selected", nickname + ", " + fUid + ", " + profile);
+                        str.append(nickname + "*" + fUid + "*" + profile + "*");
                     }
                 }
                 Log.e("string : ", String.valueOf(str));
-                Toast.makeText(context, selectedMessageSize+"명의 친구를 초대했습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, selectedMessageSize + "명의 친구를 초대했습니다.", Toast.LENGTH_SHORT).show();
                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this.context);
                 //editor 얻기
                 SharedPreferences.Editor editor = sharedPref.edit();
                 //value 넣기
                 editor.putInt("count", selectedMessageSize);
-                editor.putString("members",str.toString());
+                editor.putString("members", str.toString());
                 editor.commit();
                 mode.finish();
-                ((Activity)context).finish();
+                ((Activity) context).finish();
                 break;
         }
 
@@ -100,8 +94,8 @@ public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
         //First check current fragment action mode
         recyclerAdapter.removeSelection();
         Fragment recyclerFragment = new AddFriendActivity().getFragment(0);
-        if(recyclerFragment != null){
-            ((RecyclerView_Fragment)recyclerFragment).setNullToActionMode();
+        if (recyclerFragment != null) {
+            ((RecyclerView_Fragment) recyclerFragment).setNullToActionMode();
         }
 
     }

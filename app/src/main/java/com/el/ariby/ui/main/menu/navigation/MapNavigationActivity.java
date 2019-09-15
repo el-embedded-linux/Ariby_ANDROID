@@ -1,14 +1,12 @@
 package com.el.ariby.ui.main.menu.navigation;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -18,6 +16,14 @@ import com.el.ariby.databinding.ActivityMapNavigationBinding;
 import com.el.ariby.ui.api.MapFindApi;
 import com.el.ariby.ui.api.SelfCall;
 import com.el.ariby.ui.api.response.MapFindRepoResponse;
+import com.el.ariby.ui.main.menu.groupRiding.groupRidingMap.MemberListItem;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapPOIItem;
@@ -25,7 +31,11 @@ import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,19 +48,25 @@ import retrofit2.Retrofit;
 public class MapNavigationActivity extends AppCompatActivity implements
         MapView.CurrentLocationEventListener {
     ActivityMapNavigationBinding mBinding;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference ref = database.getReference("RECORD");
+    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+    DatabaseReference userRef;
+
     MapView mapNaviView;
     String startX, startY, endX, endY;
     ArrayList<PointDouble> naviPoints = new ArrayList<>();
     int naviCount = 0;
     ProgressDialog progressDialog;
     ArrayList<NaviMember> naviMembers = new ArrayList<>();
-    int time = 0; // 운행시간 체크
+    long time = 0; // 운행시간 체크
     Timer timer = new Timer(); // 운행시간 체크
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_map_navigation);
+
 
         mapNaviView = new MapView(this);
         ViewGroup mapViewContainer = findViewById(R.id.map_navi_view);
@@ -77,7 +93,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
         MapPoint markerPointEnd = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(endX), Double.parseDouble(endY));
-
 
 
         MapPOIItem marker = new MapPOIItem(); // 마커 생성
@@ -115,18 +130,74 @@ public class MapNavigationActivity extends AppCompatActivity implements
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                Log.d("timer : ", time+"");
+                Log.d("timer : ", time + "");
                 time++;
             }
         };
 
-        timer.schedule(tt,0,1000);
+        timer.schedule(tt, 0, 1000);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         timer.cancel();
+
+        userRef = database.getReference("USER").child(firebaseUser.getUid());
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String nickname = dataSnapshot.child("nickname").getValue().toString();
+                String userImg = dataSnapshot.child("userImageURL").getValue().toString();
+
+                //현재 날짜/시간 가져오기
+                long currentTime = System.currentTimeMillis();
+                final Date date = new Date(currentTime);
+                Date month = new Date(currentTime);
+                SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
+                SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
+
+                //나중에 사용
+                String thisYear = sdfYear.format(date);
+                String thisMonth = sdfMonth.format(date);
+                String monthCheckStr = thisMonth + "-01-" + thisYear + " 00:00:00";
+
+                DateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+                try {
+                    month = format.parse(monthCheckStr);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                long monthOutput = month.getTime() / 1000L;
+                String monthStr = Long.toString(monthOutput);
+                final long monthTimestamp = Long.parseLong(monthStr) * 1000;
+
+                Log.e("스탬프", String.valueOf(monthTimestamp));
+
+                SimpleDateFormat format2 = new SimpleDateFormat("hh:mm:ss");
+                String totalTime = format2.format(new Date(time));
+
+                Log.e("테스트:걸린시간 = ", totalTime);
+
+                ref.child(firebaseUser.getUid())
+                        .child("userInfo")
+                        .setValue(new MemberListItem(userImg, nickname));
+
+                ref.child(firebaseUser.getUid())
+                        .child("dailyData")
+                        .child(String.valueOf(monthTimestamp))
+                        .child("dailyTotalTime")
+                        .setValue(getTime(time));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
     private void getMapFind(final String startX, final String startY,
@@ -152,21 +223,21 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         Double.parseDouble(startY), Double.parseDouble(startX)));
 
                 Double kilo = repo.getFeatures().get(0).getProperties().
-                        getTotalDistance().doubleValue()/1000;
-                Double time2=(kilo/13.0)*60; // 자전거 소요시간 공식 (거리/속도)*분
-                mBinding.txtNaviTime.setText("남은시간 : " + Math.round(time2)+"분");
+                        getTotalDistance().doubleValue() / 1000;
+                Double time2 = (kilo / 13.0) * 60; // 자전거 소요시간 공식 (거리/속도)*분
+                mBinding.txtNaviTime.setText("남은시간 : " + Math.round(time2) + "분");
 
-                if(kilo>=1.0) //
-                    mBinding.txtNaviDistance.setText("남은거리 : " + Math.round(kilo*10)/10.0+"km");
+                if (kilo >= 1.0) //
+                    mBinding.txtNaviDistance.setText("남은거리 : " + Math.round(kilo * 10) / 10.0 + "km");
                 else
-                    mBinding.txtNaviDistance.setText("남은거리 : " + Math.round(kilo*1000)+"m");
+                    mBinding.txtNaviDistance.setText("남은거리 : " + Math.round(kilo * 1000) + "m");
 
                 NaviMember member = new NaviMember();
                 for (int i = 0; i < featuresSize; i++) {
                     MapFindRepoResponse.Geometry geometry = repo.getFeatures().get(i).getGeometry();
                     MapFindRepoResponse.Properties properties = repo.getFeatures().get(i).getProperties();
                     PointDouble point;
-                    Log.i("Navigation Array info","index = "+properties.getIndex()+" type = "+geometry.getType());
+                    Log.i("Navigation Array info", "index = " + properties.getIndex() + " type = " + geometry.getType());
 
                     if (geometry.getType().equals("Point")) {
                         point = new PointDouble(
@@ -184,23 +255,22 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         mapNaviView.addPOIItem(marker5);
                         polyline.addPoint(MapPoint.mapPointWithGeoCoord(point.getY(), point.getX()));
 
-                        if(i==(featuresSize-1)) { // 도착지점 추가 (경로 중 마지막은 point로 찍힘)
+                        if (i == (featuresSize - 1)) { // 도착지점 추가 (경로 중 마지막은 point로 찍힘)
                             member.setPoint(point);
                             member.setTime(0);
                             member.setDistance(0);
                             member.setDescription(properties.getDescription());
                             naviMembers.add(member);
                         }
-                        Log.i("Navigation Array","turnType = "+properties.getTurnType());
+                        Log.i("Navigation Array", "turnType = " + properties.getTurnType());
 
                         //이전 LineString중 TurnType정보가 없는 객체에 현재의 TurnType정보를 저장
-                        for (int j = naviMembers.size()-1; j>=0; j--){
+                        for (int j = naviMembers.size() - 1; j >= 0; j--) {
                             NaviMember temp = naviMembers.get(j);
-                            if(temp.getTurnType()==0){
+                            if (temp.getTurnType() == 0) {
                                 temp.setTurnType(properties.getTurnType());
-                                naviMembers.add(j,temp);
-                            }
-                            else{
+                                naviMembers.add(j, temp);
+                            } else {
                                 break;
                             }
                         }
@@ -219,8 +289,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         member.setDistance(properties.getDistance());
                         member.setTime(properties.getTime());
                         member.setTurnType(0);
-                        Log.i("Navigation Array", "description = "+member.getDescription()
-                                +" Distance = "+member.getDistance()+" time = "+member.getTime());
+                        Log.i("Navigation Array", "description = " + member.getDescription()
+                                + " Distance = " + member.getDistance() + " time = " + member.getTime());
                         naviMembers.add(member);
                     }
                     member = new NaviMember();
@@ -233,7 +303,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                                 naviMembers.get(0).getPoint().y, naviMembers.get(0).getPoint().x, "meter");
                 mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
                 mBinding.txtNaviMap.setText(naviMembers.get(0).description
-                        + "턴타입 : "+naviMembers.get(0).getTurnType());
+                        + "턴타입 : " + naviMembers.get(0).getTurnType());
             }
 
             @Override
@@ -255,21 +325,21 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
         double distanceKiloMeter2 =
                 distance(mapPointGeo.latitude, mapPointGeo.longitude,
-                        naviMembers.get(naviMemberSize-1).getPoint().y,
-                        naviMembers.get(naviMemberSize-1).getPoint().x, "meter");
+                        naviMembers.get(naviMemberSize - 1).getPoint().y,
+                        naviMembers.get(naviMemberSize - 1).getPoint().x, "meter");
 
         mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
 
-        if(distanceKiloMeter2 <= 1000)
+        if (distanceKiloMeter2 <= 1000)
             mBinding.txtNaviDistance.setText("남은거리 : " + (int) distanceKiloMeter + "m");
         else
-            mBinding.txtNaviDistance.setText("남은거리 : " + (int) (distanceKiloMeter2/1000*10)/10.0 + "km");
+            mBinding.txtNaviDistance.setText("남은거리 : " + (int) (distanceKiloMeter2 / 1000 * 10) / 10.0 + "km");
 
         if (distanceKiloMeter <= 3.0) {
             ++naviCount;
 
-            if(naviMembers.get(naviCount).getDescription().equals("도착")) {
-                Toast.makeText(getApplicationContext(),"도착",Toast.LENGTH_LONG).show();
+            if (naviMembers.get(naviCount).getDescription().equals("도착")) {
+                Toast.makeText(getApplicationContext(), "도착", Toast.LENGTH_LONG).show();
                 /*final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("도착했습니다. 안내를 종료합니다.");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -280,7 +350,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 });
                 builder.show();*/
             } else {
-                mBinding.txtNaviMap.setText("다음 "+naviMembers.get(naviCount).getDescription()+"/"+
+                mBinding.txtNaviMap.setText("다음 " + naviMembers.get(naviCount).getDescription() + "/" +
                         naviMembers.get(naviCount).getTrunTypeByText());
             }
         }
@@ -336,6 +406,15 @@ public class MapNavigationActivity extends AppCompatActivity implements
     public void onPointerCaptureChanged(boolean hasCapture) {
 
     }
+
+    public String getTime(long sec) {
+        long min, hour;
+        min = sec / 60;
+        hour = min / 60;
+        sec = sec % 60;
+        min = min % 60;
+        return hour + ":" + min + ":" + sec;
+    }
 }
 
 class NaviMember {
@@ -353,8 +432,8 @@ class NaviMember {
         this.turnType = turnType;
     }
 
-    public String getTrunTypeByText(){
-        switch (turnType){
+    public String getTrunTypeByText() {
+        switch (turnType) {
             case 0:
                 return "초기화 오류";
             case 1:
