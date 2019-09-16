@@ -16,7 +16,8 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.main.menu.recommend.CourseMapActivity"></activity>
+        <activity android:name=".ui.main.menu.ridingRecord.RidingrecordActivity"></activity>
+        <activity android:name=".ui.main.menu.recommend.CourseMapActivity" />
         <activity android:name=".ui.main.menu.navigation.MapNavigationRaspberryActivity" />
         <activity android:name=".ui.main.menu.navigation.MapNavigationActivity" />
         <activity android:name=".ui.main.menu.follow.FollowerListActivity" />
@@ -26,16 +27,18 @@
         <activity android:name=".ui.main.menu.follow.FindFollowActivity" />
         <activity android:name=".ui.main.menu.navigation.MapSearchActivity" />
         <activity android:name=".ui.main.menu.navigation.MapInputActivity" />
+
         <receiver android:name=".ui.main.menu.ranking.RankingAlarm" />
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="bcb5be527657eea3d6511a0c20cbb41b" />
-        <activity android:name=".ui.main.MapActivity">
 
-        </activity>
+        <activity android:name=".ui.main.MapActivity"></activity>
         <activity android:name=".ui.main.menu.club.ClubMemberActivity" />
         <activity android:name=".ui.main.menu.club.ClubDetailActivity" />
         <activity android:name=".ui.main.menu.club.ClubSearchActivity" />
@@ -45,13 +48,12 @@
         <activity android:name=".ui.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".SplashActivity">
-
-        </activity>
+        <activity android:name=".SplashActivity"></activity>
         <activity android:name=".FirstActivity" />
         <activity android:name=".ui.join.HeightActivity" />
         <activity android:name=".ui.join.WeightActivity" />
@@ -62,7 +64,7 @@
         <activity android:name=".ui.main.menu.groupRiding.CreateGroupActivity" />
         <activity android:name=".ui.main.menu.groupRiding.SingleRideActivity" />
         <activity android:name=".ui.main.menu.groupRiding.AddFriendActivity" />
-        <activity android:name=".ui.main.menu.groupRiding.groupRidingMap.Group_MapActivity"/>
+        <activity android:name=".ui.main.menu.groupRiding.groupRidingMap.Group_MapActivity" />
     </application>
 
 </manifest>

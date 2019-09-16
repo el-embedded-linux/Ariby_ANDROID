@@ -10,10 +10,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +27,7 @@ import com.el.ariby.R;
 import com.el.ariby.ui.main.menu.follow.FindFollowActivity;
 import com.el.ariby.ui.main.menu.follow.FollowListActivity;
 import com.el.ariby.ui.main.menu.follow.FollowerListActivity;
+import com.el.ariby.ui.main.menu.ridingRecord.RidingrecordActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -103,7 +108,8 @@ public class InfoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO 더보기 이벤트
-                Toast.makeText(getContext(), "클릭했습니다.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getActivity(), RidingrecordActivity.class);
+                startActivity(intent);
             }
         });
 
