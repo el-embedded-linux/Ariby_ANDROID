@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -62,6 +63,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
     long time = 0; // 운행시간 체크
     Timer timer = new Timer(); // 운행시간 체크
 
+    ArrayList<String> disList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +89,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
         progressDialog = new ProgressDialog(MapNavigationActivity.this);
         progressDialog.setMessage("데이터를 로딩중입니다.");
 
-        getMapFind(startY, startX, endY, endX);
+        disList.add(0, getMapFind(startY, startX, endY, endX)); // 총 거리 반환
 
         MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(startX), Double.parseDouble(startY));
@@ -150,46 +153,64 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 String nickname = dataSnapshot.child("nickname").getValue().toString();
                 String userImg = dataSnapshot.child("userImageURL").getValue().toString();
 
-                //현재 날짜/시간 가져오기
-                long currentTime = System.currentTimeMillis();
-                final Date date = new Date(currentTime);
-                Date month = new Date(currentTime);
-                SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
-                SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
+                int size = naviMembers.size()-1;
+                Double myDistance = distance(Double.valueOf(disList.get(1)),
+                        Double.valueOf(disList.get(2)),
+                        naviMembers.get(size).getPoint().y,
+                        naviMembers.get(size).getPoint().x, "m");
+                if (!TextUtils.isEmpty(myDistance.toString())) {
+                    if (myDistance > 0.1) {
+                        //현재 날짜/시간 가져오기
+                        long currentTime = System.currentTimeMillis();
+                        final Date date = new Date(currentTime);
+                        Date month = new Date(currentTime);
+                        SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
+                        SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
 
-                //나중에 사용
-                String thisYear = sdfYear.format(date);
-                String thisMonth = sdfMonth.format(date);
-                String monthCheckStr = thisMonth + "-01-" + thisYear + " 00:00:00";
+                        //나중에 사용
+                        String thisYear = sdfYear.format(date);
+                        String thisMonth = sdfMonth.format(date);
+                        String monthCheckStr = thisMonth + "-01-" + thisYear + " 00:00:00";
 
-                DateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
-                try {
-                    month = format.parse(monthCheckStr);
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                        DateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+                        try {
+                            month = format.parse(monthCheckStr);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        long monthOutput = month.getTime() / 1000L;
+                        String monthStr = Long.toString(monthOutput);
+                        final long monthTimestamp = Long.parseLong(monthStr) * 1000;
+
+                        Log.e("스탬프", String.valueOf(monthTimestamp));
+
+                        SimpleDateFormat format2 = new SimpleDateFormat("hh:mm:ss");
+                        String totalTime = format2.format(new Date(time));
+
+                        Log.e("테스트:걸린시간 = ", totalTime);
+
+                        ref.child(firebaseUser.getUid())
+                                .child("userInfo")
+                                .setValue(new MemberListItem(userImg, nickname));
+
+                        ref.child(firebaseUser.getUid())
+                                .child("dailyData")
+                                .child(String.valueOf(monthTimestamp))
+                                .child("dailyTotalTime")
+                                .setValue(getTime(time));
+
+                        ref.child(firebaseUser.getUid())
+                                .child("dailyData")
+                                .child(String.valueOf(monthTimestamp))
+                                .child("dailyTotalDis")
+                                .setValue(myDistance);
+
+                        Log.e("테스트", String.valueOf(myDistance));
+                    }
                 }
-
-                long monthOutput = month.getTime() / 1000L;
-                String monthStr = Long.toString(monthOutput);
-                final long monthTimestamp = Long.parseLong(monthStr) * 1000;
-
-                Log.e("스탬프", String.valueOf(monthTimestamp));
-
-                SimpleDateFormat format2 = new SimpleDateFormat("hh:mm:ss");
-                String totalTime = format2.format(new Date(time));
-
-                Log.e("테스트:걸린시간 = ", totalTime);
-
-                ref.child(firebaseUser.getUid())
-                        .child("userInfo")
-                        .setValue(new MemberListItem(userImg, nickname));
-
-                ref.child(firebaseUser.getUid())
-                        .child("dailyData")
-                        .child(String.valueOf(monthTimestamp))
-                        .child("dailyTotalTime")
-                        .setValue(getTime(time));
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -200,14 +221,14 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
     }
 
-    private void getMapFind(final String startX, final String startY,
-                            final String endX, final String endY) {
+    private String getMapFind(final String startX, final String startY,
+                              final String endX, final String endY) {
         Retrofit retrofit = SelfCall.createRetrofit(MapFindApi.BASEURL);
         MapFindApi apiService = retrofit.create(MapFindApi.class);
         Call<MapFindRepoResponse> call =
                 apiService.getMapFind("d7673b71-bc89-416a-9ac6-019e5d8f327a", "1",
                         startX, startY, endX, endY, "123", "234");
-
+        final int[] totalDistance = new int[1];
         call.enqueue(new Callback<MapFindRepoResponse>() {
             @Override
             public void onResponse(Call<MapFindRepoResponse> call,
@@ -218,7 +239,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 MapPolyline polyline = new MapPolyline();
                 polyline.setTag(1000);
                 polyline.setLineColor(Color.argb(128, 255, 51, 0));
-
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(
                         Double.parseDouble(startY), Double.parseDouble(startX)));
 
@@ -304,13 +324,16 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
                 mBinding.txtNaviMap.setText(naviMembers.get(0).description
                         + "턴타입 : " + naviMembers.get(0).getTurnType());
+                totalDistance[0] = repo.getFeatures().get(0).getProperties().getTotalDistance();
             }
 
             @Override
             public void onFailure(Call<MapFindRepoResponse> call, Throwable t) {
                 Log.d("TEST : ", t.getMessage());
+                totalDistance[0] = 0;
             }
         });
+        return String.valueOf(totalDistance[0]);
     }
 
     @Override
@@ -354,6 +377,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         naviMembers.get(naviCount).getTrunTypeByText());
             }
         }
+        disList.add(1, String.valueOf(mapPointGeo.latitude));
+        disList.add(2, String.valueOf(mapPointGeo.longitude));
 
         Log.d("currentDistance", String.valueOf(distanceKiloMeter));
     }
