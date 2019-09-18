@@ -3,6 +3,7 @@ package com.el.ariby.ui.main.menu.groupRiding.groupRidingMap;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -21,6 +22,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -37,6 +39,7 @@ import com.el.ariby.R;
 import com.el.ariby.ui.api.MapFindApi;
 import com.el.ariby.ui.api.SelfCall;
 import com.el.ariby.ui.api.response.MapFindRepoResponse;
+import com.el.ariby.ui.main.menu.groupRiding.GroupRideActivity;
 import com.el.ariby.ui.main.menu.navigation.PointDouble;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -73,6 +76,7 @@ public class Group_MapActivity extends AppCompatActivity
     FirebaseDatabase database;
     DatabaseReference ref;
     DatabaseReference userRef;
+    DatabaseReference myGroupRef;
     String groupName;
     int count = 100;
     private CountDownTimer countDownTimer;
@@ -83,9 +87,7 @@ public class Group_MapActivity extends AppCompatActivity
     String startX, startY, endX, endY;
     int memberTag =1;
     MapPOIItem[] items;
-
     List<MapPOIItem> marker;
-
     ArrayList<String> memberList = new ArrayList<>();
     String myNick;
     String myUid;
@@ -112,6 +114,8 @@ public class Group_MapActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.group_nav_view);
         final TextView txtGroupName = findViewById(R.id.group_navi_groupname);
         final TextView txtMemberCount = findViewById(R.id.group_navi_members);
+        final TextView btnOut = findViewById(R.id.btnOut);
+        final TextView btnStop = findViewById(R.id.btnStop);
         listView = findViewById(R.id.group_nav_member_list);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close );
         drawerLayout.addDrawerListener(toggle);
@@ -137,8 +141,10 @@ public class Group_MapActivity extends AppCompatActivity
 
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("GROUP_RIDING");
+        myGroupRef = database.getReference("GROUP_RIDING_MEMBERS");
 
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        myUid = firebaseUser.getUid();
         userRef = database.getReference("USER").child(firebaseUser.getUid());
         marker = new ArrayList<MapPOIItem>();
 
@@ -261,6 +267,32 @@ public class Group_MapActivity extends AppCompatActivity
 
         countDownTimer();
         countDownTimer.start();
+
+        btnOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(Group_MapActivity.this);
+                alertDialog.setTitle("나가기");
+                alertDialog.setMessage("그룹에서 나가시겠습니까?");
+                alertDialog.setPositiveButton("네", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(Group_MapActivity.this, "그룹을 나갑니다.", Toast.LENGTH_SHORT).show();
+                        myGroupRef.child(myUid).child(groupName).removeValue();
+                        dialog.cancel();
+                        onBackPressed();
+                    }
+                });
+
+                alertDialog.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.show();
+            }
+        });
     }
 
     public static BitmapDrawable drawableFromUrl (String url) throws IOException{
@@ -330,10 +362,12 @@ public class Group_MapActivity extends AppCompatActivity
         DrawerLayout drawerLayout = findViewById(R.id.group_drawer_layout2);
         if(drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START);
-        }else{
-            super.onBackPressed();
         }
-        super.onBackPressed();
+            Intent intent1 = new Intent(this, GroupRideActivity.class);
+            intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent1);
+            return;
+
     }
 
     private void getMapFind(final String startX, final String startY, final String endX, final String endY) { //레트로핏 경로 가져오기

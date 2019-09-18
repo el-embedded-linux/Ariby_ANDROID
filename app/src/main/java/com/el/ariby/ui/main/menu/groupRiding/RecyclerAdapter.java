@@ -1,5 +1,6 @@
 package com.el.ariby.ui.main.menu.groupRiding;
 
+import android.arch.lifecycle.ViewModel;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 
 import java.security.acl.Group;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
@@ -44,6 +46,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_group_ride, null);
         return new ViewHolder(v);
+    }
+
+    public void updateData(ArrayList<GroupRideItem> viewModels){
+        items.clear();
+        items.addAll(viewModels);
+        notifyDataSetChanged();
+    }
+
+    public void removeItem(int position){
+        items.remove(position);
+        notifyItemRemoved(position);
     }
 
     @Override

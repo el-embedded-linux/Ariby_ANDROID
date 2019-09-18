@@ -54,18 +54,22 @@ public class GroupRideActivity extends AppCompatActivity {
         myGroupRef = database.getReference("GROUP_RIDING_MEMBERS");
         final String myUid = mUser.getUid();
 
+
+
         myGroupRef.child(myUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int i = 0;
                 if(dataSnapshot.exists()){
                     for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        String groupName = dataSnapshot1.getValue().toString();
+                        //String groupName = dataSnapshot1.getValue().toString();
+                        String groupName = dataSnapshot1.getKey();
                         Log.d("내 그룹 : ", groupName);
                         myGroupList.add(groupName);
                         //i++;
                     }
                 }
+                adapter.notifyDataSetChanged();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -81,7 +85,6 @@ public class GroupRideActivity extends AppCompatActivity {
                 for(int i=0 ; i < myGroupList.size(); i++ ) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String groupName = snapshot.getKey();
-                        Log.d("myGroupList.get(index) : ", myGroupList.get(1));
                         if (myGroupList.get(index).equals(groupName)) {
                             Log.e("hhhh", groupName);
                             String startPoint = snapshot.child("startPoint").child("name").getValue().toString();
