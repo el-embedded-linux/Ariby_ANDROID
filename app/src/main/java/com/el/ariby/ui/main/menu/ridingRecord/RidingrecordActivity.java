@@ -28,8 +28,7 @@ public class RidingrecordActivity extends AppCompatActivity {
     ArrayList<String> record = new ArrayList<>();
     FirebaseDatabase database;
     DatabaseReference ref;
-    DatabaseReference user;
-    String myNick;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,44 +42,43 @@ public class RidingrecordActivity extends AppCompatActivity {
         final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         final String myUid = mUser.getUid();
         database = FirebaseDatabase.getInstance();
-        ref = database.getReference("RECORD");
+        ref = database.getReference("RECORD").child(myUid).child("dailyData");
 
 
     doWork(new Callback() {
         @Override
-        public void callback() {
+        public void success(final ArrayList<String> data) {
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()) {
+                        int i = 0;
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String uid = snapshot.getKey();
+                            if(data.get(i).equals(uid)){
+                                String ridingtime = dataSnapshot.child(uid).child("dailyTotalTime").getValue().toString();
+                                String date = dataSnapshot.child(uid).child("date").getValue().toString();
+                                RidingrecordItems.add(new Ridingrecorditem(date, ridingtime));
+                                adapter.notifyDataSetChanged();
 
+                                if(data.size()-1 > i){
+                                    i++;
+                                }
+                            }
+
+                        }
+                        recyclerView.setAdapter(new com.el.ariby.ui.main.menu.ridingRecord.RidingrecordAdapter(getApplicationContext(), RidingrecordItems, R.layout.activity_ridingrecord));
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
     });
-
-
-        ref.child(myUid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
-                    //for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-                        Log.d("snapshot",dataSnapshot.getRef().toString());
-                        String ridingtime = dataSnapshot.child("dailyData").child("1567263600000").child("dailyTotalTime").getValue().toString();
-                        String date = dataSnapshot.child("dailyData").child("1567263600000").child("date").getValue().toString();
-                        Log.d("nickname", date + ridingtime);
-                        RidingrecordItems.add(new Ridingrecorditem(date, ridingtime));
-                        adapter.notifyDataSetChanged();
-
-                    //}
-                    recyclerView.setAdapter(new com.el.ariby.ui.main.menu.ridingRecord.RidingrecordAdapter(getApplicationContext(), RidingrecordItems, R.layout.activity_ridingrecord));
-                    adapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-
 
     }
     public class RidingrecordAdapter extends BaseAdapter {
@@ -111,20 +109,25 @@ public class RidingrecordActivity extends AppCompatActivity {
         //public void clearItem(){rankingItems.clear();}
     }
     public interface Callback {
-        void callback();             // Callback 인터페이스 내의 속이 없는 껍데기 함수
+        void success(ArrayList<String> data);
     }
-
 
     public void doWork(final Callback mCallback) {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String Timestamp = snapshot.child("dailyData").getKey().toString();
-                    Log.d("Timestamp",Timestamp);
-                    record.add(Timestamp);
+                if(dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String recordUid;
+                        recordUid = snapshot.getKey();
+                        String str = snapshot.getValue().toString();
+                        if(str.contains("dailyTotalTime") && str.contains("date")){
+                            record.add(recordUid);
+                        }
+
+                    }
                 }
-                mCallback.callback();
+
             }
 
             @Override
@@ -132,5 +135,6 @@ public class RidingrecordActivity extends AppCompatActivity {
 
             }
         });
+        mCallback.success(record);
     }
 }
