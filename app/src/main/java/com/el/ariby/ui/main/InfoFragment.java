@@ -27,6 +27,7 @@ import com.el.ariby.R;
 import com.el.ariby.ui.main.menu.follow.FindFollowActivity;
 import com.el.ariby.ui.main.menu.follow.FollowListActivity;
 import com.el.ariby.ui.main.menu.follow.FollowerListActivity;
+import com.el.ariby.ui.main.menu.raspberry.raspVideoCheck;
 import com.el.ariby.ui.main.menu.ridingRecord.RidingrecordActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,6 +52,7 @@ public class InfoFragment extends Fragment {
     ImageView photo;
     Button profile_more;
     Button add_friend;
+    Button rasp_video;
     View v;
     FirebaseUser user;
     Uri uri;
@@ -66,7 +68,7 @@ public class InfoFragment extends Fragment {
         add_friend = v.findViewById(R.id.fragment_info_profile_friend);
         following_num = v.findViewById(R.id.following_num);
         followers_num = v.findViewById(R.id.followers_num);
-
+        rasp_video = v.findViewById(R.id.fragment_info_rasp_video);
         database = FirebaseDatabase.getInstance();
 
 
@@ -92,6 +94,14 @@ public class InfoFragment extends Fragment {
             }
         });
 
+
+        rasp_video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), raspVideoCheck.class);
+                startActivity(intent);
+            }
+        });
 
         photo.setOnClickListener(new View.OnClickListener() {
             @Override

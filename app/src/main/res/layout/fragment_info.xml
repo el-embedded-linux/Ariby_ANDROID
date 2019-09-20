@@ -19,6 +19,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0.1dp"
                 android:background="#333" />
+
+            <Button
+                android:layout_margin="20dp"
+                android:textSize="20dp"
+                android:text="블랙박스 영상 확인"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/friend_add_button_border"
+                android:id="@+id/fragment_info_rasp_video"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="10dp"/>
         </LinearLayout>
     </ScrollView>
 </layout>
