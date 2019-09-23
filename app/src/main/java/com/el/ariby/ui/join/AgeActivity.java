@@ -1,5 +1,6 @@
 package com.el.ariby.ui.join;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 
 import com.el.ariby.R;
@@ -82,7 +84,6 @@ public class AgeActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.not_move_activity, R.anim.rightout_activity);
             }
         });
-
     }
 
     public void setPreference(String key, String value) {

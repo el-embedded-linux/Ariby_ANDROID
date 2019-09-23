@@ -98,7 +98,6 @@ public class DustFragment extends Fragment {
     PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
-            Toast.makeText(getActivity(), "권한 허가", Toast.LENGTH_SHORT).show();
             startLocationService();
         }
 

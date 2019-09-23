@@ -68,7 +68,6 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginTop="2dp"
                     android:gravity="center"
                     android:text="날짜를 선택하세요"
                     android:textColor="@color/colorAccent"

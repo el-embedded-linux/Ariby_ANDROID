@@ -28,8 +28,10 @@ public class GenderActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if(checkedId == R.id.radio_male) {
                     Toast.makeText(getApplicationContext(),"남자",Toast.LENGTH_SHORT).show();
+                    mBinding.radioMale.setBackgroundResource(R.drawable.activity_gender_male);
                 } else if(checkedId == R.id.radio_female){
                     Toast.makeText(getApplicationContext(),"여자",Toast.LENGTH_SHORT).show();
+                    mBinding.radioFemale.setBackgroundResource(R.drawable.activity_gender_female);
                 }
             }
         });

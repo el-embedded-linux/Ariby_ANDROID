@@ -62,7 +62,7 @@ public class ClubCreateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_club_create);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_club_create);
+        mBinding = DataBindingUtil.setContentView(this,R.layout.activity_club_create);
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -126,8 +126,8 @@ public class ClubCreateActivity extends AppCompatActivity {
             final String name = mBinding.etName.getText().toString();
             String commend = mBinding.etIntro.getText().toString();
             String location = mBinding.etLocation.getText().toString();
-
-            ref.child("CLUB").child(name).setValue(new ClubModel(commend, location));
+            ClubModel model = new ClubModel(commend, location);
+            ref.child("CLUB").child(name).setValue(model);
             ref.child("CLUB").child(name).child("member").child("superVisor").setValue(mUser.getUid());
 
             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -215,8 +215,6 @@ public class ClubCreateActivity extends AppCompatActivity {
         getGeo(longitude.toString(), latitude.toString(), "WGS84");
     }
 }
-
-
 
 class ClubModel {
     String commend;
