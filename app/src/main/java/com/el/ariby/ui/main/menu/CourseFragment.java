@@ -3,10 +3,12 @@ package com.el.ariby.ui.main.menu;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -66,15 +68,13 @@ public class CourseFragment extends Fragment {
         myGroupRef = database.getReference("GROUP_RIDING_MEMBERS");
         final String myUid = mUser.getUid();
 
-
-
         myGroupRef.child(myUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int i = 0;
+                myGroupList.clear();
                 if(dataSnapshot.exists()){
                     for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        //String groupName = dataSnapshot1.getValue().toString();
                         String groupName = dataSnapshot1.getKey();
                         Log.d("내 그룹 : ", groupName);
                         myGroupList.add(groupName);
@@ -94,6 +94,7 @@ public class CourseFragment extends Fragment {
             @SuppressLint("LongLogTag")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                adapter.clearItem();
                 for(int i=0 ; i < myGroupList.size(); i++ ) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String groupName = snapshot.getKey();
@@ -109,6 +110,7 @@ public class CourseFragment extends Fragment {
                     }
                 }
                 recyclerView.setAdapter(new RecyclerAdapter(getContext(), groupRideItems, R.layout.activity_group));
+                myGroupList.clear();
                 adapter.notifyDataSetChanged();
             }
 
@@ -128,19 +130,9 @@ public class CourseFragment extends Fragment {
         });
 
 
-
-
         return view;
     }
 
-    @Override
-    public void onResume(){
-       super.onResume();
-       myGroupList.clear();
-       groupRideItems.clear();
-       // adapter.notifyDataSetChanged();
-        //OnResume Fragment
-    }
 
     public class GroupRidingAdapter extends BaseAdapter {
 
@@ -167,7 +159,8 @@ public class CourseFragment extends Fragment {
         }
 
         public void addItem(GroupRideItem item){ groupRideItems.add(item); }
-        //public void clearItem(){rankingItems.clear();}
+
+        public void clearItem(){groupRideItems.clear();}
     }
 
 

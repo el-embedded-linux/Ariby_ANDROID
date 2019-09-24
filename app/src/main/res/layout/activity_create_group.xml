@@ -39,7 +39,11 @@
         android:orientation="horizontal"
         android:paddingTop="10dp"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:paddingRight="10dp"
+
+
+
+        >
         <TextView
             android:id="@+id/riding_loc"
             android:layout_width="100dp"
@@ -53,6 +57,8 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:id="@+id/input_start"
+            android:focusableInTouchMode="false"
+            android:editable="false"
             />
     </LinearLayout>
 
@@ -63,6 +69,7 @@
         android:paddingTop="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+
         >
         <TextView
             android:id="@+id/riding_dis"
@@ -77,6 +84,8 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:id="@+id/input_end"
+            android:focusableInTouchMode="false"
+            android:editable="false"
             />
     </LinearLayout>
 
