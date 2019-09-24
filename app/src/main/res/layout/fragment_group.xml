@@ -8,92 +8,55 @@
     tools:context=".ui.main.menu.CourseFragment"
     android:paddingLeft="15dp"
     android:paddingRight="15dp"
-    android:paddingBottom="60dp"
+    android:paddingBottom="20dp"
     android:paddingTop="10dp">
 
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:layout_marginBottom="10dp"
-        android:id="@+id/single"
-        android:background="@drawable/layout_shadow">
+        android:layout_height="match_parent">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="18dp"
-            android:text="싱글라이딩"/>
-
-        <ImageView
-            android:id="@+id/imgSingle"
+            android:id="@+id/group_title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            app:srcCompat="@drawable/single"
-            android:layout_marginRight="2dp"
-            android:layout_marginBottom="3dp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:layout_marginBottom="10dp"
-        android:id="@+id/group"
-        android:background="@drawable/layout_shadow">
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="18dp"
-            android:text="그룹라이딩"/>
+            android:layout_weight="1"
+            android:gravity="bottom"
+            android:padding="7dp"
+            android:text="Group Riding"
+            android:textColor="@color/colorBlack"
+            android:textSize="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imgGroup"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            app:srcCompat="@drawable/group"
-            android:layout_marginRight="2dp"
-            android:layout_marginBottom="3dp"
-            />
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_createG"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/group_title">
 
-    </LinearLayout>
+        </android.support.v7.widget.RecyclerView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:background="@drawable/layout_shadow"
-        android:id="@+id/course"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="18dp"
-            android:text="추천경로"/>
-
-        <ImageView
-            android:id="@+id/imgCourse"
+        <Button
+            android:id="@+id/btn_createG"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            app:srcCompat="@drawable/course"
-            android:layout_marginRight="2dp"
-            android:layout_marginBottom="3dp"/>
+            android:layout_height="45dp"
+            android:text="그룹 생성하기"
+            android:textColor="#000"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
-    </LinearLayout>
+
 </LinearLayout>

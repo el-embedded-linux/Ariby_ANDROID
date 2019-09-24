@@ -23,6 +23,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 public class CreateGroupActivity extends AppCompatActivity {
     Button makeGroup;
     Button addFriend;
@@ -195,7 +197,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                 Toast.makeText(CreateGroupActivity.this, "그룹이 생성되었습니다.", Toast.LENGTH_SHORT).show();
                 Intent intent=new Intent(CreateGroupActivity.this, GroupRideActivity.class);
-                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
             }
         });
 
