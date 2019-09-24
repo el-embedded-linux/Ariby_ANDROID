@@ -40,6 +40,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -303,6 +304,7 @@ public class DustFragment extends Fragment {
             public void onResponse(Call<WeatherRepoResponse> call,
                                    Response<WeatherRepoResponse> response) {
                 if (response.isSuccessful()) {
+                    Log.e("getWeatherData 테스트","실행됨");
                     WeatherRepoResponse repo = response.body();
                     if (repo != null) {
                         int count = repo.getResponse().getBody().getNumOfRows();
@@ -354,11 +356,15 @@ public class DustFragment extends Fragment {
         }
         long now = System.currentTimeMillis(); // 현재시간
         Date date = new Date(now);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MINUTE,-30);
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat hour = new SimpleDateFormat("HHmm");
 
         String getTime = sdf.format(date);
-        String getHourMin = hour.format(date);
+        String getHourMin = hour.format(cal.getTime());
 
         manager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER, 0, 0, gpsListener);

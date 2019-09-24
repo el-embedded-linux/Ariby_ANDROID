@@ -1,6 +1,5 @@
 package com.el.ariby;
 
-import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.media.AudioManager;
@@ -17,7 +16,7 @@ import com.el.ariby.ui.join.AgeActivity;
 import com.el.ariby.ui.login.LoginActivity;
 
 public class FirstActivity extends AppCompatActivity {
-    ActivityFirstBinding mBinding;
+    public ActivityFirstBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
