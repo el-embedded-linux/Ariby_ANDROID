@@ -1,9 +1,12 @@
 package com.el.ariby;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -26,6 +29,9 @@ public class FirstActivity extends AppCompatActivity {
         Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.mainvideo);//비디오 파일 경로 설정
         mBinding.vdoView.setVideoURI(video);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mBinding.vdoView.setAudioFocusRequest(AudioManager.AUDIOFOCUS_NONE);
+        }
         mBinding.btnNewUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
