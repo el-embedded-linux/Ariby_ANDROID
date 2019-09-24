@@ -195,7 +195,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                 Toast.makeText(CreateGroupActivity.this, "그룹이 생성되었습니다.", Toast.LENGTH_SHORT).show();
                 Intent intent=new Intent(CreateGroupActivity.this, GroupRideActivity.class);
-                startActivity(intent);
+                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         });
 
