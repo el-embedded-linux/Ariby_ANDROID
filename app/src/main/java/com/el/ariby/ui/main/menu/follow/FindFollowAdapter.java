@@ -83,7 +83,7 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
 
         ImageView iconImageView = convertView.findViewById(R.id.imageView1);
         TextView titleTextView = convertView.findViewById(R.id.textView1);
-        final Button addfollow = convertView.findViewById(R.id.add_friend);
+        final Button addFollow = convertView.findViewById(R.id.add_friend);
         TextView following_num = convertView.findViewById(R.id.following_num);
         TextView followers_num = convertView.findViewById(R.id.followers_num);
         //TextView descTextView = convertView.findViewById(R.id.textView2);
@@ -98,7 +98,7 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
         titleTextView.setText(item.getNick());
         following_num.setText(item.getFollwingNum());
         followers_num.setText(item.getFollowerNum());
-        addfollow.setTag(position);
+        addFollow.setTag(position);
         auth = FirebaseAuth.getInstance().getCurrentUser();
         user = auth.getUid();
 
@@ -107,7 +107,7 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
                     public void callback(ArrayList<String> data,ArrayList<String> userUid) {
                         followingUid = data;
                         userUidList = userUid;
-                        addfollow.setOnClickListener(new View.OnClickListener() {
+                        addFollow.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
 
@@ -122,8 +122,8 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
                                             followref.child("following").child(user).child(addUserUid).setValue("true");
                                             followref.child("follower").child(addUserUid).child(user).setValue("true");
 
-                                            addfollow.setText("팔로잉");
-                                            addfollow.setEnabled(false);
+                                            addFollow.setText("팔로잉");
+                                            addFollow.setEnabled(false);
                                             adapter.notifyDataSetChanged();
                                             Toast.makeText(context, "팔로잉 되었습니다.", Toast.LENGTH_SHORT).show();
                                             break;
