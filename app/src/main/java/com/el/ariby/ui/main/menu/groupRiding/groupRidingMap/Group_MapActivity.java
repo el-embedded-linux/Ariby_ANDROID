@@ -39,6 +39,7 @@ import com.el.ariby.R;
 import com.el.ariby.ui.api.MapFindApi;
 import com.el.ariby.ui.api.SelfCall;
 import com.el.ariby.ui.api.response.MapFindRepoResponse;
+import com.el.ariby.ui.main.menu.CourseFragment;
 import com.el.ariby.ui.main.menu.groupRiding.GroupRideActivity;
 import com.el.ariby.ui.main.menu.navigation.PointDouble;
 import com.google.firebase.auth.FirebaseAuth;
@@ -363,9 +364,10 @@ public class Group_MapActivity extends AppCompatActivity
         if(drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START);
         }
-            Intent intent1 = new Intent(this, GroupRideActivity.class);
+           /* Intent intent1 = new Intent(this, CourseFragment.class);
             intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent1);
+            startActivity(intent1);*/
+           finish();
             return;
 
     }

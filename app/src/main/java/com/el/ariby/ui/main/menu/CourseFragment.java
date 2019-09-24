@@ -133,6 +133,15 @@ public class CourseFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume(){
+       super.onResume();
+       myGroupList.clear();
+       groupRideItems.clear();
+       // adapter.notifyDataSetChanged();
+        //OnResume Fragment
+    }
+
     public class GroupRidingAdapter extends BaseAdapter {
 
         @Override
