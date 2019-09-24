@@ -358,7 +358,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
         else
             mBinding.txtNaviDistance.setText("남은거리 : " + (int) (distanceKiloMeter2 / 1000 * 10) / 10.0 + "km");
 
-        if (distanceKiloMeter <= 3.0) {
+        if (distanceKiloMeter <= 9.0) {
             ++naviCount;
 
             if (naviMembers.get(naviCount).getDescription().equals("도착")) {

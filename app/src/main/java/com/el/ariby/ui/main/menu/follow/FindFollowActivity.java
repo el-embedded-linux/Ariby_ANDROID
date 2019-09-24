@@ -93,7 +93,7 @@ public class FindFollowActivity extends AppCompatActivity {
                                             }
                                         }
 
-                                                Log.d("getChildrenCount",follower+"\n"+following+"\n"+snapshot.getRef()+"\n"+userUid);
+                                        Log.d("getChildrenCount",follower+"\n"+following+"\n"+snapshot.getRef()+"\n"+userUid);
                                         adapter.addItem(new FollowItem(url, nickname, following, follower));
                                     }
                                     adapter.notifyDataSetChanged();
@@ -142,7 +142,7 @@ public class FindFollowActivity extends AppCompatActivity {
     public void loadData(final Callback callback) {
         followref = database.getReference("FRIEND").child("following").child(myUid);
         followerNumRef = database.getReference("FRIEND").child("follower");
-        follwingNumRef= database.getReference("FRIEND").child("following");
+        follwingNumRef = database.getReference("FRIEND").child("following");
         followref.addListenerForSingleValueEvent(new ValueEventListener() { //following
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
