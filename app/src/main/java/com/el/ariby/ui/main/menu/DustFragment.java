@@ -1,13 +1,17 @@
 package com.el.ariby.ui.main.menu;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -33,6 +37,7 @@ import com.el.ariby.ui.api.response.GeoRepoResponse;
 import com.el.ariby.ui.api.response.MeasureRepoResponse;
 import com.el.ariby.ui.api.response.WeatherRepoResponse;
 import com.el.ariby.ui.main.menu.dust.DustHourData;
+import com.el.ariby.ui.main.menu.groupRiding.groupRidingMap.Group_MapActivity;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
@@ -331,6 +336,7 @@ public class DustFragment extends Fragment {
         });
     }
 
+
     private void startLocationService() {
         DustFragment.GPSListener gpsListener = new DustFragment.GPSListener();
         LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -344,43 +350,66 @@ public class DustFragment extends Fragment {
             return;
         }
 
-        // LocationManaer.NETWORK_PROVIDER : 기지국들로부터 현재 위치 확인
-        Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (location != null) {
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-            String msg = "Last Known Location -> Latitude : " +
-                    location.getLatitude() +
-                    "\nLongitude : " + location.getLongitude();
-            Log.i("SampleLocation ", msg);
+        if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            //GPS 설정화면으로 이동
+            AlertDialog.Builder dialog=new AlertDialog.Builder(getContext());
+            dialog.setTitle("나가기");
+            dialog.setMessage("GPS가 꺼져있습니다. GPS를 키시겠습니까?");
+            dialog.setPositiveButton("네", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    intent.addCategory(Intent.CATEGORY_DEFAULT);
+                    startActivity(intent);
+                }
+            });
+
+            dialog.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            dialog.show();
+        } else {
+            // LocationManaer.NETWORK_PROVIDER : 기지국들로부터 현재 위치 확인
+            Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (location != null) {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                String msg = "Last Known Location -> Latitude : " +
+                        location.getLatitude() +
+                        "\nLongitude : " + location.getLongitude();
+                Log.i("SampleLocation ", msg);
+            }
+            long now = System.currentTimeMillis(); // 현재시간
+            Date date = new Date(now);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            cal.add(Calendar.MINUTE, -30);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            SimpleDateFormat hour = new SimpleDateFormat("HHmm");
+
+            String getTime = sdf.format(date);
+            String getHourMin = hour.format(cal.getTime());
+
+            manager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, 0, 0, gpsListener);
+            manager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, 0, 0, gpsListener);
+
+            getGeo(longitude.toString(), latitude.toString(), "WGS84");
+            getCoord(longitude.toString(), latitude.toString());
+            LatXLngY data = convertGRID_GPS(0, latitude, longitude);
+
+            getWeatherData(getTime,
+                    getHourMin,
+                    String.valueOf((int) data.x),
+                    String.valueOf((int) data.y));
+
+            manager.removeUpdates(gpsListener);
         }
-        long now = System.currentTimeMillis(); // 현재시간
-        Date date = new Date(now);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.MINUTE,-30);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        SimpleDateFormat hour = new SimpleDateFormat("HHmm");
-
-        String getTime = sdf.format(date);
-        String getHourMin = hour.format(cal.getTime());
-
-        manager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, 0, 0, gpsListener);
-        manager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 0, 0, gpsListener);
-
-        getGeo(longitude.toString(), latitude.toString(), "WGS84");
-        getCoord(longitude.toString(), latitude.toString());
-        LatXLngY data = convertGRID_GPS(0, latitude, longitude);
-
-        getWeatherData(getTime,
-                getHourMin,
-                String.valueOf((int) data.x),
-                String.valueOf((int) data.y));
-
-        manager.removeUpdates(gpsListener);
     }
 
     private class GPSListener implements LocationListener {
