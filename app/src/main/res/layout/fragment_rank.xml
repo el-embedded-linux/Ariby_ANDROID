@@ -40,17 +40,14 @@
 
     <!-- android:background="@drawable/spinner_bg" !-->
     <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:dropDownWidth="210dp"
-        android:layout_below="@+id/layout_tab_rank"
-        android:spinnerMode="dropdown"
-
-        android:stateListAnimator="@drawable/spinner_sla"
         android:id="@+id/dropDown"
         style="@style/Widget.AppCompat.Spinner"
-        >
-    </Spinner>
+        android:layout_width="210dp"
+        android:layout_height="25dp"
+        android:layout_below="@+id/layout_tab_rank"
+        android:dropDownWidth="210dp"
+        android:spinnerMode="dropdown"
+        android:stateListAnimator="@drawable/spinner_sla"></Spinner>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_layout_rank"

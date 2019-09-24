@@ -217,8 +217,8 @@ public class ClubCreateActivity extends AppCompatActivity {
 }
 
 class ClubModel {
-    String commend;
-    String location;
+    public String commend;
+    public String location;
 
     public ClubModel(String commend, String location) {
         this.commend = commend;
