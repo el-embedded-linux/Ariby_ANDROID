@@ -222,7 +222,10 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 Double time2=(kilo/13.0)*60; // 자전거 소요시간 공식 (거리/속도)*분
 
                 int kcal = (int)(72*0.0939*Math.round(time2)); // 평균 몸무게 62 + 자전거 무게 10 * 속도칼로리소비계수*분
-                txtTakeTime.setText(Math.round(time2)+"분");
+                if(Math.round(time2)==0)
+                    txtTakeTime.setText((Math.round(time2)+1)+"분");
+                else
+                    txtTakeTime.setText(Math.round(time2)+"분");
                 if(kilo>=1.0) //
                     txtTakeKilo.setText(Math.round(kilo*10)/10.0+"km");
                 else
