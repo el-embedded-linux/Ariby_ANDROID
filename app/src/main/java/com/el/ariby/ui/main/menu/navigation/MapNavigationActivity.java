@@ -369,7 +369,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
         mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
 
         if (distanceKiloMeter2 <= 1000)
-            mBinding.txtNaviDistance.setText("남은거리 : " + (int) distanceKiloMeter + "m");
+            mBinding.txtNaviDistance.setText("남은거리 : " + (int) distanceKiloMeter2 + "m");
         else
             mBinding.txtNaviDistance.setText("남은거리 : " + (int) (distanceKiloMeter2 / 1000 * 10) / 10.0 + "km");
 

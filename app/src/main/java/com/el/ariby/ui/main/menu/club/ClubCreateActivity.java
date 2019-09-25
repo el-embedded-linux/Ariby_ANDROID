@@ -62,7 +62,7 @@ public class ClubCreateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_club_create);
-        mBinding = DataBindingUtil.setContentView(this,R.layout.activity_club_create);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_club_create);
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -88,6 +88,7 @@ public class ClubCreateActivity extends AppCompatActivity {
         mBinding.btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                showProgressBar();
                 UploadClubInfoToFirebase();
             }
         });
@@ -144,18 +145,18 @@ public class ClubCreateActivity extends AppCompatActivity {
 
             storageReference2nd.putFile(FilePathUri).addOnSuccessListener(
                     new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
-                    while (!urlTask.isSuccessful()) ;
-                    Uri downloadUrl = urlTask.getResult();
-                    ref.child("CLUB").child(name).child("clubImageURL").setValue(downloadUrl.toString());
-
-                    Toast.makeText(getApplicationContext(), "클럽이 생성되었습니다.", Toast.LENGTH_LONG).show();
-                    finish();
-                    overridePendingTransition(R.anim.not_move_activity, R.anim.rightout_activity);
-                }
-            })
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
+                            while (!urlTask.isSuccessful()) ;
+                            Uri downloadUrl = urlTask.getResult();
+                            ref.child("CLUB").child(name).child("clubImageURL").setValue(downloadUrl.toString());
+                            hideProgressBar();
+                            Toast.makeText(getApplicationContext(), "클럽이 생성되었습니다.", Toast.LENGTH_LONG).show();
+                            finish();
+                            overridePendingTransition(R.anim.not_move_activity, R.anim.rightout_activity);
+                        }
+                    })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
@@ -213,6 +214,14 @@ public class ClubCreateActivity extends AppCompatActivity {
         Double longitude = location.getLongitude();
 
         getGeo(longitude.toString(), latitude.toString(), "WGS84");
+    }
+
+    private void showProgressBar() {
+        mBinding.pbClubCreate.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressBar() {
+        mBinding.pbClubCreate.setVisibility(View.INVISIBLE);
     }
 }
 
