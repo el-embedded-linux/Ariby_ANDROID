@@ -337,7 +337,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                                 naviMembers.get(0).getPoint().y, naviMembers.get(0).getPoint().x, "meter");
                 mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
                 mBinding.txtNaviMap.setText(naviMembers.get(0).description
-                        + "턴타입 : " + naviMembers.get(0).getTurnType());
+                        + " 턴타입 : " + naviMembers.get(0).getTrunTypeByText());
                 totalDistance[0] = repo.getFeatures().get(0).getProperties().getTotalDistance();
             }
 

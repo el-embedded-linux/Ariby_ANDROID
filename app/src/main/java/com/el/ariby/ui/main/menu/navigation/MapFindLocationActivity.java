@@ -78,7 +78,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
 
         getMapFind(startY, startX, endY, endX);
         MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
-                Double.parseDouble(startX), Double.parseDouble(startY));
+                 Double.parseDouble(startX), Double.parseDouble(startY));
 
         MapPoint markerPointEnd = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(endX), Double.parseDouble(endY));
