@@ -87,7 +87,7 @@ public class InfoFragment extends Fragment {
                             .apply(RequestOptions.circleCropTransform())
                             .into(photo); //이미지를 둥글게 처리
                     displayName.setText(name);
-                    photo.setImageURI(uri);
+                    //photo.setImageURI(uri);
                     following_num.setText(following);
                     followers_num.setText(follower);
                 }
