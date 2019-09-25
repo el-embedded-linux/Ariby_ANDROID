@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import com.el.ariby.Module;
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityNicknameBinding;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +28,7 @@ public class NicknameActivity extends AppCompatActivity {
     public final String PREFERENCE = "com.el.ariby_joining";
     ActivityNicknameBinding mBinding;
     DatabaseReference ref;
+    private Module module=new Module();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +61,7 @@ public class NicknameActivity extends AppCompatActivity {
                         String useNick = mBinding.etNickname.getText().toString();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             if((useNick.equals(snapshot.child("nickname").getValue().toString())) ||
-                                    TextUtils.isEmpty(useNick)) {
+                                    !module.isNameCheck(useNick)) {
                                 mBinding.txtAlram.setText("이미 사용중인 닉네임입니다.");
                                 mBinding.btnNext.setEnabled(false);
                                 mBinding.btnNext.setBackgroundColor(Color.parseColor("#FF979797"));

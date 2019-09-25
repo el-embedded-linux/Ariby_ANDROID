@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -16,11 +17,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import com.el.ariby.Module;
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityClubCreateBinding;
 import com.el.ariby.ui.api.GeoApi;
@@ -53,10 +58,14 @@ public class ClubCreateActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference ref;
     DatabaseReference userRef;
+    DatabaseReference clubRef;
 
     Uri FilePathUri;
     StorageReference storageReference;
     String Storage_Path = "club/"; // 파이어베이스 스토리지 저장 폴더
+    Boolean nameCheck = true;
+
+    private Module module=new Module();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +74,48 @@ public class ClubCreateActivity extends AppCompatActivity {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_club_create);
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
+        clubRef=database.getReference("CLUB");
         storageReference = FirebaseStorage.getInstance().getReference();
+
+        mBinding.etName.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        mBinding.txtNameCheck.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        mBinding.txtNameCheck.setText("생성 가능합니다.");
+                        mBinding.txtNameCheck.setTextColor(Color.BLUE);
+                        mBinding.btnCreate.setEnabled(true);
+                        mBinding.btnCreate.setBackgroundColor(Color.parseColor("#1E90FF"));
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        clubRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String name = mBinding.etName.getText().toString();
+                                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    if (name.equals(snapshot.getKey()) ||
+                                            !module.isNameCheck(name)) {
+                                        mBinding.txtNameCheck.setText("이미 존재하거나 특수문자는 입력할 수 없습니다.");
+                                        mBinding.txtNameCheck.setTextColor(Color.RED);
+                                        mBinding.btnCreate.setEnabled(false);
+                                        mBinding.btnCreate.setBackgroundColor(Color.parseColor("#FF979797"));
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
 
         mBinding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,8 +138,13 @@ public class ClubCreateActivity extends AppCompatActivity {
         mBinding.btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showProgressBar();
-                UploadClubInfoToFirebase();
+                if (nameCheck) {
+                    showProgressBar();
+                    UploadClubInfoToFirebase();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "같은 이름의 클럽이 이미 있습니다.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
