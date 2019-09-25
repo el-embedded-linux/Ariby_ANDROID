@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +28,7 @@ import java.util.List;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class CreateGroupActivity extends AppCompatActivity {
+    public static final int CODE_MAP_CURRENT_SEARCH = 5000;
     Button makeGroup;
     Button addFriend;
     EditText groupName;
@@ -75,6 +78,17 @@ public class CreateGroupActivity extends AppCompatActivity {
                 String start = inputStart.getText().toString();
                 String end = inputEnd.getText().toString();
                 String note = inputInfo.getText().toString();
+
+                if(TextUtils.isEmpty(group_name)){
+                    groupName.setError("그룹 이름을 입력해 주세요");
+                    return;
+                }else if(TextUtils.isEmpty(start)){
+                    inputStart.setError("출발지를 지정해 주세요");
+                    return;
+                }else if(TextUtils.isEmpty(end)){
+                    inputEnd.setError("도착지를 지정해 주세요");
+                    return;
+                }
 
                 final String userInfo[] = new String[3];
 
@@ -196,8 +210,8 @@ public class CreateGroupActivity extends AppCompatActivity {
                 }
 
                 Toast.makeText(CreateGroupActivity.this, "그룹이 생성되었습니다.", Toast.LENGTH_SHORT).show();
-                Intent intent=new Intent(CreateGroupActivity.this, GroupRideActivity.class);
-                startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
+                finish();
+
             }
         });
 
@@ -226,24 +240,35 @@ public class CreateGroupActivity extends AppCompatActivity {
             }
         });
     }
+
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         switch (requestCode){
-            case 5:
+            case 5: //출발
                 if(resultCode == RESULT_OK)
                 {
                     String startPoint = data.getStringExtra("result_msg");
                     startX = data.getStringExtra("X");
                     startY = data.getStringExtra("Y");
                     inputStart.setText(startPoint);
+                }else
+                if(resultCode == CODE_MAP_CURRENT_SEARCH){
+                    startX = data.getStringExtra("X");
+                    startY = data.getStringExtra("Y");
+                    inputStart.setText("현위치");
                 }
                 break;
-            case 6:
+            case 6: //도착
                 if(resultCode == RESULT_OK)
                 {
                     String endPoint = data.getStringExtra("result_msg");
                     endX = data.getStringExtra("X");
                     endY = data.getStringExtra("Y");
                     inputEnd.setText(endPoint);
+                }else if(resultCode == CODE_MAP_CURRENT_SEARCH){
+                    startX = data.getStringExtra("X");
+                    startY = data.getStringExtra("Y");
+                    inputEnd.setText("현위치");
                 }
         }
     }

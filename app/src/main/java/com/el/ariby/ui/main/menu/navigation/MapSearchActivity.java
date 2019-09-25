@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.el.ariby.R;
+import com.el.ariby.ui.main.menu.groupRiding.CreateGroupActivity;
 import com.skt.Tmap.TMapData;
 import com.skt.Tmap.TMapPOIItem;
 import com.skt.Tmap.TMapTapi;
@@ -114,6 +115,7 @@ public class MapSearchActivity extends AppCompatActivity implements
                 intent.putExtra("X",Double.toString(list.get(0)));
                 intent.putExtra("Y",Double.toString(list.get(1)));
                 setResult(MapInputActivity.CODE_MAP_CURRENT_SEARCH, intent);
+                setResult(CreateGroupActivity.CODE_MAP_CURRENT_SEARCH, intent);
                 finish();
             }
         });
