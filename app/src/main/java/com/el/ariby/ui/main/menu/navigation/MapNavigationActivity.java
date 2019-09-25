@@ -90,6 +90,11 @@ public class MapNavigationActivity extends AppCompatActivity implements
         progressDialog.setMessage("데이터를 로딩중입니다.");
 
         disList.add(0, getMapFind(startY, startX, endY, endX)); // 총 거리 반환
+        disList.add(1, startY);
+        disList.add(2, startX);
+
+        Log.d("테스트 : LAT", String.valueOf(startY));
+        Log.d("테스트 : LONG", String.valueOf(startX));
 
         MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(startX), Double.parseDouble(startY));
@@ -153,21 +158,24 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 String nickname = dataSnapshot.child("nickname").getValue().toString();
                 String userImg = dataSnapshot.child("userImageURL").getValue().toString();
 
-                int size = naviMembers.size()-1;
-                Double myDistance = distance(Double.valueOf(disList.get(1)),
-                        Double.valueOf(disList.get(2)),
-                        naviMembers.get(size).getPoint().y,
-                        naviMembers.get(size).getPoint().x, "m");
+                Double myDistance = distance(
+                        Double.valueOf(disList.get(3)), //start Y
+                        Double.valueOf(disList.get(4)), //start X
+                        Double.valueOf(disList.get(1)), //현재위치 Y
+                        Double.valueOf(disList.get(2)), "kilometer"); // 현재위치 X
+
+                Double dis = Math.round(myDistance*10)/10.0;
                 if (!TextUtils.isEmpty(myDistance.toString())) {
-                    if (myDistance > 0.1) {
+                    if (myDistance > 0.0) {
                         //현재 날짜/시간 가져오기
                         long currentTime = System.currentTimeMillis();
                         final Date date = new Date(currentTime);
                         Date month = new Date(currentTime);
                         SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
                         SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
-
+                        SimpleDateFormat todayFormat = new SimpleDateFormat("yyyy-MM-dd");
                         //나중에 사용
+                        String today = todayFormat.format(date);
                         String thisYear = sdfYear.format(date);
                         String thisMonth = sdfMonth.format(date);
                         String monthCheckStr = thisMonth + "-01-" + thisYear + " 00:00:00";
@@ -204,7 +212,13 @@ public class MapNavigationActivity extends AppCompatActivity implements
                                 .child("dailyData")
                                 .child(String.valueOf(monthTimestamp))
                                 .child("dailyTotalDis")
-                                .setValue(myDistance);
+                                .setValue(dis);
+
+                        ref.child(firebaseUser.getUid())
+                                .child("dailyData")
+                                .child(String.valueOf(monthTimestamp))
+                                .child("date")
+                                .setValue(today);
 
                         Log.e("테스트", String.valueOf(myDistance));
                     }
@@ -377,10 +391,12 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         naviMembers.get(naviCount).getTrunTypeByText());
             }
         }
-        disList.add(1, String.valueOf(mapPointGeo.latitude));
-        disList.add(2, String.valueOf(mapPointGeo.longitude));
+        disList.add(3, String.valueOf(mapPointGeo.longitude));
+        disList.add(4, String.valueOf(mapPointGeo.latitude));
 
         Log.d("currentDistance", String.valueOf(distanceKiloMeter));
+        Log.d("테스트 : LAT", String.valueOf(mapPointGeo.latitude));
+        Log.d("테스트 : LONG", String.valueOf(mapPointGeo.longitude));
     }
 
     private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
