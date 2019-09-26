@@ -117,6 +117,7 @@ public class Group_MapActivity extends AppCompatActivity
         final TextView txtMemberCount = findViewById(R.id.group_navi_members);
         final TextView btnOut = findViewById(R.id.btnOut);
         final TextView btnStop = findViewById(R.id.btnStop);
+        fab = findViewById(R.id.fab);
         listView = findViewById(R.id.group_nav_member_list);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close );
         drawerLayout.addDrawerListener(toggle);
@@ -149,6 +150,20 @@ public class Group_MapActivity extends AppCompatActivity
         userRef = database.getReference("USER").child(firebaseUser.getUid());
         marker = new ArrayList<MapPOIItem>();
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOff) {
+                    mapView.setZoomLevel(-1, true);
+                    mapView.zoomIn(true);
+                    mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+                } else if (mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading) {
+                    mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
+                } else if (mapView.getCurrentLocationTrackingMode() == MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading) {
+                    mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
+                }
+            }
+        });
 
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
