@@ -25,9 +25,18 @@
         />
 
     <EditText
-        android:layout_width="250dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/input_groupName"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="50dp"
+        android:minWidth="50dp"
+        android:text="중복검사"
+        android:textSize="12dp"
+        android:id="@+id/btnCheck"
         />
 </LinearLayout>
 
@@ -40,9 +49,6 @@
         android:paddingTop="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-
-
-
         >
         <TextView
             android:id="@+id/riding_loc"
@@ -69,7 +75,6 @@
         android:paddingTop="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-
         >
         <TextView
             android:id="@+id/riding_dis"

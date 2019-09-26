@@ -54,19 +54,14 @@ public class GroupRideActivity extends AppCompatActivity {
         myGroupRef = database.getReference("GROUP_RIDING_MEMBERS");
         final String myUid = mUser.getUid();
 
-
-
         myGroupRef.child(myUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int i = 0;
                 if(dataSnapshot.exists()){
                     for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        //String groupName = dataSnapshot1.getValue().toString();
                         String groupName = dataSnapshot1.getKey();
                         Log.d("내 그룹 : ", groupName);
                         myGroupList.add(groupName);
-                        //i++;
                     }
                 }
                 adapter.notifyDataSetChanged();
@@ -141,7 +136,6 @@ public class GroupRideActivity extends AppCompatActivity {
         }
 
        public void addItem(GroupRideItem item){ groupRideItems.add(item); }
-        //public void clearItem(){rankingItems.clear();}
     }
 }
 

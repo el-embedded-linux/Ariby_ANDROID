@@ -2,6 +2,7 @@ package com.el.ariby.ui.main.menu.groupRiding;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,6 +32,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     public static final int CODE_MAP_CURRENT_SEARCH = 5000;
     Button makeGroup;
     Button addFriend;
+    Button checkName;
     EditText groupName;
     EditText inputStart;
     EditText inputEnd;
@@ -45,6 +47,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     String startY;
     String endX;
     String endY;
+    int duplicateCheck = 2; //체크 안함
 
 
     @Override
@@ -57,6 +60,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         inputEnd = findViewById(R.id.input_end);
         inputStart = findViewById(R.id.input_start);
         inputInfo = findViewById(R.id.input_info);
+        checkName = findViewById(R.id.btnCheck);
 
         database = FirebaseDatabase.getInstance();
         final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -64,11 +68,42 @@ public class CreateGroupActivity extends AppCompatActivity {
         ref = database.getReference();
         memberRef = database.getReference("GROUP_RIDING_MEMBERS");
 
+        checkName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String name = groupName.getText().toString();
+                duplicateCheck = 0; //중복없음
+                Log.d("1 : ", String.valueOf(duplicateCheck));
+                ref.child("GROUP_RIDING").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Log.d("snapshot : ", snapshot.getKey());
+                            if (name.equals(snapshot.getKey())) {
+                                makeGroup.setEnabled(false);
+                                makeGroup.setBackgroundColor(Color.parseColor("#FF979797"));
+                                duplicateCheck = 1; //중복 발견
+                                Log.d("2 : ", String.valueOf(duplicateCheck));
+                                Toast.makeText(CreateGroupActivity.this, "이미 존재하는 그룹 이름입니다.", Toast.LENGTH_SHORT).show();
+                                break;
+                            }
+                        }
+                        if(duplicateCheck == 0){ //중복 없음
+                            Toast.makeText(CreateGroupActivity.this, "사용 가능한 그룹 이름입니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
         makeGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //UploadGroupInfoToFirebase();
-
                 SharedPreferences getList = getSharedPreferences("com.el.ariby_preferences", MODE_PRIVATE);
                 int count = getList.getInt("count", 0);
                 String str = getList.getString("members", "none");
@@ -90,8 +125,10 @@ public class CreateGroupActivity extends AppCompatActivity {
                     return;
                 }
 
-                final String userInfo[] = new String[3];
+                if(duplicateCheck==1) { Toast.makeText(CreateGroupActivity.this, "이미 존재하는 그룹입니다", Toast.LENGTH_SHORT).show();
+                }else if(duplicateCheck == 2) { Toast.makeText(CreateGroupActivity.this, "그룹 이름 중복체크를 해주세요", Toast.LENGTH_SHORT).show(); return;}
 
+                final String userInfo[] = new String[3];
 
                 final String[] array = str.split("\\*");
                 //출발지
@@ -106,7 +143,6 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                 //info
                 ref.child("GROUP_RIDING").child(group_name).child("info").child("note").setValue(note);
-
 
 
                 //생성자 닉네임
@@ -271,6 +307,14 @@ public class CreateGroupActivity extends AppCompatActivity {
                     inputEnd.setText("현위치");
                 }
         }
+    }
+
+    public int checkName(final String name){
+        final int[] check = {0}; //중복 없음
+        Log.e("group name : ", name);
+
+        Log.d("check value : ", String.valueOf(check[0]));
+        return check[0];
     }
 
 
