@@ -2,6 +2,7 @@ package com.el.ariby.ui.main.menu.groupRiding.groupRidingMap;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,8 +14,10 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -32,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -101,6 +105,7 @@ public class Group_MapActivity extends AppCompatActivity
     //drawer
     ArrayList<MemberListItem> memberListItems = new ArrayList<>();
     MemberListAdapter memberListAdapter;
+   private Bitmap bitmap;
 
     int myPosition;
     int memberCount;
@@ -165,6 +170,7 @@ public class Group_MapActivity extends AppCompatActivity
             }
         });
 
+
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -194,7 +200,6 @@ public class Group_MapActivity extends AppCompatActivity
 
                             final String getProf = snapshot.child("members").child(String.valueOf(a)).child("profile").getValue().toString();
                             String getNick = snapshot.child("members").child(String .valueOf(a)).child("nickname").getValue().toString();
-                            String getState = snapshot.child("members").child(String.valueOf(a)).child("state").getValue().toString();
                             memberList.add(getNick);
                             memberListAdapter.addItem(new MemberListItem(getProf, getNick));
                             coordinates = startLocationService();
@@ -209,23 +214,31 @@ public class Group_MapActivity extends AppCompatActivity
                             String getLat = snapshot.child("members").child(String.valueOf(a)).child("lat").getValue().toString();
                             String getLon = snapshot.child("members").child(String.valueOf(a)).child("lon").getValue().toString();
                             MapPoint markPoint3 = MapPoint.mapPointWithGeoCoord(Double.parseDouble(getLat), Double.parseDouble(getLon));
-                            MapPOIItem marker2 = new MapPOIItem();
-
+                            final MapPOIItem marker2 = new MapPOIItem();
 
                             Log.e("getLat + getLon : ", getLat + ",   " + getLon+",   "+getProf);
                             marker2.setItemName(String.valueOf(memberTag));
                             marker2.setTag(memberTag);
                             marker2.setMapPoint(markPoint3);
-                            /*marker2.setMarkerType(MapPOIItem.MarkerType.CustomImage);
-                            marker2.setCustomImageResourceId(R.drawable.default_image);
-                            marker2.setCustomImageAutoscale(true);
+                            marker2.setMarkerType(MapPOIItem.MarkerType.CustomImage);
+                            //marker2.setCustomImageResourceId(R.drawable.default_image);
+                           // new DownloadImageTask(marker2).execute(getProf);
+                           // marker2.setCustomImageBitmap(getBitmapFromURL(getProf));
+                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                            StrictMode.setThreadPolicy(policy);
+                            try {
+                                URL url = new URL(getProf);
+                                Bitmap bitmap = BitmapFactory.decodeStream((InputStream)url.getContent());
+                                marker2.setCustomImageBitmap(Bitmap.createScaledBitmap(bitmap, 120,120,false));
+                            } catch (IOException e) {
+                                Log.e("Group_MapActivity", e.getMessage());
+                            }
+
+                            marker2.setCustomImageAutoscale(false);
                             marker2.setCustomImageAnchor(0.5f, 1.0f);
-*/
-                            //marker2.setCustomImageResourceId(drawableFromUrl(getProf));
-                            marker2.setMarkerType(MapPOIItem.MarkerType.YellowPin);
-                            marker2.setSelectedMarkerType(MapPOIItem.MarkerType.YellowPin);
+
                             marker.add(marker2);
-                           mapView.addPOIItem(marker2);
+                            mapView.addPOIItem(marker2);
                             memberTag++;
                         }
                         items = mapView.getPOIItems();
@@ -311,14 +324,7 @@ public class Group_MapActivity extends AppCompatActivity
         });
     }
 
-    public static BitmapDrawable drawableFromUrl (String url) throws IOException{
-        Bitmap bitmap;
-        HttpURLConnection connection = (HttpURLConnection)new URL(url).openConnection();
-        connection.connect();
-        InputStream input = connection.getInputStream();
-        bitmap = BitmapFactory.decodeStream(input);
-        return new BitmapDrawable(Resources.getSystem(), bitmap);
-    }
+
 
     @Override
     protected void onResume() {
