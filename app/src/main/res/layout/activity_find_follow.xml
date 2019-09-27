@@ -14,7 +14,7 @@
         android:layout_alignParentTop="true">
 
         <EditText
-            android:id="@+id/find"
+            android:id="@+id/find_follow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="검색어를 입력해주세요."

@@ -1,5 +1,7 @@
 package com.el.ariby.ui.main.menu.follow;
 
+import java.util.ArrayList;
+
 public class FollowItem {
     private String iconDrawable;
     private String nick;
@@ -23,6 +25,14 @@ public class FollowItem {
         this.nick=nick;
 
     }
+
+    public FollowItem(ArrayList<String> userImage, ArrayList<String> userNickname , ArrayList<String> followerNumList, ArrayList<String> followingNumList) {
+        this.iconDrawable = String.valueOf(userImage);
+        this.nick = String.valueOf(userNickname);
+        this.follwingNum = String.valueOf(followerNumList);
+        this.followerNum = String.valueOf(followingNumList);
+    }
+
     public String getIconDrawable() {
         return iconDrawable;
     }

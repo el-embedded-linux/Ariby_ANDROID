@@ -55,7 +55,7 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="10dp"/>
             <TextView
-                android:id="@+id/followers_num"
+                android:id="@+id/user_followers_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="11"
@@ -70,7 +70,7 @@
                 android:textColor="#666666"
                 android:layout_marginRight="10dp"/>
             <TextView
-                android:id="@+id/following_num"
+                android:id="@+id/user_following_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="11"

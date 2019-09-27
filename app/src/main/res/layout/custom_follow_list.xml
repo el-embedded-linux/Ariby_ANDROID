@@ -7,7 +7,7 @@
     <ImageView
         android:layout_width="65dp"
         android:layout_height="match_parent"
-        android:id="@+id/imageView1"
+        android:id="@+id/follow_image"
         android:layout_weight="1" />
 
     <LinearLayout
@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="New Text"
-                android:id="@+id/textView1"
+                android:id="@+id/follow_textView"
                 android:textSize="24dp"
                 android:textColor="#666666"
                 android:gravity="center_vertical"
