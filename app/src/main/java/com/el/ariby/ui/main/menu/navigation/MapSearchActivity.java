@@ -19,9 +19,11 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.el.ariby.R;
+import com.el.ariby.ui.main.menu.groupRiding.CreateGroupActivity;
 import com.skt.Tmap.TMapData;
 import com.skt.Tmap.TMapPOIItem;
 import com.skt.Tmap.TMapTapi;
@@ -41,6 +43,8 @@ public class MapSearchActivity extends AppCompatActivity implements
     ArrayList<MapData> mArrayList;
     ArrayList<MapData> mArrayListTest;
     Button btnLocation;
+    ImageView btnBack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +53,7 @@ public class MapSearchActivity extends AppCompatActivity implements
         btnLocation=findViewById(R.id.btn_location);
         etMapName=findViewById(R.id.et_map_name);
         mRecycle=findViewById(R.id.my_recycler_view);
+        btnBack=findViewById(R.id.btn_back);
         mLayout = new LinearLayoutManager(this);
         mRecycle.setLayoutManager(mLayout);
         mArrayList=new ArrayList<>();
@@ -110,6 +115,14 @@ public class MapSearchActivity extends AppCompatActivity implements
                 intent.putExtra("X",Double.toString(list.get(0)));
                 intent.putExtra("Y",Double.toString(list.get(1)));
                 setResult(MapInputActivity.CODE_MAP_CURRENT_SEARCH, intent);
+                setResult(CreateGroupActivity.CODE_MAP_CURRENT_SEARCH, intent);
+                finish();
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 finish();
             }
         });

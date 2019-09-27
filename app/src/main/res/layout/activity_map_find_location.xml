@@ -94,7 +94,9 @@
                 android:id="@+id/imgbtn_navi_start"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/daram" />
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/navigate"  />
 
             <TextView
                 android:layout_width="wrap_content"

@@ -50,7 +50,15 @@ public class FriendListRecyclerAdapter extends RecyclerView.Adapter<GroupViewHol
         groupViewHolder.nickName.setText(arrayList.get(i).getFriend_nick());
         Picasso.with(context).load(arrayList.get(i).getProfile()).into(groupViewHolder.profile);
         /*change background color of the selected items in list view */
-        groupViewHolder.itemView.setBackgroundColor(mSelectedItemsIds.get(i) ? 0x9934B5E4 : Color.TRANSPARENT);
+        if(mSelectedItemsIds.get(i)){
+            groupViewHolder.invite.setText("선택됨");
+            groupViewHolder.invite.setBackgroundResource(R.drawable.selected_button_border);
+            groupViewHolder.invite.setTextColor(Color.WHITE);
+        }else{
+            groupViewHolder.invite.setText("그룹 초대하기");
+            groupViewHolder.invite.setBackgroundResource(R.drawable.friend_add_button_border);
+            groupViewHolder.invite.setTextColor(Color.rgb(9, 107, 58));
+        }
 
         }
 

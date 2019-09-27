@@ -1,17 +1,21 @@
 package com.el.ariby.ui.join;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
+import com.el.ariby.Module;
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityNicknameBinding;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +28,7 @@ public class NicknameActivity extends AppCompatActivity {
     public final String PREFERENCE = "com.el.ariby_joining";
     ActivityNicknameBinding mBinding;
     DatabaseReference ref;
+    private Module module=new Module();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,11 +57,11 @@ public class NicknameActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {//무언가 바뀐 이후
                 ref.addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String useNick = mBinding.etNickname.getText().toString();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             if((useNick.equals(snapshot.child("nickname").getValue().toString())) ||
-                                    TextUtils.isEmpty(useNick)) {
+                                    !module.isNameCheck(useNick)) {
                                 mBinding.txtAlram.setText("이미 사용중인 닉네임입니다.");
                                 mBinding.btnNext.setEnabled(false);
                                 mBinding.btnNext.setBackgroundColor(Color.parseColor("#FF979797"));

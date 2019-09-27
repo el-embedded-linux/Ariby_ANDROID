@@ -84,8 +84,8 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
         ImageView iconImageView = convertView.findViewById(R.id.imageView1);
         TextView titleTextView = convertView.findViewById(R.id.textView1);
         final Button addfollow = convertView.findViewById(R.id.add_friend);
-        TextView following_num = convertView.findViewById(R.id.user_followers_num);
-        TextView followers_num = convertView.findViewById(R.id.user_following_num);
+        TextView following_num = convertView.findViewById(R.id.following_num);
+        TextView followers_num = convertView.findViewById(R.id.followers_num);
         //TextView descTextView = convertView.findViewById(R.id.textView2);
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
 
@@ -117,6 +117,7 @@ public class FindFollowAdapter extends BaseAdapter implements Filterable {
                                         for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                                             String addUserUid = userUidList.get(pos);
+                                            Log.d("addUserUid",addUserUid);
 
                                             followref.child("following").child(user).child(addUserUid).setValue("true");
                                             followref.child("follower").child(addUserUid).child(user).setValue("true");

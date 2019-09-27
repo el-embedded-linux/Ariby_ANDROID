@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "282890420411-98budf9mq45gl9ruuuer0g6ols66mce7.apps.googleusercontent.com",
+          "client_id": "282890420411-h5l9so2taftcjnef323p0pilgcetgk7g.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.el.ariby",
-            "certificate_hash": "63b9856b9279055d3369d43783d5a646877e2bd8"
+            "certificate_hash": "afc1e864f5664d19faf835ad3d1d886f5e15f5bf"
+          }
+        },
+        {
+          "client_id": "282890420411-qjit7jj3rtqaeb8kjtdqmki4tl39eamh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.el.ariby",
+            "certificate_hash": "25770b9c976a2f0b9fc7fc57ca74d26065d5e50a"
           }
         },
         {
@@ -28,6 +36,14 @@
           "android_info": {
             "package_name": "com.el.ariby",
             "certificate_hash": "49d6641df327a8a4dee81a6240a550941b94a395"
+          }
+        },
+        {
+          "client_id": "282890420411-98budf9mq45gl9ruuuer0g6ols66mce7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.el.ariby",
+            "certificate_hash": "63b9856b9279055d3369d43783d5a646877e2bd8"
           }
         },
         {

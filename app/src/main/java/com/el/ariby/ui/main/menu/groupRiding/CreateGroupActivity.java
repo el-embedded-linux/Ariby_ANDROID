@@ -2,9 +2,12 @@ package com.el.ariby.ui.main.menu.groupRiding;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,9 +26,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 public class CreateGroupActivity extends AppCompatActivity {
+    public static final int CODE_MAP_CURRENT_SEARCH = 5000;
     Button makeGroup;
     Button addFriend;
+    Button checkName;
     EditText groupName;
     EditText inputStart;
     EditText inputEnd;
@@ -40,6 +47,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     String startY;
     String endX;
     String endY;
+    int duplicateCheck = 2; //체크 안함
 
 
     @Override
@@ -52,6 +60,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         inputEnd = findViewById(R.id.input_end);
         inputStart = findViewById(R.id.input_start);
         inputInfo = findViewById(R.id.input_info);
+        checkName = findViewById(R.id.btnCheck);
 
         database = FirebaseDatabase.getInstance();
         final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -59,11 +68,42 @@ public class CreateGroupActivity extends AppCompatActivity {
         ref = database.getReference();
         memberRef = database.getReference("GROUP_RIDING_MEMBERS");
 
+        checkName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String name = groupName.getText().toString();
+                duplicateCheck = 0; //중복없음
+                Log.d("1 : ", String.valueOf(duplicateCheck));
+                ref.child("GROUP_RIDING").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Log.d("snapshot : ", snapshot.getKey());
+                            if (name.equals(snapshot.getKey())) {
+                                makeGroup.setEnabled(false);
+                                makeGroup.setBackgroundColor(Color.parseColor("#FF979797"));
+                                duplicateCheck = 1; //중복 발견
+                                Log.d("2 : ", String.valueOf(duplicateCheck));
+                                Toast.makeText(CreateGroupActivity.this, "이미 존재하는 그룹 이름입니다.", Toast.LENGTH_SHORT).show();
+                                break;
+                            }
+                        }
+                        if(duplicateCheck == 0){ //중복 없음
+                            Toast.makeText(CreateGroupActivity.this, "사용 가능한 그룹 이름입니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
         makeGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //UploadGroupInfoToFirebase();
-
                 SharedPreferences getList = getSharedPreferences("com.el.ariby_preferences", MODE_PRIVATE);
                 int count = getList.getInt("count", 0);
                 String str = getList.getString("members", "none");
@@ -74,8 +114,21 @@ public class CreateGroupActivity extends AppCompatActivity {
                 String end = inputEnd.getText().toString();
                 String note = inputInfo.getText().toString();
 
-                final String userInfo[] = new String[3];
+                if(TextUtils.isEmpty(group_name)){
+                    groupName.setError("그룹 이름을 입력해 주세요");
+                    return;
+                }else if(TextUtils.isEmpty(start)){
+                    inputStart.setError("출발지를 지정해 주세요");
+                    return;
+                }else if(TextUtils.isEmpty(end)){
+                    inputEnd.setError("도착지를 지정해 주세요");
+                    return;
+                }
 
+                if(duplicateCheck==1) { Toast.makeText(CreateGroupActivity.this, "이미 존재하는 그룹입니다", Toast.LENGTH_SHORT).show();
+                }else if(duplicateCheck == 2) { Toast.makeText(CreateGroupActivity.this, "그룹 이름 중복체크를 해주세요", Toast.LENGTH_SHORT).show(); return;}
+
+                final String userInfo[] = new String[3];
 
                 final String[] array = str.split("\\*");
                 //출발지
@@ -90,7 +143,6 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                 //info
                 ref.child("GROUP_RIDING").child(group_name).child("info").child("note").setValue(note);
-
 
 
                 //생성자 닉네임
@@ -112,21 +164,23 @@ public class CreateGroupActivity extends AppCompatActivity {
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("nickname").setValue(userInfo[1]);
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("state").setValue("leader");
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("profile").setValue(userInfo[2]);
-
+                        ref.child("GROUP_RIDING_MEMBERS").child(mUser.getUid()).child(group_name).setValue("true");
                         //group_riding_members
                         //long groupCount = returnGroupCount(userInfo[0]);
+
                         memberRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                                    String uidStr = dataSnapshot1.getKey();
+                                    /*String uidStr = dataSnapshot1.getKey();
                                     Log.d("uidStr : ", uidStr);
                                     if(uidStr.equals(userInfo[0])) {
                                         group_num1[0] = dataSnapshot1.getChildrenCount();
                                         Log.e("group_num : ", userInfo[0] + ",  "+ String.valueOf(group_num1[0]));
                                         ref.child("GROUP_RIDING_MEMBERS").child(mUser.getUid()).child(String.valueOf(group_num1[0])).setValue(group_name);
                                         break;
-                                    }
+                                    }*/
+
                                 }
                             }
 
@@ -161,9 +215,10 @@ public class CreateGroupActivity extends AppCompatActivity {
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("profile").setValue(array[i+2]);
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lat").setValue(lat);
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lon").setValue(lon);
+                    ref.child("GROUP_RIDING_MEMBERS").child(array[index+1]).child(group_name).setValue("true");
 
                     //group_riding_members
-                    memberRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    /*memberRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
@@ -183,7 +238,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
                         }
-                    });
+                    });*/
 
                     lat = lat+0.1;
                     lon = lon+0.1;
@@ -191,8 +246,8 @@ public class CreateGroupActivity extends AppCompatActivity {
                 }
 
                 Toast.makeText(CreateGroupActivity.this, "그룹이 생성되었습니다.", Toast.LENGTH_SHORT).show();
-                Intent intent=new Intent(CreateGroupActivity.this, GroupRideActivity.class);
-                startActivity(intent);
+                finish();
+
             }
         });
 
@@ -221,26 +276,45 @@ public class CreateGroupActivity extends AppCompatActivity {
             }
         });
     }
+
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         switch (requestCode){
-            case 5:
+            case 5: //출발
                 if(resultCode == RESULT_OK)
                 {
                     String startPoint = data.getStringExtra("result_msg");
                     startX = data.getStringExtra("X");
                     startY = data.getStringExtra("Y");
                     inputStart.setText(startPoint);
+                }else
+                if(resultCode == CODE_MAP_CURRENT_SEARCH){
+                    startX = data.getStringExtra("X");
+                    startY = data.getStringExtra("Y");
+                    inputStart.setText("현위치");
                 }
                 break;
-            case 6:
+            case 6: //도착
                 if(resultCode == RESULT_OK)
                 {
                     String endPoint = data.getStringExtra("result_msg");
                     endX = data.getStringExtra("X");
                     endY = data.getStringExtra("Y");
                     inputEnd.setText(endPoint);
+                }else if(resultCode == CODE_MAP_CURRENT_SEARCH){
+                    startX = data.getStringExtra("X");
+                    startY = data.getStringExtra("Y");
+                    inputEnd.setText("현위치");
                 }
         }
+    }
+
+    public int checkName(final String name){
+        final int[] check = {0}; //중복 없음
+        Log.e("group name : ", name);
+
+        Log.d("check value : ", String.valueOf(check[0]));
+        return check[0];
     }
 
 

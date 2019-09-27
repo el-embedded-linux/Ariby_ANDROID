@@ -146,7 +146,7 @@ public class ClubDetailActivity extends AppCompatActivity {
                             builder.setPositiveButton("YES", exitDialogListener);
                             builder.setNegativeButton("NO", null);
                             builder.show();
-                        } else if (flag==2)
+                        } else
                             Toast.makeText(getApplicationContext(),
                                     "운영자는 가입이나 탈퇴가 불가능합니다.", Toast.LENGTH_SHORT).show();
                     }

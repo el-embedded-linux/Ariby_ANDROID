@@ -46,6 +46,7 @@
                 android:textColor="@color/colorPrimary"
                 android:background="@drawable/friend_add_button_border"
                 android:layout_width="wrap_content"
+                android:minWidth="100dp"
                 android:layout_height="37dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"

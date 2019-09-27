@@ -1,5 +1,6 @@
 package com.el.ariby.ui.join;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityWeightBinding;
@@ -15,7 +17,6 @@ import com.el.ariby.databinding.ActivityWeightBinding;
 public class WeightActivity extends AppCompatActivity {
     public final String PREFERENCE = "com.el.ariby_joining";
     ActivityWeightBinding mBinding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +37,6 @@ public class WeightActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!(TextUtils.isEmpty(mBinding.etWeight.getText().toString())))
                     setPreference("tall", Integer.parseInt(mBinding.etWeight.getText().toString()));
-
                 Intent intent = new Intent(getApplicationContext(), GenderActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.anim_slide_out_left, R.anim.anim_slide_in_right);
@@ -47,7 +47,6 @@ public class WeightActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), GenderActivity.class);
                 startActivity(intent);
-
             }
         });
     }

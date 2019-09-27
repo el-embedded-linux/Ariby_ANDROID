@@ -19,6 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/ranking_selected"
+                android:stateListAnimator="@null"
                 android:textColor="#000"
                 android:text="주행거리"/>
 
@@ -26,6 +27,7 @@
                 android:id="@+id/btn_ridingTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:stateListAnimator="@null"
                 android:background="#00FF0000"
                 android:textColor="#000"
                 android:text="주행시간"/>
@@ -36,18 +38,16 @@
 
     </TableLayout>
 
+    <!-- android:background="@drawable/spinner_bg" !-->
     <Spinner
-        android:layout_width="210dp"
-        android:layout_height="25dp"
-        android:dropDownWidth="210dp"
-        android:layout_below="@+id/layout_tab_rank"
-        android:spinnerMode="dropdown"
-        android:background="@drawable/spinner_bg"
-        android:stateListAnimator="@drawable/spinner_sla"
         android:id="@+id/dropDown"
         style="@style/Widget.AppCompat.Spinner"
-        >
-    </Spinner>
+        android:layout_width="210dp"
+        android:layout_height="25dp"
+        android:layout_below="@+id/layout_tab_rank"
+        android:dropDownWidth="210dp"
+        android:spinnerMode="dropdown"
+        android:stateListAnimator="@drawable/spinner_sla"></Spinner>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_layout_rank"

@@ -15,7 +15,6 @@ public class AddFriendActivity extends AppCompatActivity {
 
     int i=0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +35,6 @@ public class AddFriendActivity extends AppCompatActivity {
     public Fragment getFragment(int pos){
         return adapter.getItem(pos);
     }
-
-
 
     }
 

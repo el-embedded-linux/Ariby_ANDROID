@@ -95,30 +95,39 @@ public class JoiningActivity extends AppCompatActivity {
                                     myRef.child("USER").child(firebaseAuth.getUid()).setValue(userInfo);
                                     myRef.child("FRIEND").child("following").child(firebaseAuth.getUid()).setValue("false");
                                     myRef.child("FRIEND").child("follower").child(firebaseAuth.getUid()).setValue("false");
-                                    Intent intent = new Intent(JoiningActivity.this, MainActivity.class);
-                                    progressDialog.dismiss();
-                                    startActivity(intent);
+                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder().setDisplayName(nickName).setPhotoUri(Uri.parse("https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/displayImage.png?alt=media&token=210079dc-d9af-43b4-a364-d7b5deb47a05")).build();
+
+                                    user.updateProfile(profileUpdate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(getApplicationContext(), "완료", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                    firebaseAuth.signInWithEmailAndPassword(email, password)
+                                            .addOnCompleteListener(JoiningActivity.this, new OnCompleteListener<AuthResult>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                                            if (task.isSuccessful()) {
+                                                                Intent intent = new Intent(JoiningActivity.this, MainActivity.class);
+                                                                progressDialog.dismiss();
+                                                                startActivity(intent);
+                                                            } else {
+                                                                Toast.makeText(JoiningActivity.this, "아이디,비밀번호가 틀리거나 없는 아이디입니다.", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    }
+                                            );
                                     Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
-                                    finish();
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "등록 에러", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "이미 있는 아이디거나 생성 할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
                                     return;
                                 }
-                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder().setDisplayName(nickName).setPhotoUri(Uri.parse("https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/displayImage.png?alt=media&token=210079dc-d9af-43b4-a364-d7b5deb47a05")).build();
-
-                                user.updateProfile(profileUpdate).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Toast.makeText(getApplicationContext(), "완료", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
                             }
                         });
-
-
             }
         });
     }
@@ -135,10 +144,10 @@ public class JoiningActivity extends AppCompatActivity {
 }
 
 class UserModel {
-    String birth, nickname;
-    String gender, userImageURL;
-    int weight, height;
-    int level, exp;
+    public String birth, nickname;
+    public String gender, userImageURL;
+    public int weight, height;
+    public int level, exp;
     public UserModel(int weight, String birth, int height, String gender, String nickname) {
         this.weight = weight;
         this.birth = birth;

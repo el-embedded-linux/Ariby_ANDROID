@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.menu.raspberry.videoPlayer"
+    android:background="#000000">
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:textSize="50dp"
+        android:textColor="#FFFF00"
+        android:text=""
+        android:textAlignment="center"
+        android:id="@+id/info"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_height="match_parent"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:visibility="invisible"
+        android:id="@+id/controller"
+        android:background="#66000000"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <SeekBar
+            android:maxHeight="20dp"
+            android:minHeight="20dp"
+            android:id="@+id/videotimebar"
+            android:padding="20dp"
+            android:layout_marginBottom="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:max="200"
+            android:progress="50"
+            android:progressTint="#FF0044"
+            android:progressBackgroundTint="#FFFFFF"
+            android:thumbTint="#FF0044"/>
+
+        <Button
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFFFFF"
+            android:id="@+id/btn_play"
+            android:background="@drawable/ic_play_arrow_black_24dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_width="80dp"
+            android:layout_height="80dp"/>
+
+        <Button
+            android:visibility="invisible"
+            android:enabled="false"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFFFFF"
+            android:id="@+id/btn_pause"
+            android:background="@drawable/ic_pause_black_24dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_width="80dp"
+            android:layout_height="80dp"/>
+    </android.support.constraint.ConstraintLayout>>
+
+    <ProgressBar
+        android:id="@+id/video_loading"
+        android:visibility="visible"
+        android:layout_margin="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</android.support.constraint.ConstraintLayout>

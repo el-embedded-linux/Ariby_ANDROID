@@ -124,7 +124,7 @@ public class RecyclerView_Fragment extends Fragment {
             @Override
             public void onClick(View view, int position) {
                 //If ActionMode not null select item
-                if (actionMode != null)
+                //if (actionMode != null)
                     onListItemSelect(position);
             }
 
