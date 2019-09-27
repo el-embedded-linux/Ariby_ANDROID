@@ -26,111 +26,25 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class FollowerListAdapter extends BaseAdapter implements Filterable {
-    // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
-    ArrayList<FollowItem> FollowItemList = new ArrayList<FollowItem>();
-    ArrayList<FollowItem> filteredItemList = FollowItemList;
-    Filter listFilter;
+public class FollowerListAdapter extends BaseAdapter {
 
-    public FollowerListAdapter(){
-
-    }
-    //Adapter에 사용되는 데이터의 개수를 리턴. : 필수 구현
     @Override
     public int getCount() {
-        return filteredItemList.size();
+        return 0;
     }
 
     @Override
     public Object getItem(int position) {
-        return filteredItemList.get(position);
+        return null;
     }
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return 0;
     }
-    //position에 위치한 데이터를 화면에 출력하는데 사용될 View를 리턴. : 필수 구현
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final Context context = parent.getContext();
-
-        // "custom_follow_list" Layout을 inflate하여 convertView 참조 획득.
-
-        if(convertView == null){
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.custom_follower_list,parent, false);
-        }
-        // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
-
-        ImageView iconImageView = convertView.findViewById(R.id.follower_image);
-        TextView titleTextView = convertView.findViewById(R.id.follower_textView);
-
-        TextView followingNum = convertView.findViewById(R.id.follower_following_num);
-        TextView followerNum = convertView.findViewById(R.id.follower_followers_num);
-
-        //TextView descTextView = convertView.findViewById(R.id.textView2);
-        // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
-
-        FollowItem item = filteredItemList.get(position);
-        // 아이템 내 각 위젯에 데이터 반영
-        Glide.with(convertView).
-                load(item.getIconDrawable()).
-                centerCrop().
-                into(iconImageView);
-        titleTextView.setText(item.getNick());
-        followingNum.setText(item.getFollwingNum());
-        followerNum.setText(item.getFollowerNum());
-
-        return convertView;
-
-    }
-    public void addItem(FollowItem item) {
-        FollowItemList.add(item);
-    }
-
-    @Override
-    public Filter getFilter() {
-        if (listFilter == null){
-            listFilter = new ListFilter();
-        }
-        return listFilter;
-    }
-
-    private class ListFilter extends  Filter{
-
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            FilterResults results = new FilterResults();
-
-            if(constraint == null || constraint.length()==0){
-                results.values = FollowItemList;
-                results.count = FollowItemList.size();
-            } else {
-                ArrayList<FollowItem> itemList = new ArrayList<FollowItem>();
-
-                for (FollowItem item : FollowItemList) {
-                    if(item.getNick().toUpperCase().contains(constraint.toString().toUpperCase()))
-                    {
-                        itemList.add(item);
-                    }
-                }
-                results.values = itemList;
-                results.count = itemList.size();
-            }
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-
-            filteredItemList = (ArrayList<FollowItem>) results.values;
-
-            if (results.count > 0) {
-                notifyDataSetChanged();
-            } else {
-                notifyDataSetInvalidated();
-            }
-        }
+        return null;
     }
 }

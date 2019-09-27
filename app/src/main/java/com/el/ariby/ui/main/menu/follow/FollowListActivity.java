@@ -1,11 +1,16 @@
 package com.el.ariby.ui.main.menu.follow;
 
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Debug;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
-import android.widget.ListView;
+
 import com.el.ariby.R;
+import com.el.ariby.databinding.ActivityFollowListBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -17,167 +22,62 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class FollowListActivity extends AppCompatActivity {
-    DatabaseReference ref;
-    DatabaseReference userref;
-    DatabaseReference followref,followerNumRef, follwingNumRef;
-    FirebaseDatabase database;
-    FollowListAdapter adapter;
-    ListView listView;
-    FirebaseUser user;
-    String uid,followuid;
-    String myUid, userUid;
-    int followCount;
-    String follower, following;
-    ArrayList<String> followingUid = new ArrayList<>();
-    ArrayList<String[]> followingNumList = new ArrayList<String[]>();
-    ArrayList<String[]> followerNumList = new ArrayList<String[]>();
-
+    ActivityFollowListBinding mBinding;
+    private FirebaseUser auth;
+    private FirebaseDatabase database;
+    private DatabaseReference follwerRef, userRef;
+    final ArrayList<FollowItem> list = new ArrayList<>();
     @Override
-    protected void onPause() {
-        adapter =null;
-        listView.setAdapter(adapter);
-        super.onPause();
-    }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_follow_list);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_follow_list);
+        mBinding.setActivity(this);
+        init();
 
-        adapter = new FollowListAdapter();
-        listView = findViewById(R.id.follow_list);
-        listView.setAdapter(adapter);
-        database = FirebaseDatabase.getInstance();
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        myUid = user.getUid();
-
-        loadData(new Callback() {
-            @Override
-            public void success(ArrayList<String> data, ArrayList<String[]> followerNum, ArrayList<String[]> followingNum) {
-                followingUid=data;
-                followerNumList=followerNum;
-                followingNumList=followingNum;
-
-                ref = database.getReference("USER");
-                ref.addListenerForSingleValueEvent(new ValueEventListener() { // USER
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Log.d("align", "2");
-                            userUid = snapshot.getKey();
-                            boolean a = false;
-
-
-                            for (int j = 0; j < followCount; j++) {
-                                if (userUid.equals(followingUid.get(j))) {
-                                    a = true;
-                                    break;
-                                }
-                            }
-
-                            if (a) {
-                                String url = (String) snapshot.child("userImageURL").getValue();
-                                String nickname = snapshot.child("nickname").getValue().toString();
-
-
-                                for (int t = 0; t < followingNumList.size(); t++) {
-                                    if (followingNumList.get(t)[0].equals(userUid)) {
-                                        if (followingNumList.get(t)[1].equals(null)) {
-                                            following = String.valueOf(0);
-                                        } else {
-                                            following = followingNumList.get(t)[1];
-                                            Log.d("asd", "asd");
-                                        }
-                                    }
-                                }
-                                //요소의 크기만큼 돌면서
-                                for (int t = 0; t < followerNumList.size(); t++) {
-                                    if (followerNumList.get(t)[0].equals(userUid)) {
-                                        if (followerNumList.get(t)[1].equals(null)) {
-                                            follower = String.valueOf(0);
-                                        } else {
-                                            follower = followerNumList.get(t)[1];
-                                            Log.d("asd", "asd");
-                                        }
-                                    }
-                                }
-
-                                Log.d("getChildrenCount", follower + "\n" + following + "\n" + snapshot.getRef() + "\n" + userUid);
-                                adapter.addItem(new FollowItem(url, nickname, following, follower));
-                                adapter.notifyDataSetChanged();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void fail(String errorMessage) {
-
-            }
-        });
+        mBinding.listFollow.setLayoutManager(new LinearLayoutManager(this));
 
 
     }
 
+    private void init() {
+        auth = FirebaseAuth.getInstance().getCurrentUser();
+        database = FirebaseDatabase.getInstance();
+        follwerRef = database.getReference("FRIEND").child("follower");
+        userRef = database.getReference("USER");
+    }
 
-    public interface Callback {
-        void success(ArrayList<String> data, ArrayList<String[]> followerNum, ArrayList<String[]> followingNum);
+    private void addItem(FollowItem data) {
+        // 외부에서 item을 추가시킬 함수입니다.
+        list.add(data);
+    }
 
+    public interface Callback{
+        void success(String data);
         void fail(String errorMessage);
     }
 
-    public void loadData(final Callback callback) {
-        followref = database.getReference("FRIEND").child("following").child(myUid);
-        followerNumRef = database.getReference("FRIEND").child("follower");
-        follwingNumRef= database.getReference("FRIEND").child("following");
-        userref = database.getReference("USER");
-        userref.addListenerForSingleValueEvent(new ValueEventListener() {
+    public void doWork(final Callback mCallback) {
+        //follwerRef = database.getReference("FRIEND").child("follower")
+        follwerRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                dataSnapshot.getChildrenCount();
-            }
+                final String[] nickname = new String[1];
+                final String[] profileUrl = new String[1];
+                final String[] follwerNum = new String[1];
+                for (final DataSnapshot data : dataSnapshot.getChildren()) {
+                    userRef.child(data.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            nickname[0] = (String) dataSnapshot.child("nickname").getValue();
+                            profileUrl[0] = (String) dataSnapshot.child("userImageURL").getValue();
+                            follwerNum[0] = (String) dataSnapshot.child("userImageURL").getValue();
+                        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
-
-        followref.addListenerForSingleValueEvent(new ValueEventListener() { //following
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                followCount = (int) dataSnapshot.getChildrenCount();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String list = snapshot.getKey();
-                    followingUid.add(list);
-                    Log.d("align", "1");
-                }
-
-            }
-
-            // * 내가 팔로잉 되어있는 UID를 ArrayList<String> followingUid에 추가함 *
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        follwingNumRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int i=0;
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    String uid = snapshot.getKey();
-
-                    following = String.valueOf(snapshot.getChildrenCount());
-                    followingNumList.add(new String[]{uid, following});
-                    Log.d("follow", String.valueOf(followingNumList.get(i)[1]));
-                    i++;
+                        }
+                    });
                 }
             }
 
@@ -186,26 +86,6 @@ public class FollowListActivity extends AppCompatActivity {
 
             }
         });
-
-        followerNumRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int i=0;
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    String uid = snapshot.getKey();
-                    follower = String.valueOf(snapshot.getChildrenCount());
-                    followerNumList.add(new String[]{uid, follower});
-                    Log.d("follow", String.valueOf(followerNumList.get(i)[1]));
-                    i++;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        callback.success(followingUid,followingNumList,followerNumList);
 
     }
 }

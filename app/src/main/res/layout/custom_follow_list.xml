@@ -7,7 +7,7 @@
     <ImageView
         android:layout_width="65dp"
         android:layout_height="match_parent"
-        android:id="@+id/imageView1"
+        android:id="@+id/img_follow_profile"
         android:layout_weight="1" />
 
     <LinearLayout
@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="New Text"
-                android:id="@+id/textView1"
+                android:id="@+id/txt_follow_nickname"
                 android:textSize="24dp"
                 android:textColor="#666666"
                 android:gravity="center_vertical"
@@ -55,7 +55,7 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="10dp"/>
             <TextView
-                android:id="@+id/following_num"
+                android:id="@+id/txt_follow_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
@@ -70,7 +70,7 @@
                 android:textColor="#666666"
                 android:layout_marginRight="10dp"/>
             <TextView
-                android:id="@+id/followers_num"
+                android:id="@+id/txt_follower_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
