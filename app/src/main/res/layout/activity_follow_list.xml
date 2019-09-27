@@ -16,7 +16,7 @@
 
     </LinearLayout>
     <ListView
-        android:id="@+id/listview1"
+        android:id="@+id/follow_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textFilterEnabled="true"

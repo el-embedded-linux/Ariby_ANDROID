@@ -1,11 +1,9 @@
 package com.el.ariby.ui.main.menu.follow;
 
-import android.app.FragmentTransaction;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.ListView;
 import com.el.ariby.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,7 +21,6 @@ public class FollowListActivity extends AppCompatActivity {
     DatabaseReference userref;
     DatabaseReference followref,followerNumRef, follwingNumRef;
     FirebaseDatabase database;
-    EditText editTextFilter;
     FollowListAdapter adapter;
     ListView listView;
     FirebaseUser user;
@@ -34,19 +31,24 @@ public class FollowListActivity extends AppCompatActivity {
     ArrayList<String> followingUid = new ArrayList<>();
     ArrayList<String[]> followingNumList = new ArrayList<String[]>();
     ArrayList<String[]> followerNumList = new ArrayList<String[]>();
+
+    @Override
+    protected void onPause() {
+        adapter =null;
+        listView.setAdapter(adapter);
+        super.onPause();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_follow_list);
 
         adapter = new FollowListAdapter();
-        editTextFilter = findViewById(R.id.find);
-        listView = findViewById(R.id.listview1);
+        listView = findViewById(R.id.follow_list);
         listView.setAdapter(adapter);
         database = FirebaseDatabase.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUid = user.getUid();
-        userref = database.getReference("USER");
 
         loadData(new Callback() {
             @Override
@@ -63,11 +65,12 @@ public class FollowListActivity extends AppCompatActivity {
                             Log.d("align", "2");
                             userUid = snapshot.getKey();
                             boolean a = false;
-                            Log.d("asd", userUid);
+
 
                             for (int j = 0; j < followCount; j++) {
                                 if (userUid.equals(followingUid.get(j))) {
                                     a = true;
+                                    break;
                                 }
                             }
 
@@ -75,32 +78,34 @@ public class FollowListActivity extends AppCompatActivity {
                                 String url = (String) snapshot.child("userImageURL").getValue();
                                 String nickname = snapshot.child("nickname").getValue().toString();
 
-                                for(int t=0; t<followingNumList.size(); t++)  {
-                                    if(followingNumList.get(t)[0].equals(userUid)){
-                                        if(followingNumList.get(t)[1].equals(null)){
+
+                                for (int t = 0; t < followingNumList.size(); t++) {
+                                    if (followingNumList.get(t)[0].equals(userUid)) {
+                                        if (followingNumList.get(t)[1].equals(null)) {
                                             following = String.valueOf(0);
                                         } else {
                                             following = followingNumList.get(t)[1];
+                                            Log.d("asd", "asd");
                                         }
                                     }
                                 }
                                 //요소의 크기만큼 돌면서
-                                for(int t=0; t<followerNumList.size(); t++){
-                                    if(followerNumList.get(t)[0].equals(userUid)){
-                                        if(followerNumList.get(t)[1].equals(null)){
+                                for (int t = 0; t < followerNumList.size(); t++) {
+                                    if (followerNumList.get(t)[0].equals(userUid)) {
+                                        if (followerNumList.get(t)[1].equals(null)) {
                                             follower = String.valueOf(0);
                                         } else {
                                             follower = followerNumList.get(t)[1];
+                                            Log.d("asd", "asd");
                                         }
                                     }
                                 }
 
-                                Log.d("getChildrenCount",follower+"\n"+following+"\n"+snapshot.getRef()+"\n"+userUid);
+                                Log.d("getChildrenCount", follower + "\n" + following + "\n" + snapshot.getRef() + "\n" + userUid);
                                 adapter.addItem(new FollowItem(url, nickname, following, follower));
+                                adapter.notifyDataSetChanged();
                             }
-                            adapter.notifyDataSetChanged();
                         }
-                        adapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -130,6 +135,18 @@ public class FollowListActivity extends AppCompatActivity {
         followref = database.getReference("FRIEND").child("following").child(myUid);
         followerNumRef = database.getReference("FRIEND").child("follower");
         follwingNumRef= database.getReference("FRIEND").child("following");
+        userref = database.getReference("USER");
+        userref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                dataSnapshot.getChildrenCount();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         followref.addListenerForSingleValueEvent(new ValueEventListener() { //following
             @Override
@@ -153,11 +170,14 @@ public class FollowListActivity extends AppCompatActivity {
         follwingNumRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int i=0;
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     String uid = snapshot.getKey();
 
                     following = String.valueOf(snapshot.getChildrenCount());
                     followingNumList.add(new String[]{uid, following});
+                    Log.d("follow", String.valueOf(followingNumList.get(i)[1]));
+                    i++;
                 }
             }
 
@@ -170,11 +190,13 @@ public class FollowListActivity extends AppCompatActivity {
         followerNumRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int i=0;
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     String uid = snapshot.getKey();
                     follower = String.valueOf(snapshot.getChildrenCount());
                     followerNumList.add(new String[]{uid, follower});
-
+                    Log.d("follow", String.valueOf(followerNumList.get(i)[1]));
+                    i++;
                 }
             }
 

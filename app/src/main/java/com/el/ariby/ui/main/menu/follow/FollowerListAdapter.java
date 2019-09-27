@@ -63,11 +63,11 @@ public class FollowerListAdapter extends BaseAdapter implements Filterable {
         }
         // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
 
-        ImageView iconImageView = convertView.findViewById(R.id.imageView1);
-        TextView titleTextView = convertView.findViewById(R.id.textView1);
+        ImageView iconImageView = convertView.findViewById(R.id.follower_image);
+        TextView titleTextView = convertView.findViewById(R.id.follower_textView);
 
-        TextView followingNum = convertView.findViewById(R.id.following_num);
-        TextView followerNum = convertView.findViewById(R.id.followers_num);
+        TextView followingNum = convertView.findViewById(R.id.follower_following_num);
+        TextView followerNum = convertView.findViewById(R.id.follower_followers_num);
 
         //TextView descTextView = convertView.findViewById(R.id.textView2);
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
