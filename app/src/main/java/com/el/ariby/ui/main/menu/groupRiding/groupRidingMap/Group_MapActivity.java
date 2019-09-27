@@ -10,8 +10,16 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -19,9 +27,11 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
+import android.support.constraint.Group;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -190,7 +200,6 @@ public class Group_MapActivity extends AppCompatActivity
                 String nameCom = null;
                 memberTag =0;
                 int a = 0;
-                // URL url =  new URL("https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/profile%2Fprofile.png?alt=media&token=b65b2e7b-e58b-4ff5-a38d-99ce048ec97a");;
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     nameCom = snapshot.getKey();
                     if(groupName.equals(nameCom)){
@@ -217,23 +226,23 @@ public class Group_MapActivity extends AppCompatActivity
                             final MapPOIItem marker2 = new MapPOIItem();
 
                             Log.e("getLat + getLon : ", getLat + ",   " + getLon+",   "+getProf);
-                            marker2.setItemName(String.valueOf(memberTag));
+                            marker2.setItemName(getNick);
                             marker2.setTag(memberTag);
                             marker2.setMapPoint(markPoint3);
                             marker2.setMarkerType(MapPOIItem.MarkerType.CustomImage);
-                            //marker2.setCustomImageResourceId(R.drawable.default_image);
-                           // new DownloadImageTask(marker2).execute(getProf);
-                           // marker2.setCustomImageBitmap(getBitmapFromURL(getProf));
+
+                            //url을 bitmap으로 변환 후 커스텀이미지로 넣어줌
                             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                             StrictMode.setThreadPolicy(policy);
                             try {
                                 URL url = new URL(getProf);
                                 Bitmap bitmap = BitmapFactory.decodeStream((InputStream)url.getContent());
-                                marker2.setCustomImageBitmap(Bitmap.createScaledBitmap(bitmap, 120,120,false));
+                                bitmap = getCircularBitmap(bitmap);
+                                //marker2.setCustomImageBitmap(Bitmap.createScaledBitmap(bitmap, 120,120,false));
+                                marker2.setCustomImageBitmap(bitmap);
                             } catch (IOException e) {
                                 Log.e("Group_MapActivity", e.getMessage());
                             }
-
                             marker2.setCustomImageAutoscale(false);
                             marker2.setCustomImageAnchor(0.5f, 1.0f);
 
@@ -530,9 +539,6 @@ public class Group_MapActivity extends AppCompatActivity
 
         Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-        //Double latitude = location.getLatitude();
-        //Double longitude = location.getLongitude();
-
         ArrayList<Double> list = new ArrayList<>();
         list.add(latitude);
         list.add(longitude);
@@ -552,13 +558,54 @@ public class Group_MapActivity extends AppCompatActivity
         return list;
     }
 
+    protected Bitmap getCircularBitmap(Bitmap srcBitmap) {
+        int squareBitmapWidth = Math.min(srcBitmap.getWidth(), srcBitmap.getHeight());
+        int pinWidth = 20;
+        Drawable locationDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.marker);
+        Bitmap locationPin = ((BitmapDrawable)locationDrawable).getBitmap();
+
+        Bitmap dstBitmap = Bitmap.createBitmap(
+                squareBitmapWidth,
+                squareBitmapWidth,
+                Bitmap.Config.ARGB_8888
+        );
+        Canvas canvas = new Canvas(dstBitmap);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        Rect rect = new Rect(0, 0, squareBitmapWidth, squareBitmapWidth);
+        RectF rectF = new RectF(rect);
+        canvas.drawOval(rectF, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+
+        float left = (squareBitmapWidth-srcBitmap.getWidth())/2;
+        float top = (squareBitmapWidth-srcBitmap.getHeight())/2;
+        canvas.drawBitmap(srcBitmap, left, top, paint);
+        srcBitmap.recycle();
+        dstBitmap = overlay(dstBitmap, locationPin);
+        //dstBitmap = Bitmap.createScaledBitmap(bitmap, 120,120,false);
+        return dstBitmap;
+    }
+
+    public Bitmap overlay(Bitmap profile, Bitmap locationPin)
+    {
+        //Drawable locationDrawable = getResources().getDrawable(R.drawable.ic_room_black_24dp);
+        locationPin = Bitmap.createScaledBitmap(locationPin, 220, 200, false);
+        profile = Bitmap.createScaledBitmap(profile, 120,120, false);
+        //Bitmap locationPin = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_room_black_24dp);
+        Log.d("locationPin : ", String.valueOf(locationPin));
+        Bitmap overlay = Bitmap.createBitmap(locationPin.getWidth(), locationPin.getHeight(), locationPin.getConfig());
+        //float left1 = (profile.getWidth() - (locationPin.getWidth()*((float)profile.getHeight()/(float)locationPin.getHeight())))/(float)2.0;
+        Canvas canvas1 = new Canvas(overlay);
+        canvas1.drawBitmap(locationPin, new Matrix(), null);
+        canvas1.drawBitmap(profile, 50,10,null);
+        //canvas1.drawBitmap(locationPin, left1, 0, null);
+        //canvas1.drawBitmap(profile, new Matrix(), null);
+        return overlay;
+    }
+
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-
-
-        return false;
-    }
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) { return false; }
 
     public class MemberListAdapter extends BaseAdapter{
 
