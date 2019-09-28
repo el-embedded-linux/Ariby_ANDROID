@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ariby</string>
+    <string name="app_name">ARIBY</string>
     <string name="positive_popup_text_default">You have successfully completed the challege. Keep it yp to earn more points</string>
     <string name="positive_popup_title_default">Like a boss!</string>
     <string name="negative_popup_text_default">You have failed to complete the challenge. So close! Wanna have another go at it?</string>
