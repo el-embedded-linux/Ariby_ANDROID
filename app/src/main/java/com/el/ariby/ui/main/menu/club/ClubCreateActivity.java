@@ -85,25 +85,26 @@ public class ClubCreateActivity extends AppCompatActivity {
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        mBinding.txtNameCheck.setText("생성 가능합니다.");
-                        mBinding.txtNameCheck.setTextColor(Color.BLUE);
-                        mBinding.btnCreate.setEnabled(true);
-                        mBinding.btnCreate.setBackgroundColor(Color.parseColor("#1E90FF"));
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
                         clubRef.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 String name = mBinding.etName.getText().toString();
                                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    Log.e("테스트", name);
+                                    Log.e("테스트:key", snapshot.getKey());
+
                                     if (name.equals(snapshot.getKey()) ||
-                                            !module.isNameCheck(name)) {
+                                            !(module.isNameCheck(name))) {
                                         mBinding.txtNameCheck.setText("이미 존재하거나 특수문자는 입력할 수 없습니다.");
                                         mBinding.txtNameCheck.setTextColor(Color.RED);
                                         mBinding.btnCreate.setEnabled(false);
                                         mBinding.btnCreate.setBackgroundColor(Color.parseColor("#FF979797"));
+                                        break;
+                                    } else {
+                                        mBinding.txtNameCheck.setText("생성 가능합니다.");
+                                        mBinding.txtNameCheck.setTextColor(Color.BLUE);
+                                        mBinding.btnCreate.setEnabled(true);
+                                        mBinding.btnCreate.setBackgroundColor(Color.parseColor("#1E90FF"));
                                     }
                                 }
                             }
@@ -113,6 +114,11 @@ public class ClubCreateActivity extends AppCompatActivity {
 
                             }
                         });
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
                     }
                 });
 
