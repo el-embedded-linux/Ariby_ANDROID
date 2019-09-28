@@ -65,7 +65,7 @@ public class AgeActivity extends AppCompatActivity {
                 setPreference("birth", preference_date);
                 Intent intent = new Intent(getApplicationContext(), HeightActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.anim_slide_out_left, R.anim.anim_slide_in_right);
+                overridePendingTransition(R.anim.anim_slide_in_right, R.anim.not_move_activity);
             }
         });
 

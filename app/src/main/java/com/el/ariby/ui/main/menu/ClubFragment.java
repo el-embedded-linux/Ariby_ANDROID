@@ -105,7 +105,7 @@ public class ClubFragment extends Fragment {
                 intent.putExtra("num", num);
                 intent.putExtra("map", map);
                 startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.anim_slide_out_left, R.anim.anim_slide_in_right);
+                getActivity().overridePendingTransition(R.anim.anim_slide_in_right, R.anim.not_move_activity);
             }
         });
 

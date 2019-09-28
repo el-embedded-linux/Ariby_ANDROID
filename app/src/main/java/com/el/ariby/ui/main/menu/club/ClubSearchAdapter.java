@@ -69,7 +69,7 @@ public class ClubSearchAdapter extends BaseAdapter implements Filterable {
 
         ClubItem item = filteredItemList.get(position);
 
-        Glide.with(convertView).load(item.getMainLogo()).into(imgNickMain);
+        Glide.with(convertView).load(item.getMainLogo()).centerCrop().into(imgNickMain);
         txtTitle.setText(item.getTitle());
         txtNickname.setText(item.getNick());
         txtNumber.setText(String.valueOf(item.getNumber()));

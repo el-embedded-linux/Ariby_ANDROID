@@ -10,11 +10,13 @@ import android.view.WindowManager;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.el.ariby.Module;
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityGenderBinding;
 
 public class GenderActivity extends AppCompatActivity {
     public final String PREFERENCE = "com.el.ariby_joining";
+    private Module module=new Module();
     ActivityGenderBinding mBinding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,7 @@ public class GenderActivity extends AppCompatActivity {
                 }
                 Intent intent = new Intent(getApplicationContext(), NicknameActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.anim_slide_out_left, R.anim.anim_slide_in_right);
+                overridePendingTransition(R.anim.anim_slide_in_right, R.anim.not_move_activity);
 
             }
         });

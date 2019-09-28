@@ -37,9 +37,7 @@
         android:id="@+id/map_navi_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="150">
-
-    </RelativeLayout>
+        android:layout_weight="150"/>
     <LinearLayout
         android:paddingTop="5dp"
         android:paddingBottom="10dp"

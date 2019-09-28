@@ -80,7 +80,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
         //다운한 지도 데이터를 단말의 영구 캐쉬 영역에 저장하는 기능
         mapNaviView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
 
-
         Intent intent = getIntent();
 
         startY = intent.getStringExtra("startY");
@@ -88,7 +87,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
         endY = intent.getStringExtra("endY");
         endX = intent.getStringExtra("endX");
         progressDialog = new ProgressDialog(MapNavigationActivity.this);
-        progressDialog.setMessage("데이터를 로딩중입니다.");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
         disList.add(0, getMapFind(startY, startX, endY, endX)); // 총 거리 반환
         disList.add(1, startY);
@@ -125,9 +124,9 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 CameraUpdateFactory.newMapPoint(markerPointStart, -1));
         mapNaviView.zoomIn(true);
 
-        progressDialog.show();
         try {
-            Thread.sleep(2000);
+            progressDialog.show();
+            Thread.sleep(3000);
             mapNaviView.setCurrentLocationTrackingMode(
                     MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
             mapNaviView.setCurrentLocationEventListener(this);
@@ -165,7 +164,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         Double.valueOf(disList.get(1)), //현재위치 Y
                         Double.valueOf(disList.get(2)), "kilometer"); // 현재위치 X
 
-                Double dis = Math.round(myDistance*10)/10.0;
+                Double dis = Math.round(myDistance * 10) / 10.0;
                 if (!TextUtils.isEmpty(myDistance.toString())) {
                     if (myDistance > 0.0) {
                         //현재 날짜/시간 가져오기

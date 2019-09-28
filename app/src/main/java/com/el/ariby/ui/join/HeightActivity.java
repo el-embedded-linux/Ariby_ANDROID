@@ -40,7 +40,7 @@ public class HeightActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), WeightActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.anim_slide_out_left, R.anim.anim_slide_in_right);
+                overridePendingTransition(R.anim.anim_slide_in_right, R.anim.not_move_activity);
             }
         });
         mBinding.btnJump.setOnClickListener(new View.OnClickListener() {

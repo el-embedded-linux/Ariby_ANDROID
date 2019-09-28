@@ -39,7 +39,7 @@ public class WeightActivity extends AppCompatActivity {
                     setPreference("tall", Integer.parseInt(mBinding.etWeight.getText().toString()));
                 Intent intent = new Intent(getApplicationContext(), GenderActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.anim_slide_out_left, R.anim.anim_slide_in_right);
+                overridePendingTransition(R.anim.anim_slide_in_right, R.anim.not_move_activity);
             }
         });
         mBinding.btnJump.setOnClickListener(new View.OnClickListener() {

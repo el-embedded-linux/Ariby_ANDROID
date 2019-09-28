@@ -70,7 +70,6 @@ public class ClubCreateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_club_create);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_club_create);
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();

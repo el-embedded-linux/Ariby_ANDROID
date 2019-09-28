@@ -24,10 +24,8 @@ public class ClubSearchActivity extends AppCompatActivity {
     DatabaseReference ref;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_club_search);
-
+    protected void onResume() {
+        super.onResume();
         adapter = new ClubSearchAdapter();
 
         listview = findViewById(R.id.listview);
@@ -90,8 +88,16 @@ public class ClubSearchActivity extends AppCompatActivity {
                 intent.putExtra("num", num);
                 intent.putExtra("map", map);
                 startActivity(intent);
-                overridePendingTransition(R.anim.anim_slide_out_left, R.anim.anim_slide_in_right);
+                overridePendingTransition(R.anim.anim_slide_in_right, R.anim.not_move_activity);
             }
         });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_club_search);
+
+
     }
 }
