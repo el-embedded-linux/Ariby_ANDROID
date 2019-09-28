@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -41,10 +40,9 @@
                         android:gravity="right"
                         android:padding="10dp"
                         android:textSize="20dp"
+                        android:textColor="#000"
                         android:text="test" />
-
                 </LinearLayout>
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -53,28 +51,64 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/riding_km"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="test" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="20dp"
-                        android:text="km" />
+                        android:layout_marginStart="0dp"
+                        android:minWidth="10dp"
+                        android:text="거리 : "
+                        android:textAlignment="viewEnd"
+                        android:textSize="13dp"
+                        android:textColor="#000" />
 
                     <TextView
-                        android:id="@+id/riding_time"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/txt_dis"
+                        android:layout_width="50dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="20dp"
-                        android:text="test" />
+                        android:minWidth="20dp"
+                        android:text="250.50km"
+                        android:textAlignment="viewStart"
+                        android:textSize="13dp"
+                        android:textColor="#000" />
 
                     <TextView
-                        android:id="@+id/riding_kcal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="test" />
+                        android:layout_marginStart="15dp"
+                        android:minWidth="10dp"
+                        android:text="시간 : "
+                        android:textAlignment="viewEnd"
+                        android:textSize="13dp"
+                        android:textColor="#000" />
+
+                    <TextView
+                        android:id="@+id/txt_time"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="10h 00m 00s"
+                        android:minWidth="50dp"
+                        android:textAlignment="viewStart"
+                        android:textSize="13dp"
+                        android:textColor="#000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:minWidth="10dp"
+                        android:text="칼로리 : "
+                        android:textAlignment="viewEnd"
+                        android:textSize="13dp"
+                        android:textColor="#000" />
+
+                    <TextView
+                        android:id="@+id/txt_kcal"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="2.3kcal"
+                        android:minWidth="50dp"
+                        android:textAlignment="viewStart"
+                        android:textSize="13dp"
+                        android:textColor="#000"/>
 
 
                 </LinearLayout>

@@ -13,9 +13,9 @@ public class CustomRidingrecord extends LinearLayout {
 
     CardView cardView;
     TextView date;
-    TextView ridingtime;
-    TextView ridingkm;
-    TextView ridingkcal;
+    TextView ridingTime;
+    TextView ridingDis;
+    TextView ridingKcal;
 
     public CustomRidingrecord(Context context) {
         super(context);
@@ -32,8 +32,8 @@ public class CustomRidingrecord extends LinearLayout {
         inflater.inflate(R.layout.custom_riding_record_item, this, true);
         cardView = findViewById(R.id.cardview);
         date = findViewById(R.id.date);
-        ridingtime = findViewById(R.id.riding_time);
-        ridingkm = findViewById(R.id.riding_km);
-        ridingkcal = findViewById(R.id.riding_kcal);
+        ridingTime = findViewById(R.id.txt_time);
+        ridingDis = findViewById(R.id.txt_dis);
+        ridingKcal = findViewById(R.id.txt_kcal);
     }
 }

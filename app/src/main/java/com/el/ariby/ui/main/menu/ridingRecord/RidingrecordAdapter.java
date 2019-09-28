@@ -48,8 +48,8 @@ public class RidingrecordAdapter extends RecyclerView.Adapter<RidingrecordAdapte
         ref = database.getReference("COURSE");
         final Ridingrecorditem item = items.get(position);
         holder.date.setText(item.getDate());
-        holder.ridingtime.setText(item.getRidingtime());
-        //holder.kmText.setText(item.getKmText());
+        holder.ridingTime.setText(item.getRidingtime());
+        holder.ridingKm.setText(item.getRidingkm());
 
     }
 
@@ -59,15 +59,15 @@ public class RidingrecordAdapter extends RecyclerView.Adapter<RidingrecordAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView date, ridingtime, ridingkm, ridingkcal;
+        TextView date, ridingTime, ridingKm, ridingKcal;
         CardView cardview;
 
         public ViewHolder(View itemView) {
             super(itemView);
             date = (TextView) itemView.findViewById(R.id.date);
-            ridingtime = (TextView) itemView.findViewById(R.id.riding_time);
-            ridingkm = (TextView) itemView.findViewById(R.id.riding_km);
-            ridingkcal = (TextView) itemView.findViewById(R.id.riding_kcal);
+            ridingTime = (TextView) itemView.findViewById(R.id.txt_time);
+            ridingKm = (TextView) itemView.findViewById(R.id.txt_dis);
+            ridingKcal = (TextView) itemView.findViewById(R.id.txt_kcal);
             cardview = (CardView) itemView.findViewById(R.id.cardview);
         }
     }

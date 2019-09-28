@@ -39,46 +39,41 @@ public class RidingrecordActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
 
+
         final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         final String myUid = mUser.getUid();
         database = FirebaseDatabase.getInstance();
-        ref = database.getReference("RECORD").child(myUid).child("dailyData");
+        ref = database.getReference("RECORD").child(myUid).child("dailyData").child("data");
 
 
-    doWork(new Callback() {
-        @Override
-        public void success(final ArrayList<String> data) {
+
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.exists()) {
                         int i = 0;
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            String uid = snapshot.getKey();
-                            if(data.get(i).equals(uid)){
-                                String ridingtime = dataSnapshot.child(uid).child("dailyTotalTime").getValue().toString();
-                                String date = dataSnapshot.child(uid).child("date").getValue().toString();
-                                RidingrecordItems.add(new Ridingrecorditem(date, ridingtime));
+                            String timestamp = snapshot.getKey();
+                            Log.d("timestamp : ", timestamp);
+                                String ridingTime = dataSnapshot.child(timestamp).child("time").getValue().toString();
+                                String date = dataSnapshot.child(timestamp).child("date").getValue().toString();
+                                String ridingDis = dataSnapshot.child(timestamp).child("distance").getValue().toString()+"km";
+                                RidingrecordItems.add(new Ridingrecorditem(date, ridingDis, ridingTime));
                                 adapter.notifyDataSetChanged();
-
-                                if(data.size()-1 > i){
-                                    i++;
-                                }
                             }
 
                         }
                         recyclerView.setAdapter(new com.el.ariby.ui.main.menu.ridingRecord.RidingrecordAdapter(getApplicationContext(), RidingrecordItems, R.layout.activity_ridingrecord));
                         adapter.notifyDataSetChanged();
                     }
-                }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
+
             });
-        }
-    });
+
 
     }
     public class RidingrecordAdapter extends BaseAdapter {

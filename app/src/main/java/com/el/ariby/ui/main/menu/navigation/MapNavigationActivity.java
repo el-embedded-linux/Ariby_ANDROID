@@ -452,7 +452,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                             //유저 인포
                             ref.child(myUid).child("userInfo").child("nickname").setValue(nickname);
                             ref.child(myUid).child("userInfo").child("profile").setValue(userProfile);
-                            break;
+
                         }
 
                     }
