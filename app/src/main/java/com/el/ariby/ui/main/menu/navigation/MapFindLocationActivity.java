@@ -1,6 +1,5 @@
 package com.el.ariby.ui.main.menu.navigation;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,13 +8,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.el.ariby.R;
 import com.el.ariby.ui.api.MapFindApi;
@@ -67,7 +64,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
 
         txtTakeKcal = findViewById(R.id.txt_take_kcal);
         imgBtnStart = findViewById(R.id.imgbtn_navi_start);
-        layout=findViewById(R.id.relativeLayout);
+        layout = findViewById(R.id.relativeLayout);
         mapView = new MapView(this);
 
         Intent intent = getIntent();
@@ -78,7 +75,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
 
         getMapFind(startY, startX, endY, endX);
         MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
-                 Double.parseDouble(startX), Double.parseDouble(startY));
+                Double.parseDouble(startX), Double.parseDouble(startY));
 
         MapPoint markerPointEnd = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(endX), Double.parseDouble(endY));
@@ -123,7 +120,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 mapNaviView.zoomIn(true);
                 mapNaviView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
                 }
-                 }
+                }
                 });
                  builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dialog, int which) {
@@ -151,11 +148,11 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         });
 
         imgBtnStart.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
-                   choiceNavigation();
-               }
-           }
+                                           @Override
+                                           public void onClick(View v) {
+                                               choiceNavigation();
+                                           }
+                                       }
         );
     }
 
@@ -177,7 +174,21 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                                    Response<MapFindRepoResponse> response) {
 
                 MapFindRepoResponse repo = response.body();
-                int featuresSize = repo.getFeatures().size();
+                int featuresSize;
+                try {
+                    featuresSize = repo.getFeatures().size();
+                } catch (Exception e) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MapFindLocationActivity.this);
+                    builder.setMessage("목적지까지 연결도로가 없거나 단절되어 길안내가 불가능 합니다.");
+                    builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    builder.show();
+                    return;
+                }
 
                 MapPolyline polyline = new MapPolyline();
                 polyline.setTag(1000);
@@ -218,20 +229,20 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 int padding = 150; // px
                 mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
                 kilo = repo.getFeatures().get(0).getProperties().
-                        getTotalDistance().doubleValue()/1000;
-                Double time2=(kilo/13.0)*60; // 자전거 소요시간 공식 (거리/속도)*분
+                        getTotalDistance().doubleValue() / 1000;
+                Double time2 = (kilo / 13.0) * 60; // 자전거 소요시간 공식 (거리/속도)*분
 
-                int kcal = (int)(72*0.0939*Math.round(time2)); // 평균 몸무게 62 + 자전거 무게 10 * 속도칼로리소비계수*분
-                if(Math.round(time2)==0)
-                    txtTakeTime.setText((Math.round(time2)+1)+"분");
+                int kcal = (int) (72 * 0.0939 * Math.round(time2)); // 평균 몸무게 62 + 자전거 무게 10 * 속도칼로리소비계수*분
+                if (Math.round(time2) == 0)
+                    txtTakeTime.setText((Math.round(time2) + 1) + "분");
                 else
-                    txtTakeTime.setText(Math.round(time2)+"분");
-                if(kilo>=1.0) //
-                    txtTakeKilo.setText(Math.round(kilo*10)/10.0+"km");
+                    txtTakeTime.setText(Math.round(time2) + "분");
+                if (kilo >= 1.0) //
+                    txtTakeKilo.setText(Math.round(kilo * 10) / 10.0 + "km");
                 else
-                    txtTakeKilo.setText(Math.round(kilo*1000)+"m");
+                    txtTakeKilo.setText(Math.round(kilo * 1000) + "m");
 
-                txtTakeKcal.setText(kcal+"kcal");
+                txtTakeKcal.setText(kcal + "kcal");
             }
 
             @Override
@@ -248,7 +259,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         MapFindApi apiService = retrofit.create(MapFindApi.class);
         Call<MapFindRepoResponse> call =
                 apiService.getMapFind2("d7673b71-bc89-416a-9ac6-019e5d8f327a", "1",
-                        startX, startY, endX, endY, "123", "234",passList);
+                        startX, startY, endX, endY, "123", "234", passList);
 
         call.enqueue(new Callback<MapFindRepoResponse>() {
             @Override
@@ -298,17 +309,17 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                 int padding = 150; // px
                 mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
                 kilo = repo.getFeatures().get(0).getProperties().
-                        getTotalDistance().doubleValue()/1000;
-                Double time2=(kilo/13.0)*60; // 자전거 소요시간 공식 (거리/속도)*분
+                        getTotalDistance().doubleValue() / 1000;
+                Double time2 = (kilo / 13.0) * 60; // 자전거 소요시간 공식 (거리/속도)*분
 
-                int kcal = (int)(72*0.0939*Math.round(time2)); // 평균 몸무게 62 + 자전거 무게 10 * 속도칼로리소비계수*분
-                txtTakeTime.setText(Math.round(time2)+"분");
-                if(kilo>=1.0) //
-                    txtTakeKilo.setText(Math.round(kilo*10)/10.0+"km");
+                int kcal = (int) (72 * 0.0939 * Math.round(time2)); // 평균 몸무게 62 + 자전거 무게 10 * 속도칼로리소비계수*분
+                txtTakeTime.setText(Math.round(time2) + "분");
+                if (kilo >= 1.0) //
+                    txtTakeKilo.setText(Math.round(kilo * 10) / 10.0 + "km");
                 else
-                    txtTakeKilo.setText(Math.round(kilo*1000)+"m");
+                    txtTakeKilo.setText(Math.round(kilo * 1000) + "m");
 
-                txtTakeKcal.setText(kcal+"kcal");
+                txtTakeKcal.setText(kcal + "kcal");
             }
 
             @Override
@@ -392,23 +403,23 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(which == 0) {
-                    Intent intent = new Intent(getApplicationContext(),MapNavigationActivity.class);
-                    intent.putExtra("startX",startX);
-                    intent.putExtra("startY",startY);
+                if (which == 0) {
+                    Intent intent = new Intent(getApplicationContext(), MapNavigationActivity.class);
+                    intent.putExtra("startX", startX);
+                    intent.putExtra("startY", startY);
                     intent.putExtra("endX", endX);
-                    intent.putExtra("endY",endY);
-                    intent.putExtra("kilo",kilo);
+                    intent.putExtra("endY", endY);
+                    intent.putExtra("kilo", kilo);
                     layout.removeAllViews();
                     startActivity(intent);
 
-                } else if(which == 1) {
-                    Intent intent = new Intent(getApplicationContext(),MapNavigationRaspberryActivity.class);
-                    intent.putExtra("startX",startX);
-                    intent.putExtra("startY",startY);
+                } else if (which == 1) {
+                    Intent intent = new Intent(getApplicationContext(), MapNavigationRaspberryActivity.class);
+                    intent.putExtra("startX", startX);
+                    intent.putExtra("startY", startY);
                     intent.putExtra("endX", endX);
-                    intent.putExtra("endY",endY);
-                    intent.putExtra("kilo",kilo);
+                    intent.putExtra("endY", endY);
+                    intent.putExtra("kilo", kilo);
                     layout.removeAllViews();
                     startActivity(intent);
                 }
