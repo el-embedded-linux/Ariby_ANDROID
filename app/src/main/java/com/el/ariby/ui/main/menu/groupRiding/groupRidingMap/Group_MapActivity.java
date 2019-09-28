@@ -2,12 +2,11 @@ package com.el.ariby.ui.main.menu.groupRiding.groupRidingMap;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -22,12 +21,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
-import android.support.constraint.Group;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -35,17 +32,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,8 +47,6 @@ import com.el.ariby.R;
 import com.el.ariby.ui.api.MapFindApi;
 import com.el.ariby.ui.api.SelfCall;
 import com.el.ariby.ui.api.response.MapFindRepoResponse;
-import com.el.ariby.ui.main.menu.CourseFragment;
-import com.el.ariby.ui.main.menu.groupRiding.GroupRideActivity;
 import com.el.ariby.ui.main.menu.navigation.PointDouble;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -73,7 +65,6 @@ import net.daum.mf.map.api.MapView;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +91,7 @@ public class Group_MapActivity extends AppCompatActivity
     ArrayList<Double> coordinates;
     Intent intent;
     String startX, startY, endX, endY;
-    int memberTag =1;
+    int memberTag = 1;
     MapPOIItem[] items;
     List<MapPOIItem> marker;
     ArrayList<String> memberList = new ArrayList<>();
@@ -115,10 +106,11 @@ public class Group_MapActivity extends AppCompatActivity
     //drawer
     ArrayList<MemberListItem> memberListItems = new ArrayList<>();
     MemberListAdapter memberListAdapter;
-   private Bitmap bitmap;
+    private Bitmap bitmap;
 
     int myPosition;
     int memberCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,7 +126,7 @@ public class Group_MapActivity extends AppCompatActivity
         final TextView btnStop = findViewById(R.id.btnStop);
         fab = findViewById(R.id.fab);
         listView = findViewById(R.id.group_nav_member_list);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close );
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorBlack));
         toggle.syncState();
@@ -154,7 +146,7 @@ public class Group_MapActivity extends AppCompatActivity
         startY = intent.getStringExtra("startX");
         endX = intent.getStringExtra("endY");
         endY = intent.getStringExtra("endX");
-        Log.e("intents : ", startX+", "+startY);
+        Log.e("intents : ", startX + ", " + startY);
 
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("GROUP_RIDING");
@@ -198,22 +190,22 @@ public class Group_MapActivity extends AppCompatActivity
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String nameCom = null;
-                memberTag =0;
+                memberTag = 0;
                 int a = 0;
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     nameCom = snapshot.getKey();
-                    if(groupName.equals(nameCom)){
+                    if (groupName.equals(nameCom)) {
                         memberCount = (int) snapshot.child("members").getChildrenCount();
                         Log.d("memberCount1", String.valueOf(memberCount));
-                        for(a = 0; a<memberCount; a++) { //멤버들의 위치, 프로필, 닉네임 가져오기 (처음 로딩되었을 때 마커 뿌리기)
+                        for (a = 0; a < memberCount; a++) { //멤버들의 위치, 프로필, 닉네임 가져오기 (처음 로딩되었을 때 마커 뿌리기)
 
                             final String getProf = snapshot.child("members").child(String.valueOf(a)).child("profile").getValue().toString();
-                            String getNick = snapshot.child("members").child(String .valueOf(a)).child("nickname").getValue().toString();
+                            String getNick = snapshot.child("members").child(String.valueOf(a)).child("nickname").getValue().toString();
                             memberList.add(getNick);
                             memberListAdapter.addItem(new MemberListItem(getProf, getNick));
                             coordinates = startLocationService();
 
-                            if(memberList.get(a).equals(myNick)){
+                            if (memberList.get(a).equals(myNick)) {
                                 Log.d("내 닉네임 : ", myNick);
                                 ref.child(groupName).child("members").child(String.valueOf(a)).child("lat").setValue(coordinates.get(0));
                                 ref.child(groupName).child("members").child(String.valueOf(a)).child("lon").setValue(coordinates.get(1));
@@ -225,7 +217,7 @@ public class Group_MapActivity extends AppCompatActivity
                             MapPoint markPoint3 = MapPoint.mapPointWithGeoCoord(Double.parseDouble(getLat), Double.parseDouble(getLon));
                             final MapPOIItem marker2 = new MapPOIItem();
 
-                            Log.e("getLat + getLon : ", getLat + ",   " + getLon+",   "+getProf);
+                            Log.e("getLat + getLon : ", getLat + ",   " + getLon + ",   " + getProf);
                             marker2.setItemName(getNick);
                             marker2.setTag(memberTag);
                             marker2.setMapPoint(markPoint3);
@@ -236,7 +228,7 @@ public class Group_MapActivity extends AppCompatActivity
                             StrictMode.setThreadPolicy(policy);
                             try {
                                 URL url = new URL(getProf);
-                                Bitmap bitmap = BitmapFactory.decodeStream((InputStream)url.getContent());
+                                Bitmap bitmap = BitmapFactory.decodeStream((InputStream) url.getContent());
                                 bitmap = getCircularBitmap(bitmap);
                                 //marker2.setCustomImageBitmap(Bitmap.createScaledBitmap(bitmap, 120,120,false));
                                 marker2.setCustomImageBitmap(bitmap);
@@ -252,19 +244,19 @@ public class Group_MapActivity extends AppCompatActivity
                         }
                         items = mapView.getPOIItems();
                         Log.e("item_list length ", String.valueOf(items.length));
-                        for(int z = 0; z <items.length ;z++){
+                        for (int z = 0; z < items.length; z++) {
                             MapPOIItem mapPOIItem = mapView.findPOIItemByTag(items[z].getTag());
                             mapView.selectPOIItem(mapPOIItem, true);
-                            Log.d("item_list : ", items[z].getTag()+" item_list poiItem : "+ mapPOIItem);
+                            Log.d("item_list : ", items[z].getTag() + " item_list poiItem : " + mapPOIItem);
                             Log.e("item_list N : ", String.valueOf(z));
                         }
                         break;
                     }
                 }
                 txtGroupName.setText(groupName);
-                txtMemberCount.setText("인원 : "+memberCount);
+                txtMemberCount.setText("인원 : " + memberCount);
                 memberListAdapter.notifyDataSetChanged();
-            } 
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -276,7 +268,7 @@ public class Group_MapActivity extends AppCompatActivity
         //getMapFind(startY, startY, endY, endX);
         MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(startY), Double.parseDouble(startX));
-        Log.e("MapPoint : ", "Y: "+startY);
+        Log.e("MapPoint : ", "Y: " + startY);
 
         MapPoint markerPointEnd = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(endY), Double.parseDouble(endX));
@@ -334,14 +326,13 @@ public class Group_MapActivity extends AppCompatActivity
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
     }
 
-    public void countDownTimer(){
-        countDownTimer = new CountDownTimer(11*1000, 6000) {
+    public void countDownTimer() {
+        countDownTimer = new CountDownTimer(11 * 1000, 6000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 Log.e("countdownTimer : ", String.valueOf(count));
@@ -355,13 +346,13 @@ public class Group_MapActivity extends AppCompatActivity
                         //memberTag =1;
                         int a = 1;
 
-                        for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             nameCom = snapshot.getKey();
-                            if(groupName.equals(nameCom)){
+                            if (groupName.equals(nameCom)) {
                                 memberCount = (int) snapshot.child("members").getChildrenCount();
                                 Log.d("memberCount", String.valueOf(memberCount));
                                 items = mapView.getPOIItems();
-                                for(a = 0; a<memberCount; a++) {
+                                for (a = 0; a < memberCount; a++) {
                                     String getLat = snapshot.child("members").child(String.valueOf(a)).child("lat").getValue().toString();
                                     String getLon = snapshot.child("members").child(String.valueOf(a)).child("lon").getValue().toString();
                                     String getNick = snapshot.child("members").child(String.valueOf(a)).child("nickname").getValue().toString();
@@ -388,17 +379,17 @@ public class Group_MapActivity extends AppCompatActivity
         };
     }
 
-    public void onBackPressed(){
+    public void onBackPressed() {
         countDownTimer.cancel();
         DrawerLayout drawerLayout = findViewById(R.id.group_drawer_layout2);
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         }
            /* Intent intent1 = new Intent(this, CourseFragment.class);
             intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent1);*/
-           finish();
-            return;
+        finish();
+        return;
 
     }
 
@@ -415,7 +406,21 @@ public class Group_MapActivity extends AppCompatActivity
                                    Response<MapFindRepoResponse> response) {
 
                 MapFindRepoResponse repo = response.body();
-                int featuresSize = repo.getFeatures().size();
+                int featuresSize;
+                try {
+                    featuresSize = repo.getFeatures().size();
+                } catch (Exception e) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Group_MapActivity.this);
+                    builder.setMessage("목적지까지 연결도로가 없거나 단절되어 길안내가 불가능 합니다.");
+                    builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    builder.show();
+                    return;
+                }
 
                 Log.d("getMapFind start : ", "start");
                 MapPolyline polyline = new MapPolyline();
@@ -553,7 +558,7 @@ public class Group_MapActivity extends AppCompatActivity
         ref.child(groupName).child("members").child(String.valueOf(myPosition)).child("lon").setValue(longitude);
         String msg1 = "Latitude : " + latitude + "\nLongitude : " + longitude;
         Toast.makeText(Group_MapActivity.this, msg1, Toast.LENGTH_SHORT).show();
-        latitude = latitude +0.001;
+        latitude = latitude + 0.001;
         longitude = longitude + 0.001;
         return list;
     }
@@ -562,7 +567,7 @@ public class Group_MapActivity extends AppCompatActivity
         int squareBitmapWidth = Math.min(srcBitmap.getWidth(), srcBitmap.getHeight());
         int pinWidth = 20;
         Drawable locationDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.marker);
-        Bitmap locationPin = ((BitmapDrawable)locationDrawable).getBitmap();
+        Bitmap locationPin = ((BitmapDrawable) locationDrawable).getBitmap();
 
         Bitmap dstBitmap = Bitmap.createBitmap(
                 squareBitmapWidth,
@@ -577,8 +582,8 @@ public class Group_MapActivity extends AppCompatActivity
         canvas.drawOval(rectF, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 
-        float left = (squareBitmapWidth-srcBitmap.getWidth())/2;
-        float top = (squareBitmapWidth-srcBitmap.getHeight())/2;
+        float left = (squareBitmapWidth - srcBitmap.getWidth()) / 2;
+        float top = (squareBitmapWidth - srcBitmap.getHeight()) / 2;
         canvas.drawBitmap(srcBitmap, left, top, paint);
         srcBitmap.recycle();
         dstBitmap = overlay(dstBitmap, locationPin);
@@ -586,18 +591,17 @@ public class Group_MapActivity extends AppCompatActivity
         return dstBitmap;
     }
 
-    public Bitmap overlay(Bitmap profile, Bitmap locationPin)
-    {
+    public Bitmap overlay(Bitmap profile, Bitmap locationPin) {
         //Drawable locationDrawable = getResources().getDrawable(R.drawable.ic_room_black_24dp);
         locationPin = Bitmap.createScaledBitmap(locationPin, 220, 200, false);
-        profile = Bitmap.createScaledBitmap(profile, 120,120, false);
+        profile = Bitmap.createScaledBitmap(profile, 120, 120, false);
         //Bitmap locationPin = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_room_black_24dp);
         Log.d("locationPin : ", String.valueOf(locationPin));
         Bitmap overlay = Bitmap.createBitmap(locationPin.getWidth(), locationPin.getHeight(), locationPin.getConfig());
         //float left1 = (profile.getWidth() - (locationPin.getWidth()*((float)profile.getHeight()/(float)locationPin.getHeight())))/(float)2.0;
         Canvas canvas1 = new Canvas(overlay);
         canvas1.drawBitmap(locationPin, new Matrix(), null);
-        canvas1.drawBitmap(profile, 50,10,null);
+        canvas1.drawBitmap(profile, 50, 10, null);
         //canvas1.drawBitmap(locationPin, left1, 0, null);
         //canvas1.drawBitmap(profile, new Matrix(), null);
         return overlay;
@@ -605,9 +609,11 @@ public class Group_MapActivity extends AppCompatActivity
 
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) { return false; }
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        return false;
+    }
 
-    public class MemberListAdapter extends BaseAdapter{
+    public class MemberListAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -621,10 +627,12 @@ public class Group_MapActivity extends AppCompatActivity
 
         @Override
         public long getItemId(int position) {
-           return position;
+            return position;
         }
 
-        public void addItem(MemberListItem item){ memberListItems.add(item);}
+        public void addItem(MemberListItem item) {
+            memberListItems.add(item);
+        }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -635,6 +643,9 @@ public class Group_MapActivity extends AppCompatActivity
             view.setProfile(item.getProfile());
             return view;
         }
-        public void clearItem(){memberListItems.clear();}
+
+        public void clearItem() {
+            memberListItems.clear();
+        }
     }
 }

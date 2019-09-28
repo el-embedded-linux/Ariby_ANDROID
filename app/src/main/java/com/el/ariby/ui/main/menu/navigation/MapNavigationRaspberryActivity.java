@@ -1,17 +1,18 @@
 package com.el.ariby.ui.main.menu.navigation;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.el.ariby.R;
-import com.el.ariby.databinding.ActivityMapNavigationBinding;
 import com.el.ariby.databinding.ActivityMapRaspberryNavigationBinding;
 import com.el.ariby.ui.api.MapFindApi;
 import com.el.ariby.ui.api.SelfCall;
@@ -122,7 +123,21 @@ public class MapNavigationRaspberryActivity extends AppCompatActivity implements
             public void onResponse(Call<MapFindRepoResponse> call,
                                    Response<MapFindRepoResponse> response) {
                 MapFindRepoResponse repo = response.body();
-                int featuresSize = repo.getFeatures().size();
+                int featuresSize;
+                try {
+                    featuresSize = repo.getFeatures().size();
+                } catch (Exception e) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MapNavigationRaspberryActivity.this);
+                    builder.setMessage("목적지까지 연결도로가 없거나 단절되어 길안내가 불가능 합니다.");
+                    builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    builder.show();
+                    return;
+                }
 
                 MapPolyline polyline = new MapPolyline();
                 polyline.setTag(1000);
@@ -132,21 +147,21 @@ public class MapNavigationRaspberryActivity extends AppCompatActivity implements
                         Double.parseDouble(startY), Double.parseDouble(startX)));
 
                 Double kilo = repo.getFeatures().get(0).getProperties().
-                        getTotalDistance().doubleValue()/1000;
-                Double time2=(kilo/13.0)*60; // 자전거 소요시간 공식 (거리/속도)*분
-                mBinding.txtNaviTime2.setText("남은시간 : " + Math.round(time2)+"분");
+                        getTotalDistance().doubleValue() / 1000;
+                Double time2 = (kilo / 13.0) * 60; // 자전거 소요시간 공식 (거리/속도)*분
+                mBinding.txtNaviTime2.setText("남은시간 : " + Math.round(time2) + "분");
 
-                if(kilo>=1.0) //
-                    mBinding.txtNaviDistance2.setText("남은거리 : " + Math.round(kilo*10)/10.0+"km");
+                if (kilo >= 1.0) //
+                    mBinding.txtNaviDistance2.setText("남은거리 : " + Math.round(kilo * 10) / 10.0 + "km");
                 else
-                    mBinding.txtNaviDistance2.setText("남은거리 : " + Math.round(kilo*1000)+"m");
+                    mBinding.txtNaviDistance2.setText("남은거리 : " + Math.round(kilo * 1000) + "m");
 
                 NaviMember member = new NaviMember();
                 for (int i = 0; i < featuresSize; i++) {
                     MapFindRepoResponse.Geometry geometry = repo.getFeatures().get(i).getGeometry();
                     MapFindRepoResponse.Properties properties = repo.getFeatures().get(i).getProperties();
                     PointDouble point;
-                    Log.i("Navigation Array info","index = "+properties.getIndex()+" type = "+geometry.getType());
+                    Log.i("Navigation Array info", "index = " + properties.getIndex() + " type = " + geometry.getType());
 
                     if (geometry.getType().equals("Point")) {
                         point = new PointDouble(
@@ -164,23 +179,22 @@ public class MapNavigationRaspberryActivity extends AppCompatActivity implements
                         mapNaviView.addPOIItem(marker5);
                         polyline.addPoint(MapPoint.mapPointWithGeoCoord(point.getY(), point.getX()));
 
-                        if(i==(featuresSize-1)) { // 도착지점 추가 (경로 중 마지막은 point로 찍힘)
+                        if (i == (featuresSize - 1)) { // 도착지점 추가 (경로 중 마지막은 point로 찍힘)
                             member.setPoint(point);
                             member.setTime(0);
                             member.setDistance(0);
                             member.setDescription(properties.getDescription());
                             naviMembers.add(member);
                         }
-                        Log.i("Navigation Array","turnType = "+properties.getTurnType());
+                        Log.i("Navigation Array", "turnType = " + properties.getTurnType());
 
                         //이전 LineString중 TurnType정보가 없는 객체에 현재의 TurnType정보를 저장
-                        for (int j = naviMembers.size()-1; j>=0; j--){
+                        for (int j = naviMembers.size() - 1; j >= 0; j--) {
                             NaviMember temp = naviMembers.get(j);
-                            if(temp.getTurnType()==0){
+                            if (temp.getTurnType() == 0) {
                                 temp.setTurnType(properties.getTurnType());
-                                naviMembers.add(j,temp);
-                            }
-                            else{
+                                naviMembers.add(j, temp);
+                            } else {
                                 break;
                             }
                         }
@@ -199,7 +213,7 @@ public class MapNavigationRaspberryActivity extends AppCompatActivity implements
                         member.setDistance(properties.getDistance());
                         member.setTime(properties.getTime());
                         member.setTurnType(0);
-                        Log.i("Navigation Array", "description = "+member.getDescription()+" Distance = "+member.getDistance()+" time = "+member.getTime());
+                        Log.i("Navigation Array", "description = " + member.getDescription() + " Distance = " + member.getDistance() + " time = " + member.getTime());
                         naviMembers.add(member);
                     }
                     member = new NaviMember();
@@ -210,7 +224,7 @@ public class MapNavigationRaspberryActivity extends AppCompatActivity implements
                         distance(Double.valueOf(startY), Double.valueOf(startX),
                                 naviMembers.get(0).getPoint().y, naviMembers.get(0).getPoint().x, "meter");
                 mBinding.txtNaviMeter2.setText((int) distanceKiloMeter + "m");
-                mBinding.txtNaviMap2.setText(naviMembers.get(0).description + "턴타입 : "+naviMembers.get(0).getTurnType());
+                mBinding.txtNaviMap2.setText(naviMembers.get(0).description + "턴타입 : " + naviMembers.get(0).getTurnType());
             }
 
             @Override
@@ -232,21 +246,21 @@ public class MapNavigationRaspberryActivity extends AppCompatActivity implements
 
         double distanceKiloMeter2 =
                 distance(mapPointGeo.latitude, mapPointGeo.longitude,
-                        naviMembers.get(naviMemberSize-1).getPoint().y,
-                        naviMembers.get(naviMemberSize-1).getPoint().x, "meter");
+                        naviMembers.get(naviMemberSize - 1).getPoint().y,
+                        naviMembers.get(naviMemberSize - 1).getPoint().x, "meter");
 
         mBinding.txtNaviMeter2.setText((int) distanceKiloMeter + "m");
 
-        if(distanceKiloMeter2 <= 1000)
+        if (distanceKiloMeter2 <= 1000)
             mBinding.txtNaviDistance2.setText("남은거리 : " + (int) distanceKiloMeter + "m");
         else
-            mBinding.txtNaviDistance2.setText("남은거리 : " + (int) (distanceKiloMeter2/1000*10)/10.0 + "km");
-;
+            mBinding.txtNaviDistance2.setText("남은거리 : " + (int) (distanceKiloMeter2 / 1000 * 10) / 10.0 + "km");
+        ;
         if (distanceKiloMeter <= 3.0) {
             ++naviCount;
 
-            if(naviMembers.get(naviCount).getDescription().equals("도착")) {
-                Toast.makeText(getApplicationContext(),"도착",Toast.LENGTH_LONG).show();
+            if (naviMembers.get(naviCount).getDescription().equals("도착")) {
+                Toast.makeText(getApplicationContext(), "도착", Toast.LENGTH_LONG).show();
                 /*final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("도착했습니다. 안내를 종료합니다.");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -257,7 +271,7 @@ public class MapNavigationRaspberryActivity extends AppCompatActivity implements
                 });
                 builder.show();*/
             } else {
-                mBinding.txtNaviMap2.setText("다음 "+naviMembers.get(naviCount).getDescription()+"/"+naviMembers.get(naviCount).getTrunTypeByText());
+                mBinding.txtNaviMap2.setText("다음 " + naviMembers.get(naviCount).getDescription() + "/" + naviMembers.get(naviCount).getTrunTypeByText());
             }
         }
 

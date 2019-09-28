@@ -28,6 +28,7 @@ import com.el.ariby.ui.api.MapFindApi;
 import com.el.ariby.ui.api.SelfCall;
 import com.el.ariby.ui.api.response.MapFindRepoResponse;
 import com.el.ariby.ui.main.menu.groupRiding.groupRidingMap.Group_MapActivity;
+import com.el.ariby.ui.main.menu.navigation.MapFindLocationActivity;
 import com.el.ariby.ui.main.menu.navigation.MapNavigationActivity;
 import com.el.ariby.ui.main.menu.navigation.MapNavigationRaspberryActivity;
 import com.el.ariby.ui.main.menu.navigation.PointDouble;
@@ -158,7 +159,21 @@ public class CourseMapActivity extends AppCompatActivity {
                                    Response<MapFindRepoResponse> response) {
 
                 MapFindRepoResponse repo = response.body();
-                int featuresSize = repo.getFeatures().size();
+                int featuresSize;
+                try {
+                    featuresSize = repo.getFeatures().size();
+                } catch (Exception e) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CourseMapActivity.this);
+                    builder.setMessage("목적지까지 연결도로가 없거나 단절되어 길안내가 불가능 합니다.");
+                    builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    builder.show();
+                    return;
+                }
 
                 MapPolyline polyline = new MapPolyline();
                 polyline.setTag(1000);
