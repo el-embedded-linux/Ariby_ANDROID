@@ -3,15 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="activity"
+            type="com.el.ariby.ui.main.menu.follow.FollowerListActivity" />
+    </data>
 <LinearLayout
     android:id="@+id/layout_follower"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#fff"
     tools:context=".ui.main.menu.follow.FollowerListActivity">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_follower"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#fff">
     </android.support.v7.widget.RecyclerView>
 </LinearLayout>
 </layout>

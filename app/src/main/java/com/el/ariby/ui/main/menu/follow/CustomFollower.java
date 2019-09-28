@@ -9,23 +9,21 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.el.ariby.R;
 
-public class CustomFollow extends LinearLayout {
+public class CustomFollower extends LinearLayout {
     ImageView imgProfile;
     TextView Nickname;
     String descStr;
     TextView followingNum;
     TextView followerNum;
 
-    public CustomFollow(Context context) {
+    public CustomFollower(Context context) {
         super(context);
         init(context);
     }
-
-    public CustomFollow(Context context, AttributeSet attrs) {
+    public CustomFollower(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
-
     public void setImgProfile(String url) {
         Glide.with(this).load(url).into(imgProfile);
     }
@@ -46,12 +44,12 @@ public class CustomFollow extends LinearLayout {
         Nickname.setText(followerNum);
     }
 
-    private void init(Context context){
+    private void init(Context context) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.custom_follow_list,this,true);
-        imgProfile = findViewById(R.id.img_follow_profile);
-        Nickname = findViewById(R.id.txt_follow_nickname);
-        followingNum = findViewById(R.id.txt_follow_num);
-        followerNum = findViewById(R.id.txt_follower_num);
+        inflater.inflate(R.layout.custom_follower_list,this,true);
+        imgProfile = findViewById(R.id.img_follower_profile);
+        Nickname = findViewById(R.id.txt_follower_nickname);
+        followingNum = findViewById(R.id.txt_follower_follow_num);
+        followerNum = findViewById(R.id.txt_follower_follower_num);
     }
 }

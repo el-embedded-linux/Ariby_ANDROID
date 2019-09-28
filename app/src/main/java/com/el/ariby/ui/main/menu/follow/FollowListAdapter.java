@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.el.ariby.R;
 
 import java.util.ArrayList;
@@ -18,9 +19,12 @@ import java.util.ArrayList;
 public class FollowListAdapter extends RecyclerView.Adapter<FollowListAdapter.ViewHolder> {
     Context context;
     private ArrayList<FollowItem> mlist;
+    int item_layout;
 
-    FollowListAdapter(ArrayList<FollowItem> list) {
-        mlist = list;
+    FollowListAdapter(Context context, ArrayList<FollowItem> list, int item_layout) {
+        this.context = context;
+        this.mlist = list;
+        this.item_layout = item_layout;
     }
 
     @NonNull
@@ -37,7 +41,10 @@ public class FollowListAdapter extends RecyclerView.Adapter<FollowListAdapter.Vi
         String followNum = mlist.get(i).getFollwingNum();
         String followerNum = mlist.get(i).getFollowerNum();
         Log.e("테스트", nickname + followerNum + followNum + mlist.get(i).getIconDrawable());
-        Glide.with(context).load(mlist.get(i).getIconDrawable()).into(holder.imgFollowProfile);
+        Glide.with(context)
+                .load(mlist.get(i).getIconDrawable())
+                .centerCrop()
+                .into(holder.imgFollowProfile);
         holder.txtFollowNickname.setText(nickname);
         holder.txtFollowNum.setText(followNum);
         holder.txtFollowerNum.setText(followerNum);

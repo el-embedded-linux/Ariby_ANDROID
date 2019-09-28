@@ -148,6 +148,7 @@ class UserModel {
     public String gender, userImageURL;
     public int weight, height;
     public int level, exp;
+    public int followNum, followerNum;
     public UserModel(int weight, String birth, int height, String gender, String nickname) {
         this.weight = weight;
         this.birth = birth;
@@ -157,5 +158,7 @@ class UserModel {
         this.level = 1;
         this.exp = 0;
         this.userImageURL = "https://firebasestorage.googleapis.com/v0/b/elandroid.appspot.com/o/displayImage.png?alt=media&token=210079dc-d9af-43b4-a364-d7b5deb47a05";
+        this.followNum = 0;
+        this.followerNum= 0;
     }
 }

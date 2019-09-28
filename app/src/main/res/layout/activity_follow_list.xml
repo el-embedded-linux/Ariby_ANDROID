@@ -9,16 +9,17 @@
             type="com.el.ariby.ui.main.menu.follow.FollowListActivity" />
     </data>
 <LinearLayout
+    android:id="@+id/layout_follow"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#BBBABA"
+    android:background="#fff"
     tools:context=".ui.main.menu.follow.FollowListActivity">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_follow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#BBBABA">
+        android:background="#fff">
     </android.support.v7.widget.RecyclerView>
 </LinearLayout>
 </layout>
