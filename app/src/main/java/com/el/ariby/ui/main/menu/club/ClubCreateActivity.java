@@ -18,7 +18,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -65,7 +64,7 @@ public class ClubCreateActivity extends AppCompatActivity {
     String Storage_Path = "club/"; // 파이어베이스 스토리지 저장 폴더
     Boolean nameCheck = true;
 
-    private Module module=new Module();
+    private Module module = new Module();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +72,7 @@ public class ClubCreateActivity extends AppCompatActivity {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_club_create);
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
-        clubRef=database.getReference("CLUB");
+        clubRef = database.getReference("CLUB");
         storageReference = FirebaseStorage.getInstance().getReference();
 
         mBinding.etName.addTextChangedListener(
@@ -89,22 +88,25 @@ public class ClubCreateActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 String name = mBinding.etName.getText().toString();
-                                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     Log.e("테스트", name);
                                     Log.e("테스트:key", snapshot.getKey());
-
-                                    if (name.equals(snapshot.getKey()) ||
-                                            !(module.isNameCheck(name))) {
-                                        mBinding.txtNameCheck.setText("이미 존재하거나 특수문자는 입력할 수 없습니다.");
-                                        mBinding.txtNameCheck.setTextColor(Color.RED);
-                                        mBinding.btnCreate.setEnabled(false);
-                                        mBinding.btnCreate.setBackgroundColor(Color.parseColor("#FF979797"));
-                                        break;
+                                    if(nameCheck) {
+                                        if (name.equals(snapshot.getKey()) ||
+                                                !(module.isNameCheck(name))) {
+                                            mBinding.txtNameCheck.setText("이미 존재하거나 특수문자는 입력할 수 없습니다.");
+                                            mBinding.txtNameCheck.setTextColor(Color.RED);
+                                            mBinding.btnCreate.setEnabled(false);
+                                            mBinding.btnCreate.setBackgroundColor(Color.parseColor("#FF979797"));
+                                            break;
+                                        } else {
+                                            mBinding.txtNameCheck.setText("생성 가능합니다.");
+                                            mBinding.txtNameCheck.setTextColor(Color.BLUE);
+                                            mBinding.btnCreate.setEnabled(true);
+                                            mBinding.btnCreate.setBackgroundColor(Color.parseColor("#1E90FF"));
+                                        }
                                     } else {
-                                        mBinding.txtNameCheck.setText("생성 가능합니다.");
-                                        mBinding.txtNameCheck.setTextColor(Color.BLUE);
-                                        mBinding.btnCreate.setEnabled(true);
-                                        mBinding.btnCreate.setBackgroundColor(Color.parseColor("#1E90FF"));
+                                        mBinding.txtNameCheck.setText("");
                                     }
                                 }
                             }
@@ -143,13 +145,12 @@ public class ClubCreateActivity extends AppCompatActivity {
         mBinding.btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (nameCheck) {
-                    showProgressBar();
-                    UploadClubInfoToFirebase();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "같은 이름의 클럽이 이미 있습니다.", Toast.LENGTH_SHORT).show();
-                }
+                nameCheck=false;
+                showProgressBar();
+                mBinding.btnCreate.setEnabled(false);
+                mBinding.btnCreate.setBackgroundColor(Color.parseColor("#FF979797"));
+                mBinding.txtNameCheck.setText("");
+                UploadClubInfoToFirebase();
             }
         });
     }
