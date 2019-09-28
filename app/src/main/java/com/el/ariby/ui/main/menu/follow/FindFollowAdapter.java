@@ -36,7 +36,8 @@ public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.Vi
     Context context;
     private ArrayList<FollowItem> mlist;
     int item_layout;
-
+    DatabaseReference ref;
+    FirebaseDatabase database;
     FindFollowAdapter(Context context, ArrayList<FollowItem> list, int item_layout) {
         this.context = context;
         this.mlist = list;
@@ -53,17 +54,25 @@ public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference("GROUP_RIDING");
+        final FollowItem item = mlist.get(i);
         String nickname = mlist.get(i).getNick();
         String followNum = mlist.get(i).getFollwingNum();
         String followerNum = mlist.get(i).getFollowerNum();
         Log.e("테스트", nickname + followerNum + followNum + mlist.get(i).getIconDrawable());
         Glide.with(context)
                 .load(mlist.get(i).getIconDrawable())
-                .centerCrop()
                 .into(holder.imgFollowProfile);
         holder.txtFollowNickname.setText(nickname);
         holder.txtFollowNum.setText(followNum);
         holder.txtFollowerNum.setText(followerNum);
+        holder.addFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, item.getNick(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
@@ -77,7 +86,7 @@ public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.Vi
         TextView txtFollowNickname;
         TextView txtFollowNum;
         TextView txtFollowerNum;
-
+        Button addFriend;
         ViewHolder(View itemView) {
             super(itemView);
 
@@ -86,6 +95,7 @@ public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.Vi
             txtFollowNickname = itemView.findViewById(R.id.txt_user_nickname);
             txtFollowNum = itemView.findViewById(R.id.txt_user_follow_num);
             txtFollowerNum = itemView.findViewById(R.id.txt_user_follower_num);
+            addFriend =itemView.findViewById(R.id.add_friend);
         }
     }
 }

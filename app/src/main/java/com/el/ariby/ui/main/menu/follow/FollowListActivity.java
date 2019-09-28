@@ -53,6 +53,7 @@ public class FollowListActivity extends AppCompatActivity {
 
         mAdapter = new FollowListAdapter() ;
         mRecyclerView = (RecyclerView)findViewById(R.id.list_follow) ;
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this)) ;
         mBinding.listFollow.setLayoutManager(new LinearLayoutManager(this));
         // 리사이클러뷰에 SimpleTextAdapter 객체 지정.

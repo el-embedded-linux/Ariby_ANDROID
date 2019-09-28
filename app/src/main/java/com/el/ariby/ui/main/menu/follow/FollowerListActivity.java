@@ -47,6 +47,7 @@ public class FollowerListActivity extends AppCompatActivity {
         init();
         mAdapter = new FollowerListAdapter() ;
         mRecyclerView = (RecyclerView)findViewById(R.id.list_follower) ;
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this)) ;
         mBinding.listFollower.setLayoutManager(new LinearLayoutManager(this));
 

@@ -43,7 +43,6 @@ public class FollowListAdapter extends RecyclerView.Adapter<FollowListAdapter.Vi
         Log.e("테스트", nickname + followerNum + followNum + mlist.get(i).getIconDrawable());
         Glide.with(context)
                 .load(mlist.get(i).getIconDrawable())
-                .centerCrop()
                 .into(holder.imgFollowProfile);
         holder.txtFollowNickname.setText(nickname);
         holder.txtFollowNum.setText(followNum);
