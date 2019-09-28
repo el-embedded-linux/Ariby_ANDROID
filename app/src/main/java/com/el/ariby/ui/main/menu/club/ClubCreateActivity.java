@@ -182,32 +182,33 @@ public class ClubCreateActivity extends AppCompatActivity {
         if (FilePathUri != null) {
             final StorageReference storageReference2nd = storageReference.child(Storage_Path +
                     System.currentTimeMillis() + "." + GetFileExtension(FilePathUri));
-            FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-            userRef = database.getReference("USER").child(mUser.getUid());
-
-            final String name = mBinding.etName.getText().toString();
-            String commend = mBinding.etIntro.getText().toString();
-            String location = mBinding.etLocation.getText().toString();
-            ClubModel model = new ClubModel(commend, location);
-            ref.child("CLUB").child(name).setValue(model);
-            ref.child("CLUB").child(name).child("member").child("superVisor").setValue(mUser.getUid());
-
-            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    ref.child("CLUB").child(name).child("leaderNick").setValue(dataSnapshot.child("nickname").getValue());
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
 
             storageReference2nd.putFile(FilePathUri).addOnSuccessListener(
                     new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+                            userRef = database.getReference("USER").child(mUser.getUid());
+
+                            final String name = mBinding.etName.getText().toString();
+                            String commend = mBinding.etIntro.getText().toString();
+                            String location = mBinding.etLocation.getText().toString();
+                            ClubModel model = new ClubModel(commend, location);
+                            ref.child("CLUB").child(name).setValue(model);
+                            ref.child("CLUB").child(name).child("member").child("superVisor").setValue(mUser.getUid());
+
+                            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    ref.child("CLUB").child(name).child("leaderNick").setValue(dataSnapshot.child("nickname").getValue());
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
                             Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
                             while (!urlTask.isSuccessful()) ;
                             Uri downloadUrl = urlTask.getResult();
