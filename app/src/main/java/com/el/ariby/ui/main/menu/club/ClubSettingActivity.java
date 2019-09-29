@@ -28,6 +28,13 @@ public class ClubSettingActivity extends AppCompatActivity {
         clubTitle = intent.getStringExtra("title");
         clubDetailActi = (ClubDetailActivity)ClubDetailActivity.clubDetail;
 
+        mBinding.btnClubSettingBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         mBinding.btnClubDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

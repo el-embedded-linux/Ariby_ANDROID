@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/btn_back"
+            android:id="@+id/btn_club_setting_back"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
