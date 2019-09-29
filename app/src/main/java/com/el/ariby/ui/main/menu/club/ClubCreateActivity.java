@@ -67,14 +67,8 @@ public class ClubCreateActivity extends AppCompatActivity {
     private Module module = new Module();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_club_create);
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference();
-        clubRef = database.getReference("CLUB");
-        storageReference = FirebaseStorage.getInstance().getReference();
-
+    protected void onResume() {
+        super.onResume();
         mBinding.etName.addTextChangedListener(
                 new TextWatcher() {
                     @Override
@@ -91,7 +85,7 @@ public class ClubCreateActivity extends AppCompatActivity {
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     Log.e("테스트", name);
                                     Log.e("테스트:key", snapshot.getKey());
-                                    if(nameCheck) {
+                                    if (nameCheck) {
                                         if (name.equals(snapshot.getKey()) ||
                                                 !(module.isNameCheck(name))) {
                                             mBinding.txtNameCheck.setText("이미 존재하거나 특수문자는 입력할 수 없습니다.");
@@ -123,6 +117,16 @@ public class ClubCreateActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_club_create);
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference();
+        clubRef = database.getReference("CLUB");
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         mBinding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,12 +149,16 @@ public class ClubCreateActivity extends AppCompatActivity {
         mBinding.btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nameCheck=false;
-                showProgressBar();
-                mBinding.btnCreate.setEnabled(false);
-                mBinding.btnCreate.setBackgroundColor(Color.parseColor("#FF979797"));
-                mBinding.txtNameCheck.setText("");
-                UploadClubInfoToFirebase();
+                if (FilePathUri != null) {
+                    nameCheck = false;
+                    showProgressBar();
+                    mBinding.btnCreate.setEnabled(false);
+                    mBinding.btnCreate.setBackgroundColor(Color.parseColor("#FF979797"));
+                    mBinding.txtNameCheck.setText("");
+                    UploadClubInfoToFirebase();
+                } else {
+                    Toast.makeText(getApplicationContext(), "클럽 이미지 사진을 선택해주세요.", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
@@ -227,6 +235,10 @@ public class ClubCreateActivity extends AppCompatActivity {
                     });
         } else {
             Toast.makeText(getApplicationContext(), "클럽 이미지 사진을 선택해주세요.", Toast.LENGTH_LONG).show();
+            hideProgressBar();
+            mBinding.btnCreate.setEnabled(true);
+            mBinding.btnCreate.setBackgroundColor(Color.parseColor("#1E90FF"));
+
         }
     }
 
