@@ -69,7 +69,7 @@ public class DustFragment extends Fragment {
     public static Double longitude;
 
     private FragmentDustBinding mBinding;
-    String openKey = "5QyVwm0GQxAdvNdc%2BRHjoLPF07dmzuYnQi%2F2BiMLpPQtGwPItZolkz4GLA4PPiS7pgTGKhGBhn5GHi8t9WRcnQ%3D%3D";
+    String openKey = "uYV4E4WjSwCM%2B68P8EGBfW6Oo8HhG6omuKax6fhyzu3QMo3UGWJ8iYYfElb%2Bmz%2FyEL5S65jd5uG5J6YXm%2FwP9g%3D%3D";
     String kakaoKey = "KakaoAK e880d656790ed7e10098f0742679154e";
 
     @Nullable
