@@ -60,14 +60,7 @@ public class GenderActivity extends AppCompatActivity {
 
             }
         });
-        mBinding.btnJump.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), NicknameActivity.class);
-                startActivity(intent);
 
-            }
-        });
     }
 
     public void setPreference(String key, String value) {

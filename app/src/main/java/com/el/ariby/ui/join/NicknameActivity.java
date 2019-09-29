@@ -24,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 public class NicknameActivity extends AppCompatActivity {
     public final String PREFERENCE = "com.el.ariby_joining";
     ActivityNicknameBinding mBinding;
@@ -76,6 +78,7 @@ public class NicknameActivity extends AppCompatActivity {
                 });
             }
         });
+
         mBinding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,9 +90,12 @@ public class NicknameActivity extends AppCompatActivity {
         mBinding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!(TextUtils.isEmpty(mBinding.etNickname.getText().toString())))
+                if (!(TextUtils.isEmpty(mBinding.etNickname.getText().toString()))) { //비어있지 않으면
                     setPreference("displayName", mBinding.etNickname.getText().toString());
-
+                }else if(TextUtils.isEmpty(mBinding.etNickname.getText().toString())){
+                    mBinding.etNickname.setError("닉네임을 입력해 주세요.");
+                    return;
+                }
                 Intent intent = new Intent(getApplicationContext(), JoiningActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.anim_slide_in_right, R.anim.not_move_activity);

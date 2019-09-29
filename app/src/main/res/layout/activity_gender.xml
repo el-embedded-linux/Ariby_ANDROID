@@ -31,16 +31,7 @@
                     android:drawableStart="@drawable/ic_arrow_back_black_24dp"
                     android:drawableLeft="@drawable/ic_arrow_back_black_24dp" />
 
-                <Button
-                    android:id="@+id/btn_jump"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:background="#00FF0000"
-                    android:text="넘어가기"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="14sp" />
+
             </RelativeLayout>
 
             <LinearLayout

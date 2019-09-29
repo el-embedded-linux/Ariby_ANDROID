@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -46,6 +47,7 @@ public class JoiningActivity extends AppCompatActivity {
 
         FirebaseApp.initializeApp(this);
         firebaseAuth = FirebaseAuth.getInstance();
+        final SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
 
         mBinding.btnJoining.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,15 +83,19 @@ public class JoiningActivity extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(), "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
                                     }
 
-                                    try {
-                                        weight = getPreferenceInt("weight"); // 저장된 값 불러오기 (몸무게)
-                                        gender = getPreferenceString("gender"); // 성별
-                                        birth = getPreferenceString("birth"); // 나이
-                                        height = getPreferenceInt("height"); // 키
-                                        nickName = getPreferenceString("displayName");
-                                    } catch (Exception e) { // 사용자가 정보(키,몸무게 등)를 입력하지 않았을 경우, 변수 값에 DEFAULT 값 설정해 두었기 때문에 비워둠
 
-                                    }
+                                        weight = pref.getInt("weight",0);
+                                    //getPreferenceInt("weight"); // 저장된 값 불러오기 (몸무게)
+                                        gender = pref.getString("gender","");
+                                        //gender = getPreferenceString("gender"); // 성별
+                                        birth = pref.getString("birth", "");
+                                        height = pref.getInt("tall", 0);
+                                        nickName = pref.getString("displayName","");
+
+                                        /*birth = getPreferenceString("birth"); // 나이
+                                        height = getPreferenceInt("tall"); // 키
+                                        nickName = getPreferenceString("displayName");*/
+                                        Log.d("info : ", String.valueOf(weight)+", "+height+", "+nickName);
 
                                     UserModel userInfo = new UserModel(weight, birth, height, gender, nickName);
                                     myRef.child("USER").child(firebaseAuth.getUid()).setValue(userInfo);

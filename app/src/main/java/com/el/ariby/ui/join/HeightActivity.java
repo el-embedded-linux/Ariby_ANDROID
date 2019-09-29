@@ -14,6 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityHeightBinding;
 
+import org.w3c.dom.Text;
+
 public class HeightActivity extends AppCompatActivity {
     public final String PREFERENCE = "com.el.ariby_joining";
     ActivityHeightBinding mBinding;
@@ -35,21 +37,18 @@ public class HeightActivity extends AppCompatActivity {
         mBinding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!(TextUtils.isEmpty(mBinding.etHeight.getText().toString())))
+                if (!(TextUtils.isEmpty(mBinding.etHeight.getText().toString()))) { //빈칸이 아니면
                     setPreference("tall", Integer.parseInt(mBinding.etHeight.getText().toString()));
-
+                }else if(TextUtils.isEmpty(mBinding.etHeight.getText().toString())){ //빈칸이면
+                    mBinding.etHeight.setError("키를 입력해 주세요.");
+                    return;
+                }
                 Intent intent = new Intent(getApplicationContext(), WeightActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.anim_slide_in_right, R.anim.not_move_activity);
             }
         });
-        mBinding.btnJump.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), WeightActivity.class);
-                startActivity(intent);
-            }
-        });
+
     }
 
     public void setPreference(String key, int value) {

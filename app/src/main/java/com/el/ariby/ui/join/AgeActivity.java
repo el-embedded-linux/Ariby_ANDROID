@@ -69,13 +69,6 @@ public class AgeActivity extends AppCompatActivity {
             }
         });
 
-        mBinding.btnJump.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), HeightActivity.class);
-                startActivity(intent);
-            }
-        });
 
         mBinding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
