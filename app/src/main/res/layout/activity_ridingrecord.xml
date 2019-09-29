@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.menu.ridingRecord.RidingrecordActivity">
+    tools:context=".ui.main.menu.ridingRecord.RidingrecordActivity"
+    android:orientation="horizontal">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -12,4 +13,11 @@
         android:layout_height="match_parent"
         android:background="#F0F0F0"/>
 
+    <TextView
+        android:id="@+id/txt_riding_record_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/no_data_available" />
 </LinearLayout>

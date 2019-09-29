@@ -14,12 +14,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityFindFollowBinding;
-import com.el.ariby.databinding.ActivityFollowListBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +43,7 @@ public class FindFollowActivity extends AppCompatActivity {
     String myUid;
     RecyclerView mRecyclerView;
     EditText editTextFilter;
+    TextView emptyView;
     FindFollowAdapter mAdapter = null ;
     ArrayList<FollowItem> mList = new ArrayList<FollowItem>();
     ArrayList<String> UidList = new ArrayList<String>();
@@ -53,6 +55,7 @@ public class FindFollowActivity extends AppCompatActivity {
         mBinding.setActivity(this);
         init();
         mAdapter = new FindFollowAdapter() ;
+        emptyView = (TextView) findViewById(R.id.txt_find_follow_list_empty_view);
         mRecyclerView = (RecyclerView)findViewById(R.id.list_find_follow) ;
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this)) ;
         mRecyclerView.setHasFixedSize(true);
@@ -62,6 +65,14 @@ public class FindFollowActivity extends AppCompatActivity {
         doWork(new Callback() {
             @Override
             public void success(ArrayList<String> nick,ArrayList<String> profile,ArrayList<String> follower,ArrayList<String> follow) {
+                ArrayList<String> checkNick = nick;
+                if(checkNick.isEmpty()){
+                    mRecyclerView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                }else{
+                    emptyView.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                }
             }
             @Override
             public void fail(String errorMessage) {
@@ -86,14 +97,13 @@ public class FindFollowActivity extends AppCompatActivity {
     }
 
     public void doWork(final Callback mCallback) {
+        DatabaseReference myRef = database.getReference();
         //followerRef = database.getReference("FRIEND").child("follower").child(myUid)
         followerRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Followlist.add(snapshot.getKey());
-                    Log.d("Followlist1",snapshot.getKey());
-                    Log.d("Followlist1", String.valueOf(snapshot.getRef()));
                 }
 
             }
@@ -109,7 +119,7 @@ public class FindFollowActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     if(Followlist.contains(snapshot.getKey()) || auth.getUid().equals(snapshot.getKey())){
-                        Log.d("Followlist",snapshot.getKey());
+
                     } else{
                         UidList.add(snapshot.getKey());
                     }
@@ -133,12 +143,9 @@ public class FindFollowActivity extends AppCompatActivity {
                     profileUrl = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("userImageURL").getValue()));
                     followerNum = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("followerNum").getValue()));
                     followNum = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("followNum").getValue()));
-                    mList.add(new FollowItem(profileUrl, nickname, followerNum, followNum));
-                    Log.d("align", "1");
-                    Log.d("followerNum", String.valueOf(nickname) + String.valueOf(profileUrl) + String.valueOf(followerNum) + String.valueOf(followNum));
-
+                    mList.add(new FollowItem(profileUrl, nickname, followNum ,followerNum, UidList.get(i)));
                 }
-                mRecyclerView.setAdapter(new com.el.ariby.ui.main.menu.follow.FollowListAdapter(getApplicationContext(), mList , R.layout.activity_follow_list));
+                mRecyclerView.setAdapter(new com.el.ariby.ui.main.menu.follow.FindFollowAdapter(getApplicationContext(), mList , R.layout.activity_find_follow));
                 mAdapter.notifyDataSetChanged();
             }
 

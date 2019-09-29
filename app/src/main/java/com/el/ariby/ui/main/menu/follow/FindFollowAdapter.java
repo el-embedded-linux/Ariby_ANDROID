@@ -36,7 +36,8 @@ public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.Vi
     Context context;
     private ArrayList<FollowItem> mlist;
     int item_layout;
-    DatabaseReference ref;
+    FirebaseUser auth;
+    DatabaseReference Userref, Followref, Followerref;
     FirebaseDatabase database;
     FindFollowAdapter(Context context, ArrayList<FollowItem> list, int item_layout) {
         this.context = context;
@@ -53,16 +54,23 @@ public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("GROUP_RIDING");
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int i) {
         final FollowItem item = mlist.get(i);
+        database = FirebaseDatabase.getInstance();
+        auth = FirebaseAuth.getInstance().getCurrentUser();
+        final String myUid = auth.getUid();
+        final DatabaseReference myRef = database.getReference();
+        final String uid = mlist.get(i).getUid();
+        Userref = database.getReference("USER");
+        Followref = database.getReference("FRIEND").child("following").child(myUid);
+        Followerref = database.getReference("FRIEND").child("follower").child(uid);
+
         String nickname = mlist.get(i).getNick();
         String followNum = mlist.get(i).getFollwingNum();
         String followerNum = mlist.get(i).getFollowerNum();
-        Log.e("테스트", nickname + followerNum + followNum + mlist.get(i).getIconDrawable());
         Glide.with(context)
                 .load(mlist.get(i).getIconDrawable())
+                .centerCrop()
                 .into(holder.imgFollowProfile);
         holder.txtFollowNickname.setText(nickname);
         holder.txtFollowNum.setText(followNum);
@@ -70,7 +78,57 @@ public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.Vi
         holder.addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, item.getNick(), Toast.LENGTH_SHORT).show();
+                holder.addFriend.setEnabled(false);
+                Toast.makeText(context, uid, Toast.LENGTH_LONG).show();
+                //USER의 팔로잉 팔로워 수 증가
+                Userref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //사용자의 팔로잉 수 증가
+                        String followNum = dataSnapshot.child(myUid).child("followNum").getValue().toString();
+                        int integer_followNum = Integer.parseInt(followNum);
+                        integer_followNum = integer_followNum + 1;
+
+                        myRef.child("USER").child(myUid).child("followNum").setValue(integer_followNum);
+
+                        //사용자가 팔로잉 한 해당 유저의 팔로워 수 증가
+                        String followerNum = dataSnapshot.child(uid).child("followerNum").getValue().toString();
+                        int integer_followerNum = Integer.parseInt(followerNum);
+                        integer_followerNum = integer_followerNum + 1;
+
+                        myRef.child("USER").child(uid).child("followerNum").setValue(integer_followerNum);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                //팔로워 증가
+                Followerref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        myRef.child("FRIEND").child("follower").child(uid).child(myUid).setValue("true");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                //팔로잉 증가
+                Followref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        myRef.child("FRIEND").child("following").child(myUid).child(uid).setValue("true");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
     }

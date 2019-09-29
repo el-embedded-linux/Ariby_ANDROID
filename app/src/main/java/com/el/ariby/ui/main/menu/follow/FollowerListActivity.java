@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityFollowerListBinding;
@@ -29,13 +30,13 @@ public class FollowerListActivity extends AppCompatActivity {
     private FirebaseUser auth;
     private FirebaseDatabase database;
     private DatabaseReference followRef, userRef;
-    final ArrayList<FollowItem> list = new ArrayList<>();
     String nickname;
     String profileUrl;
     String followerNum;
     String followNum;
     String myUid;
     RecyclerView mRecyclerView;
+    TextView emptyView;
     FollowerListAdapter mAdapter = null ;
     ArrayList<FollowItem> mList = new ArrayList<FollowItem>();
     ArrayList<String> UidList = new ArrayList<String>();
@@ -46,6 +47,7 @@ public class FollowerListActivity extends AppCompatActivity {
         mBinding.setActivity(this);
         init();
         mAdapter = new FollowerListAdapter() ;
+        emptyView = findViewById(R.id.txt_follower_list_empty_view);
         mRecyclerView = (RecyclerView)findViewById(R.id.list_follower) ;
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this)) ;
@@ -55,6 +57,14 @@ public class FollowerListActivity extends AppCompatActivity {
         doWork(new Callback() {
             @Override
             public void success(ArrayList<String> nick,ArrayList<String> profile,ArrayList<String> follower,ArrayList<String> follow) {
+                ArrayList<String> checkNick = nick;
+                if(checkNick.isEmpty()){
+                    mRecyclerView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                }else{
+                    emptyView.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                }
             }
             @Override
             public void fail(String errorMessage) {
@@ -100,11 +110,8 @@ public class FollowerListActivity extends AppCompatActivity {
                     profileUrl =(String.valueOf(dataSnapshot.child(UidList.get(i)).child("userImageURL").getValue()));
                     followerNum = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("followerNum").getValue()));
                     followNum = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("followNum").getValue()));
-                    mList.add(new FollowItem(profileUrl, nickname,followerNum, followNum));
-                    Log.d("align","1");
-                    Log.d("followerNum", String.valueOf(nickname)+String.valueOf(profileUrl)+String.valueOf(followerNum)+String.valueOf(followNum));
+                    mList.add(new FollowItem(profileUrl, nickname,followerNum, followNum, UidList.get(i)));
                 }
-
                 mRecyclerView.setAdapter(new com.el.ariby.ui.main.menu.follow.FollowerListAdapter(getApplicationContext(), mList , R.layout.activity_follower_list));
                 mAdapter.notifyDataSetChanged();
             }

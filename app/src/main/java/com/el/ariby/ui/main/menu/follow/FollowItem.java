@@ -6,10 +6,9 @@ public class FollowItem extends ArrayList<String> {
     private String iconDrawable;
     private String nick;
     private String follwingNum, followerNum;
+    private String uid;
 
-    public FollowItem(String nick){
-        this.nick=nick;
-    }
+    public void setUid(String uid) { this.uid = uid; }
 
     public void setIconDrawable(String iconDrawable) {
         this.iconDrawable = iconDrawable;
@@ -27,18 +26,21 @@ public class FollowItem extends ArrayList<String> {
         this.followerNum = followerNum;
     }
 
-    public FollowItem(String iconDrawable, String nick, String follwingNum, String followerNum){
+    public FollowItem(String iconDrawable, String nick, String follwingNum, String followerNum, String uid){
         this.iconDrawable=iconDrawable;
         this.nick=nick;
         this.follwingNum = follwingNum;
         this.followerNum = followerNum;
+        this.uid=uid;
     }
 
-    public FollowItem(String iconDrawable, String nick){
-        this.iconDrawable=iconDrawable;
-        this.nick=nick;
+    public FollowItem(String uid){
+        this.uid=uid;
     }
 
+    public String getUid() {
+        return uid;
+    }
 
     public String getIconDrawable() {
         return iconDrawable;

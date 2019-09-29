@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.el.ariby.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,17 +29,18 @@ public class RidingrecordActivity extends AppCompatActivity {
     ArrayList<String> record = new ArrayList<>();
     FirebaseDatabase database;
     DatabaseReference ref;
-
+    TextView emptyView;
+    RecyclerView recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ridingrecord);
         adapter = new RidingrecordAdapter();
-        final RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerView) ;
+        recyclerView = (RecyclerView)findViewById(R.id.recyclerView) ;
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
-
+        emptyView = findViewById(R.id.txt_riding_record_empty_view);
 
         final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         final String myUid = mUser.getUid();
@@ -122,7 +124,13 @@ public class RidingrecordActivity extends AppCompatActivity {
 
                     }
                 }
-
+                if(record.isEmpty()){
+                    recyclerView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                }else{
+                    emptyView.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

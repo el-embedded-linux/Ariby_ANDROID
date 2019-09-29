@@ -11,6 +11,10 @@
 
     <!--Action Mode Menu Items-->
     <string name="invite">Invite</string>
+    <string name="no_data_available">기록이 없습니다</string>
+    <string name="no_follow_available">팔로잉한 사람이 없습니다</string>
+    <string name="no_follower_available">팔로우한 사람이 없습니다</string>
+    <string name="no_find_follow_available">유저가 없습니다</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
