@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -71,6 +72,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
     Date total = new Date(); //하루 누적 주행기록
 
     String nickname, userProfile;
+    String weight = "50.0";
+    Double kcal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +88,6 @@ public class MapNavigationActivity extends AppCompatActivity implements
         mapNaviView.setMapTilePersistentCacheEnabled(true);
         //다운한 지도 데이터를 단말의 영구 캐쉬 영역에 저장하는 기능
         mapNaviView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
-
 
         Intent intent = getIntent();
 
@@ -410,10 +412,22 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         }
                     });
 
+                    SharedPreferences pref = getSharedPreferences("com.el.ariby_joining", MODE_PRIVATE);
+                    int weight = pref.getInt("weight", 0);
+                    String riding = getMin(time);
+                    Log.d("ridingTime : ", getMin(time));
+                    Log.d("weight : ", String.valueOf(weight));
+                    Double returnTime = Double.parseDouble(riding);
+            if(returnTime<=0.0){
+                returnTime+=0.0001;
+            }
+                    kcal =(3.0 * (3.5 * Double.parseDouble(String.valueOf(weight)) * returnTime))*5;
+                    Log.e("kcal : ", String.valueOf(kcal));
+
                     ref.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren() ){
+                            for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
                                 String uid = dataSnapshot1.getKey();
                                 Log.d("uid : ", uid);
                                 if(myUid.equals(uid)){ //해당 uid로 기존 기록이 있으면
@@ -542,6 +556,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                             ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("distance").setValue(dis);
                             ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("time").setValue(getTime(time));
                             ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("date").setValue(today);
+                            ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("kcal").setValue(kcal);
 
                         }
 
@@ -627,6 +642,12 @@ public class MapNavigationActivity extends AppCompatActivity implements
         sec = sec % 60;
         min = min % 60;
         return hour + ":" + min + ":" + sec;
+    }
+
+    public String getMin(long sec){
+        long min;
+        min = sec/60;
+        return String.valueOf(min);
     }
 }
 
