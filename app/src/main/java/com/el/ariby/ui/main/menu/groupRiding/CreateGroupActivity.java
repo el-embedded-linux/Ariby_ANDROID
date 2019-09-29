@@ -68,6 +68,9 @@ public class CreateGroupActivity extends AppCompatActivity {
         ref = database.getReference();
         memberRef = database.getReference("GROUP_RIDING_MEMBERS");
 
+        final double lon = 127.0442899;
+        final double lat = 37.6675547;
+
         checkName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,8 +156,8 @@ public class CreateGroupActivity extends AppCompatActivity {
                 //info
                 ref.child("GROUP_RIDING").child(group_name).child("info").child("note").setValue(note);
 
-
                 //생성자 닉네임
+
                 userRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
                     @Override
@@ -173,6 +176,8 @@ public class CreateGroupActivity extends AppCompatActivity {
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("nickname").setValue(userInfo[1]);
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("state").setValue("leader");
                         ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("profile").setValue(userInfo[2]);
+                        ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("lat").setValue(lat);
+                        ref.child("GROUP_RIDING").child(group_name).child("members").child("0").child("lon").setValue(lon);
                         ref.child("GROUP_RIDING_MEMBERS").child(mUser.getUid()).child(group_name).setValue("true");
                         //group_riding_members
                         //long groupCount = returnGroupCount(userInfo[0]);
@@ -210,20 +215,20 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                 int a = 1;
                 //TODO. lat, lon 자동완성 지우기
-                double lon = 127.0442899;
-                double lat = 37.6675547;
-
+                double lon1 = 127.0442899;
+                double lat1 = 37.6675547;
                 for (int i = 0; i < count*3 ; i += 3)
                 {
                     final long[] group_num2 = new long[1];
                     final int index = i;
+
                     Log.e("print", array[i]);
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("uid").setValue(array[i+1]);
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("nickname").setValue(array[i]);
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("state").setValue("true");
                     ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("profile").setValue(array[i+2]);
-                    ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lat").setValue(lat);
-                    ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lon").setValue(lon);
+                    ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lat").setValue(lat1);
+                    ref.child("GROUP_RIDING").child(group_name).child("members").child(String.valueOf(a)).child("lon").setValue(lon1);
                     ref.child("GROUP_RIDING_MEMBERS").child(array[index+1]).child(group_name).setValue("true");
 
                     //group_riding_members
@@ -249,8 +254,8 @@ public class CreateGroupActivity extends AppCompatActivity {
                         }
                     });*/
 
-                    lat = lat+0.1;
-                    lon = lon+0.1;
+                    lat1 = lat1+0.1;
+                    lon1 = lon1+0.1;
                     a++;
                 }
 
