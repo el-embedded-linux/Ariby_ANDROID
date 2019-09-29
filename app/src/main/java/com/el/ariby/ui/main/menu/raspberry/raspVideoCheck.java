@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class raspVideoCheck extends AppCompatActivity {
     ListView rasp_video_list;
     ArrayList<String> videos = new ArrayList<String>();
-    private String URL = "http://10.5.5.100:3000";
+    private String URL = "http://192.168.100.1:3000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

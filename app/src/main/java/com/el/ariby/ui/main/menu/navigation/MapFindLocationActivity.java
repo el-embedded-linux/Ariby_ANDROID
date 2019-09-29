@@ -413,6 +413,15 @@ public class MapFindLocationActivity extends AppCompatActivity implements
     }
 
     private void choiceNavigation() {
+        Intent intent = new Intent(getApplicationContext(), MapNavigationActivity.class);
+        intent.putExtra("startX", startX);
+        intent.putExtra("startY", startY);
+        intent.putExtra("endX", endX);
+        intent.putExtra("endY", endY);
+        intent.putExtra("kilo", kilo);
+        layout.removeAllViews();
+        startActivityForResult(intent,1000);
+
         ArrayList<String> list = new ArrayList<>();
         list.add("스마트폰");
         list.add("라즈베리파이");
@@ -446,7 +455,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
 
             }
         });
-        builder.show();
+        //builder.show();
     }
 
     @Override
