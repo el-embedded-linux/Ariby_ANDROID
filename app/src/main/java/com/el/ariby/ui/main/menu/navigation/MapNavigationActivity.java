@@ -37,6 +37,12 @@ import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapView;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -75,11 +81,30 @@ public class MapNavigationActivity extends AppCompatActivity implements
     String weight = "50.0";
     Double kcal;
 
+    //2019.09.30 선룡이가 추가함 라즈베리파이 통신용 변수들
+    public static final String sIP = "192.168.100.1";
+    public static final int sPORT = 3001;
+    String raspTurnTypeStr = "";
+    int raspDistance = 0;
+    int raspTurnType = 0;
+    String raspDescription = "";
+    DatagramSocket socket;
+    InetAddress serverAddr;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_map_navigation);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        try {
+            socket = new DatagramSocket();
+            serverAddr = InetAddress.getByName(sIP);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
 
         mapNaviView = new MapView(this);
         ViewGroup mapViewContainer = findViewById(R.id.map_navi_view);
@@ -111,6 +136,29 @@ public class MapNavigationActivity extends AppCompatActivity implements
         timer.schedule(tt, 0, 1000);
     }
 
+
+    private void send2rasp(){
+        Thread mThread = new Thread(new Runnable(){
+            @Override
+            public void run(){
+                String data = "";
+                data += raspDescription+"/";
+                data += raspTurnTypeStr+"/";
+                data += Integer.toString(raspTurnType)+"/";
+                data += Integer.toString(raspDistance);
+                byte[] buf = data.getBytes();
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddr, sPORT);
+
+                //패킷 전송!
+                try {
+                    socket.send(packet);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        mThread.start();
+    }
 
     private void getMapFind(final String startX, final String startY,
                             final String endX, final String endY) {
@@ -216,6 +264,14 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
                 mBinding.txtNaviMap.setText(naviMembers.get(0).description
                         + " 턴타입 : " + naviMembers.get(0).getTrunTypeByText());
+
+                //2019.09.30 추가
+                raspDescription =naviMembers.get(0).description;
+                raspTurnTypeStr = naviMembers.get(0).getTrunTypeByText();
+                raspTurnType = naviMembers.get(0).getTurnType();
+                raspDistance = (int) distanceKiloMeter;
+                send2rasp();
+
                 totalDistance[0] = repo.getFeatures().get(0).getProperties().getTotalDistance();
 
                 disList.add(0, String.valueOf(totalDistance[0])); // 총 거리 반환
@@ -285,6 +341,10 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
         mBinding.txtNaviMeter.setText((int) distanceKiloMeter + "m");
 
+        raspDistance = (int) distanceKiloMeter;
+        send2rasp();
+
+
         if (distanceKiloMeter2 <= 1000)
             mBinding.txtNaviDistance.setText("남은거리 : " + (int) distanceKiloMeter2 + "m");
         else
@@ -307,6 +367,10 @@ public class MapNavigationActivity extends AppCompatActivity implements
             } else {
                 mBinding.txtNaviMap.setText("다음 " + naviMembers.get(naviCount).getDescription() + "/" +
                         naviMembers.get(naviCount).getTrunTypeByText());
+                raspDescription = naviMembers.get(naviCount).getDescription();
+                raspTurnType = naviMembers.get(naviCount).getTurnType();
+                raspTurnTypeStr = naviMembers.get(naviCount).getTrunTypeByText();
+                send2rasp();
             }
         }
         disList.add(3, String.valueOf(mapPointGeo.longitude));
