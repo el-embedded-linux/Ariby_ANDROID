@@ -23,6 +23,7 @@ public class RankingItem {
        this.rank = rank;
         this.txtUpDown = changed;
         this.imgUpDown = imgChanged;
+        this.uid = uid;
     }
 
     public RankingItem(String nickname){
@@ -35,6 +36,15 @@ public class RankingItem {
     String ridingDis; //주행거리
     String ridingTime; //주행시간
 
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    String uid; //uid
 
 
     public String getImgUpDown() {

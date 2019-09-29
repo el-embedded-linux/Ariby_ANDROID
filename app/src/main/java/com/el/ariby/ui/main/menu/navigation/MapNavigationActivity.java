@@ -334,6 +334,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
         long currentTime = System.currentTimeMillis();
         final Date date = new Date(currentTime);
         Date rightNow = new Date(currentTime); //단일 주행기록
+        Date month = new Date(currentTime);
 
         SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
         SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
@@ -354,12 +355,14 @@ public class MapNavigationActivity extends AppCompatActivity implements
         final String now = thisYear + thisMonth + thisDay + thisHour;
         String rightNowStr = thisMonth + "-" + thisDay + "-" + thisYear + " " + thisHour + ":" + thisMin + ":" + thisSec; //단일 주행기록
         String dailyTotalStr = thisMonth + "-" + thisDay + "-" + thisYear + " 09:00:00"; //누적 주행기록
+        String monthStr = thisMonth+"-01-"+thisYear+" 00:00:00";
         Log.e("right now : ", rightNowStr);
         Log.e("total : ", dailyTotalStr);
         DateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
         try {
             rightNow = (Date) format.parse(rightNowStr); //단일
             total = (Date)format.parse(dailyTotalStr); //누적
+            month = (Date)format.parse(monthStr);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -371,8 +374,14 @@ public class MapNavigationActivity extends AppCompatActivity implements
         String totalStr = Long.toString(totalOutPut);
         final long totalTimestamp = Long.parseLong(totalStr) * 1000;
 
+        long monthOutput = month.getTime()/1000L;
+        String monthString = Long.toString(monthOutput);
+        final long monthTimestamp = Long.parseLong(monthString) * 1000;
+
         Log.e("rightNow? : ", String.valueOf(nowTimestamp));
         Log.e("누적 주행기록 : ", String.valueOf(totalTimestamp));
+        Log.d("한달 누적기록 : ", String.valueOf(monthTimestamp));
+
         final String route = "dailyData/data/" + nowTimestamp + "/";
 
         final boolean[] uploadCheck = {false};
@@ -403,8 +412,12 @@ public class MapNavigationActivity extends AppCompatActivity implements
                             try { //누적기록 업데이트
                                 String preDis = dataSnapshot1.child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalDis").getValue().toString();
                                 String preTime = dataSnapshot1.child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalTime").getValue().toString();
+                                String monthPreDis = dataSnapshot1.child("monthlyData").child(String.valueOf(monthTimestamp)).child("monthlyDis").getValue().toString();
+                                String monthPreTime = dataSnapshot1.child("monthlyData").child(String.valueOf(monthTimestamp)).child("monthlyTime").getValue().toString();
+
                                 Log.e("preDis : ", preDis);
-                                if(preDis!=null && preTime!=null){
+                                if(preDis!=null && monthPreDis!=null){
+                                    //dailyData
                                     Double updateDis = Double.parseDouble(preDis) + dis;
 
                                     String [] times = preTime.split(":");
@@ -430,10 +443,52 @@ public class MapNavigationActivity extends AppCompatActivity implements
                                     ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalDis").setValue(updateDis);
                                     ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalTime").setValue(updateTime);
 
+                                    //monthlyData
+                                    Double updateMonthDis = Double.parseDouble(monthPreDis)+dis;
+                                    String [] monthTimes = monthPreTime.split(":");
+                                    String [] inputMonthTime = getTime(time).split(":");
+                                    int [] monthTimeInt = new int[monthTimes.length];
+                                    int [] inputMonthTimeInt = new int[inputMonthTime.length];
+                                    for(int i=0; i<monthTimes.length; i++){
+                                        monthTimeInt[i] = Integer.parseInt(monthTimes[i]);
+                                        inputMonthTimeInt[i] = Integer.parseInt(inputMonthTime[i]);
+                                        monthTimeInt[i]+=inputMonthTimeInt[i];
+                                    }
+
+                                    for(int z=2; z>=0; z--){
+                                        if(monthTimeInt[z]>60){
+                                            monthTimeInt[z-1]+=monthTimeInt[z]/60;
+                                            monthTimeInt[z]=monthTimeInt[z]%60;
+                                        }
+                                    }
+                                    String updateMonthTime = monthTimeInt[0]+":"+monthTimeInt[1]+":"+monthTimeInt[2];
+                                    ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("monthlyDis").setValue(updateMonthDis);
+                                    ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("monthlyTime").setValue(updateMonthTime);
+
                                 }else{ //당일 누적기록이 없으면
                                     ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalTime").setValue(getTime(time));
                                     ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalDis").setValue(dis);
                                     ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("date").setValue(today);
+                                    ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("daily_dis_rank").setValue(0);
+                                    ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("daily_time_rank").setValue(0);
+                                    ref.child(myUid).child("dailyData").child("upDown").child("upDownDis").setValue(0);
+                                    ref.child(myUid).child("dailyData").child("upDown").child("upDownTime").setValue(0);
+
+                                    //유저 인포
+                                    ref.child(myUid).child("userInfo").child("nickname").setValue(nickname);
+                                    ref.child(myUid).child("userInfo").child("profile").setValue(userProfile);
+                                    Log.e("nickname", nickname+", "+userProfile);
+                                    ref.child(myUid).child("userInfo").child("upDownImg").setValue(0);
+                                    ref.child(myUid).child("userInfo").child("upDownTxt").setValue(0);
+
+                                    //monthly 생성
+                                    ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("monthlyDis").setValue(dis);
+                                    ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("monthlyTime").setValue(getTime(time));
+                                    ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("month_dis_rank").setValue(0);
+                                    ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("month_time_rank").setValue(0);
+                                    ref.child(myUid).child("monthlyData").child("upDown").child("upDownDis").setValue(0);
+                                    ref.child(myUid).child("monthlyData").child("upDown").child("upDownTime").setValue(0);
+
                                 }
 
                             }catch (Exception e){
@@ -448,14 +503,33 @@ public class MapNavigationActivity extends AppCompatActivity implements
                             ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalTime").setValue(getTime(time));
                             ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalDis").setValue(dis);
                             ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("date").setValue(today);
+                            ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("daily_dis_rank").setValue(0);
+                            ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("daily_time_rank").setValue(0);
+                            ref.child(myUid).child("dailyData").child("upDown").child("upDownDis").setValue(0);
+                            ref.child(myUid).child("dailyData").child("upDown").child("upDownTime").setValue(0);
 
                             //유저 인포
                             ref.child(myUid).child("userInfo").child("nickname").setValue(nickname);
                             ref.child(myUid).child("userInfo").child("profile").setValue(userProfile);
+                            ref.child(myUid).child("userInfo").child("upDownImg").setValue(0);
+                            ref.child(myUid).child("userInfo").child("upDownTxt").setValue(0);
+
+                            //monthly 생성
+                            ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("monthlyDis").setValue(dis);
+                            ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("monthlyTime").setValue(getTime(time));
+                            ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("month_dis_rank").setValue(0);
+                            ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("month_time_rank").setValue(0);
+                            ref.child(myUid).child("monthlyData").child("upDown").child("upDownDis").setValue(0);
+                            ref.child(myUid).child("monthlyData").child("upDown").child("upDownTime").setValue(0);
 
                         }
 
                     }
+
+                    //유저 인포
+                    ref.child(myUid).child("userInfo").child("nickname").setValue(nickname);
+                    ref.child(myUid).child("userInfo").child("profile").setValue(userProfile);
+
                     //단일기록 저장
                     ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("distance").setValue(dis);
                     ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("time").setValue(getTime(time));
