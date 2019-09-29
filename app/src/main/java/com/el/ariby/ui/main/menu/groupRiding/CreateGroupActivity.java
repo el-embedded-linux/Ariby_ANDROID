@@ -73,31 +73,35 @@ public class CreateGroupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String name = groupName.getText().toString();
                 duplicateCheck = 0; //중복없음
-                Log.d("1 : ", String.valueOf(duplicateCheck));
-                ref.child("GROUP_RIDING").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Log.d("snapshot : ", snapshot.getKey());
-                            if (name.equals(snapshot.getKey())) {
-                                makeGroup.setEnabled(false);
-                                makeGroup.setBackgroundColor(Color.parseColor("#FF979797"));
-                                duplicateCheck = 1; //중복 발견
-                                Log.d("2 : ", String.valueOf(duplicateCheck));
-                                Toast.makeText(CreateGroupActivity.this, "이미 존재하는 그룹 이름입니다.", Toast.LENGTH_SHORT).show();
-                                break;
+                Log.d("for문 안에서 체크1 : ", String.valueOf(duplicateCheck));
+                    ref.child("GROUP_RIDING").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                Log.d("snapshot : ", snapshot.getKey());
+                                if (duplicateCheck==3) {
+                                    break;
+                                }
+                                    if (name.equals(snapshot.getKey())) {
+                                        makeGroup.setEnabled(false);
+                                        makeGroup.setBackgroundColor(Color.parseColor("#FF979797"));
+                                        duplicateCheck = 1; //중복 발견
+                                        Log.d("for문 안에서 체크2 : ", String.valueOf(duplicateCheck));
+                                        Toast.makeText(CreateGroupActivity.this, "이미 존재하는 그룹 이름입니다.", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    }
+                            }
+                            if (duplicateCheck == 0) { //중복 없음
+                                Toast.makeText(CreateGroupActivity.this, "사용 가능한 그룹 이름입니다.", Toast.LENGTH_SHORT).show();
                             }
                         }
-                        if(duplicateCheck == 0){ //중복 없음
-                            Toast.makeText(CreateGroupActivity.this, "사용 가능한 그룹 이름입니다.", Toast.LENGTH_SHORT).show();
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
                         }
-                    }
+                    });
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
             }
         });
 
@@ -124,9 +128,14 @@ public class CreateGroupActivity extends AppCompatActivity {
                     inputEnd.setError("도착지를 지정해 주세요");
                     return;
                 }
-
-                if(duplicateCheck==1) { Toast.makeText(CreateGroupActivity.this, "이미 존재하는 그룹입니다", Toast.LENGTH_SHORT).show();
-                }else if(duplicateCheck == 2) { Toast.makeText(CreateGroupActivity.this, "그룹 이름 중복체크를 해주세요", Toast.LENGTH_SHORT).show(); return;}
+                Log.d("duplicateCheck : ", String.valueOf(duplicateCheck));
+                if(duplicateCheck==1) {
+                    Toast.makeText(CreateGroupActivity.this, "이미 존재하는 그룹입니다", Toast.LENGTH_SHORT).show();
+                    return;
+                }else if(duplicateCheck == 2) {
+                    Toast.makeText(CreateGroupActivity.this, "그룹 이름 중복체크를 해주세요", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 final String userInfo[] = new String[3];
 
@@ -168,18 +177,18 @@ public class CreateGroupActivity extends AppCompatActivity {
                         //group_riding_members
                         //long groupCount = returnGroupCount(userInfo[0]);
 
-                        memberRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        /*memberRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                                    /*String uidStr = dataSnapshot1.getKey();
+                                    String uidStr = dataSnapshot1.getKey();
                                     Log.d("uidStr : ", uidStr);
                                     if(uidStr.equals(userInfo[0])) {
                                         group_num1[0] = dataSnapshot1.getChildrenCount();
                                         Log.e("group_num : ", userInfo[0] + ",  "+ String.valueOf(group_num1[0]));
                                         ref.child("GROUP_RIDING_MEMBERS").child(mUser.getUid()).child(String.valueOf(group_num1[0])).setValue(group_name);
                                         break;
-                                    }*/
+                                    }
 
                                 }
                             }
@@ -188,7 +197,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
 
                             }
-                        });
+                        });*/
 
                     }
 
@@ -246,6 +255,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                 }
 
                 Toast.makeText(CreateGroupActivity.this, "그룹이 생성되었습니다.", Toast.LENGTH_SHORT).show();
+                duplicateCheck=3;
                 finish();
 
             }
@@ -309,13 +319,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         }
     }
 
-    public int checkName(final String name){
-        final int[] check = {0}; //중복 없음
-        Log.e("group name : ", name);
 
-        Log.d("check value : ", String.valueOf(check[0]));
-        return check[0];
-    }
 
 
 }
