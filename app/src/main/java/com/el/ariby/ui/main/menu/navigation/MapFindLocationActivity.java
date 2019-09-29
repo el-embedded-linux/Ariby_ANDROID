@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -52,14 +53,17 @@ public class MapFindLocationActivity extends AppCompatActivity implements
     ArrayList<PointDouble> naviPoints = new ArrayList<>();
     ImageButton imgBtnStart;
     RelativeLayout layout;
+    ProgressBar pbLoadingNavigation;
     Double kilo;
-
+    ViewGroup mapViewContainer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_find_location);
 
         fab = findViewById(R.id.fab_focus);
+        pbLoadingNavigation=findViewById(R.id.pb_load_navigation);
+        pbLoadingNavigation.setVisibility(View.VISIBLE);
         txtTakeTime = findViewById(R.id.txt_take_time);
         txtTakeKilo = findViewById(R.id.txt_take_kilo);
 
@@ -73,7 +77,6 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         startY = intent.getStringExtra("startY");
         endX = intent.getStringExtra("endX");
         endY = intent.getStringExtra("endY");
-
         getMapFind(startY, startX, endY, endX);
         MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
                 Double.parseDouble(startX), Double.parseDouble(startY));
@@ -97,7 +100,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         marker2.setMarkerType(MapPOIItem.MarkerType.BluePin);
         marker2.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
 
-        final ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
+        mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
         mapViewContainer.addView(mapView);
         mapView.addPOIItem(marker);
         mapView.addPOIItem(marker2);
@@ -105,6 +108,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         mapView.setMapTilePersistentCacheEnabled(true);//다운한 지도 데이터를 단말의 영구 캐쉬 영역에 저장하는 기능
         Log.d("size", String.valueOf(naviPoints.size()));
         mapView.setCurrentLocationEventListener(this);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -244,6 +248,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                     txtTakeKilo.setText(Math.round(kilo * 1000) + "m");
 
                 txtTakeKcal.setText(kcal + "kcal");
+                pbLoadingNavigation.setVisibility(View.GONE);
             }
 
             @Override
@@ -442,6 +447,12 @@ public class MapFindLocationActivity extends AppCompatActivity implements
             }
         });
         builder.show();
+    }
+
+    @Override
+    protected void onPause() {
+        layout.removeAllViews();
+        super.onPause();
     }
 
     @Override
