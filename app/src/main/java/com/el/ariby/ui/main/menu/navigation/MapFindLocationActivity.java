@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -425,7 +426,7 @@ public class MapFindLocationActivity extends AppCompatActivity implements
                     intent.putExtra("endY", endY);
                     intent.putExtra("kilo", kilo);
                     layout.removeAllViews();
-                    startActivity(intent);
+                    startActivityForResult(intent,1000);
 
                 } else if (which == 1) {
                     Intent intent = new Intent(getApplicationContext(), MapNavigationRaspberryActivity.class);
@@ -441,5 +442,15 @@ public class MapFindLocationActivity extends AppCompatActivity implements
             }
         });
         builder.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK) {
+            if(requestCode==1000) {
+                finish();
+            }
+        }
     }
 }
