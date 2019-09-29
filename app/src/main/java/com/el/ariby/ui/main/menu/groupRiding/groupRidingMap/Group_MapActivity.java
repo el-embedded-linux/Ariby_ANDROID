@@ -566,7 +566,7 @@ public class Group_MapActivity extends AppCompatActivity
     protected Bitmap getCircularBitmap(Bitmap srcBitmap) {
         int squareBitmapWidth = Math.min(srcBitmap.getWidth(), srcBitmap.getHeight());
         int pinWidth = 20;
-        Drawable locationDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.marker);
+        Drawable locationDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.pin_4_real);
         Bitmap locationPin = ((BitmapDrawable) locationDrawable).getBitmap();
 
         Bitmap dstBitmap = Bitmap.createBitmap(
@@ -593,7 +593,7 @@ public class Group_MapActivity extends AppCompatActivity
 
     public Bitmap overlay(Bitmap profile, Bitmap locationPin) {
         //Drawable locationDrawable = getResources().getDrawable(R.drawable.ic_room_black_24dp);
-        locationPin = Bitmap.createScaledBitmap(locationPin, 220, 200, false);
+        locationPin = Bitmap.createScaledBitmap(locationPin, 160, 210, false);
         profile = Bitmap.createScaledBitmap(profile, 120, 120, false);
         //Bitmap locationPin = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_room_black_24dp);
         Log.d("locationPin : ", String.valueOf(locationPin));
@@ -601,7 +601,7 @@ public class Group_MapActivity extends AppCompatActivity
         //float left1 = (profile.getWidth() - (locationPin.getWidth()*((float)profile.getHeight()/(float)locationPin.getHeight())))/(float)2.0;
         Canvas canvas1 = new Canvas(overlay);
         canvas1.drawBitmap(locationPin, new Matrix(), null);
-        canvas1.drawBitmap(profile, 50, 10, null);
+        canvas1.drawBitmap(profile, 20, 25, null);
         //canvas1.drawBitmap(locationPin, left1, 0, null);
         //canvas1.drawBitmap(profile, new Matrix(), null);
         return overlay;
