@@ -96,51 +96,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
         progressDialog = new ProgressDialog(MapNavigationActivity.this);
         progressDialog.setMessage("데이터를 로딩중입니다.");
 
-        disList.add(0, getMapFind(startY, startX, endY, endX)); // 총 거리 반환
-        disList.add(1, startY);
-        disList.add(2, startX);
-
-        Log.d("테스트 : LAT", String.valueOf(startY));
-        Log.d("테스트 : LONG", String.valueOf(startX));
-
-        MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
-                Double.parseDouble(startX), Double.parseDouble(startY));
-
-        MapPoint markerPointEnd = MapPoint.mapPointWithGeoCoord(
-                Double.parseDouble(endX), Double.parseDouble(endY));
-
-
-        MapPOIItem marker = new MapPOIItem(); // 마커 생성
-        marker.setItemName("출발지");
-        marker.setTag(0);
-        marker.setMapPoint(markerPointStart);
-        marker.setMarkerType(MapPOIItem.MarkerType.BluePin);
-        marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
-
-        MapPOIItem marker2 = new MapPOIItem(); // 마커 생성
-        marker2.setItemName("도착지");
-        marker2.setTag(1);
-        marker2.setMapPoint(markerPointEnd);
-        marker2.setMarkerType(MapPOIItem.MarkerType.BluePin);
-        marker2.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
-
-        mapNaviView.addPOIItem(marker);
-        mapNaviView.addPOIItem(marker2);
-
-        mapNaviView.moveCamera(
-                CameraUpdateFactory.newMapPoint(markerPointStart, -1));
-        mapNaviView.zoomIn(true);
-
-        progressDialog.show();
-        try {
-            Thread.sleep(2000);
-            mapNaviView.setCurrentLocationTrackingMode(
-                    MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
-            mapNaviView.setCurrentLocationEventListener(this);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        progressDialog.dismiss();
+        getMapFind(startY, startX, endY, endX);
 
         TimerTask tt = new TimerTask() {
             @Override
@@ -154,9 +110,9 @@ public class MapNavigationActivity extends AppCompatActivity implements
     }
 
 
-
-    private String getMapFind(final String startX, final String startY,
-                              final String endX, final String endY) {
+    private void getMapFind(final String startX, final String startY,
+                            final String endX, final String endY) {
+        progressDialog.show();
         Retrofit retrofit = SelfCall.createRetrofit(MapFindApi.BASEURL);
         MapFindApi apiService = retrofit.create(MapFindApi.class);
         Call<MapFindRepoResponse> call =
@@ -259,15 +215,55 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 mBinding.txtNaviMap.setText(naviMembers.get(0).description
                         + " 턴타입 : " + naviMembers.get(0).getTrunTypeByText());
                 totalDistance[0] = repo.getFeatures().get(0).getProperties().getTotalDistance();
+
+                disList.add(0, String.valueOf(totalDistance[0])); // 총 거리 반환
+                disList.add(1, startY);
+                disList.add(2, startX);
+
+                Log.d("테스트 : LAT", String.valueOf(startY));
+                Log.d("테스트 : LONG", String.valueOf(startX));
+
+                MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
+                        Double.parseDouble(startX), Double.parseDouble(startY));
+
+                MapPoint markerPointEnd = MapPoint.mapPointWithGeoCoord(
+                        Double.parseDouble(endX), Double.parseDouble(endY));
+
+
+                MapPOIItem marker = new MapPOIItem(); // 마커 생성
+                marker.setItemName("출발지");
+                marker.setTag(0);
+                marker.setMapPoint(markerPointStart);
+                marker.setMarkerType(MapPOIItem.MarkerType.BluePin);
+                marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
+
+                MapPOIItem marker2 = new MapPOIItem(); // 마커 생성
+                marker2.setItemName("도착지");
+                marker2.setTag(1);
+                marker2.setMapPoint(markerPointEnd);
+                marker2.setMarkerType(MapPOIItem.MarkerType.BluePin);
+                marker2.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
+
+                mapNaviView.addPOIItem(marker);
+                mapNaviView.addPOIItem(marker2);
+
+                mapNaviView.moveCamera(
+                        CameraUpdateFactory.newMapPoint(markerPointStart, -1));
+                mapNaviView.zoomIn(true);
+
+                mapNaviView.setCurrentLocationTrackingMode(
+                        MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
+                mapNaviView.setCurrentLocationEventListener(MapNavigationActivity.this);
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<MapFindRepoResponse> call, Throwable t) {
+                progressDialog.dismiss();
                 Log.d("TEST : ", t.getMessage());
                 totalDistance[0] = 0;
             }
         });
-        return String.valueOf(totalDistance[0]);
     }
 
     @Override
@@ -335,7 +331,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         Double.valueOf(disList.get(1)), //현재위치 Y
                         Double.valueOf(disList.get(2)), "kilometer"); // 현재위치 X
 
-                final Double dis = Math.round(myDistance*10)/10.0;
+                final Double dis = Math.round(myDistance * 10) / 10.0;
                 final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
                 final String myUid = mUser.getUid();
                 Log.e("myUid : ", myUid);
@@ -363,14 +359,14 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 final String now = thisYear + thisMonth + thisDay + thisHour;
                 String rightNowStr = thisMonth + "-" + thisDay + "-" + thisYear + " " + thisHour + ":" + thisMin + ":" + thisSec; //단일 주행기록
                 String dailyTotalStr = thisMonth + "-" + thisDay + "-" + thisYear + " 09:00:00"; //누적 주행기록
-                String monthStr = thisMonth+"-01-"+thisYear+" 00:00:00";
+                String monthStr = thisMonth + "-01-" + thisYear + " 00:00:00";
                 Log.e("right now : ", rightNowStr);
                 Log.e("total : ", dailyTotalStr);
                 DateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
                 try {
                     rightNow = (Date) format.parse(rightNowStr); //단일
-                    total = (Date)format.parse(dailyTotalStr); //누적
-                    month = (Date)format.parse(monthStr);
+                    total = (Date) format.parse(dailyTotalStr); //누적
+                    month = (Date) format.parse(monthStr);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -382,7 +378,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 String totalStr = Long.toString(totalOutPut);
                 final long totalTimestamp = Long.parseLong(totalStr) * 1000;
 
-                long monthOutput = month.getTime()/1000L;
+                long monthOutput = month.getTime() / 1000L;
                 String monthString = Long.toString(monthOutput);
                 final long monthTimestamp = Long.parseLong(monthString) * 1000;
 
@@ -393,7 +389,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 final String route = "dailyData/data/" + nowTimestamp + "/";
 
                 final boolean[] uploadCheck = {false};
-                if(myDistance > 0.0){
+                if (myDistance > 0.0) {
                     userRef = database.getReference("USER");
 
                     userRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -413,10 +409,10 @@ public class MapNavigationActivity extends AppCompatActivity implements
                     ref.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren() ){
+                            for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                                 String uid = dataSnapshot1.getKey();
                                 Log.d("uid : ", uid);
-                                if(myUid.equals(uid)){ //해당 uid로 기존 기록이 있으면
+                                if (myUid.equals(uid)) { //해당 uid로 기존 기록이 있으면
                                     try { //누적기록 업데이트
                                         String preDis = dataSnapshot1.child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalDis").getValue().toString();
                                         String preTime = dataSnapshot1.child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalTime").getValue().toString();
@@ -424,56 +420,56 @@ public class MapNavigationActivity extends AppCompatActivity implements
                                         String monthPreTime = dataSnapshot1.child("monthlyData").child(String.valueOf(monthTimestamp)).child("monthlyTime").getValue().toString();
 
                                         Log.e("preDis : ", preDis);
-                                        if(preDis!=null && monthPreDis!=null){
+                                        if (preDis != null && monthPreDis != null) {
                                             //dailyData
                                             Double updateDis = Double.parseDouble(preDis) + dis;
 
-                                            String [] times = preTime.split(":");
-                                            String [] inputTime = getTime(time).split(":");
+                                            String[] times = preTime.split(":");
+                                            String[] inputTime = getTime(time).split(":");
 
-                                            int [] timeInt = new int[times.length];
-                                            int [] inputTimeInt = new int[inputTime.length];
-                                            for(int i=0; i<times.length ; i++){
+                                            int[] timeInt = new int[times.length];
+                                            int[] inputTimeInt = new int[inputTime.length];
+                                            for (int i = 0; i < times.length; i++) {
                                                 timeInt[i] = Integer.parseInt(times[i]);
                                                 inputTimeInt[i] = Integer.parseInt(inputTime[i]);
                                                 timeInt[i] += inputTimeInt[i];
                                             }
 
-                                            for(int z=2;z >=0;z--){
-                                                if(timeInt[z]>=60){
-                                                    timeInt[z-1] += timeInt[z]/60;
-                                                    timeInt[z] = timeInt[z]%60;
+                                            for (int z = 2; z >= 0; z--) {
+                                                if (timeInt[z] >= 60) {
+                                                    timeInt[z - 1] += timeInt[z] / 60;
+                                                    timeInt[z] = timeInt[z] % 60;
                                                 }
                                             }
-                                            Log.d("timeInt", String.valueOf(timeInt[0])+"시, "+timeInt[1]+", "+timeInt[2]);
-                                            String updateTime = timeInt[0]+":"+timeInt[1]+":"+timeInt[2];
+                                            Log.d("timeInt", String.valueOf(timeInt[0]) + "시, " + timeInt[1] + ", " + timeInt[2]);
+                                            String updateTime = timeInt[0] + ":" + timeInt[1] + ":" + timeInt[2];
 
                                             ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalDis").setValue(updateDis);
                                             ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalTime").setValue(updateTime);
 
                                             //monthlyData
-                                            Double updateMonthDis = Double.parseDouble(monthPreDis)+dis;
-                                            String [] monthTimes = monthPreTime.split(":");
-                                            String [] inputMonthTime = getTime(time).split(":");
-                                            int [] monthTimeInt = new int[monthTimes.length];
-                                            int [] inputMonthTimeInt = new int[inputMonthTime.length];
-                                            for(int i=0; i<monthTimes.length; i++){
+                                            Double updateMonthDis = Double.parseDouble(monthPreDis) + dis;
+                                            String[] monthTimes = monthPreTime.split(":");
+                                            String[] inputMonthTime = getTime(time).split(":");
+                                            int[] monthTimeInt = new int[monthTimes.length];
+                                            int[] inputMonthTimeInt = new int[inputMonthTime.length];
+                                            for (int i = 0; i < monthTimes.length; i++) {
                                                 monthTimeInt[i] = Integer.parseInt(monthTimes[i]);
                                                 inputMonthTimeInt[i] = Integer.parseInt(inputMonthTime[i]);
-                                                monthTimeInt[i]+=inputMonthTimeInt[i];
+                                                monthTimeInt[i] += inputMonthTimeInt[i];
                                             }
 
-                                            for(int z=2; z>=0; z--){
-                                                if(monthTimeInt[z]>60){
-                                                    monthTimeInt[z-1]+=monthTimeInt[z]/60;
-                                                    monthTimeInt[z]=monthTimeInt[z]%60;
+                                            for (int z = 2; z >= 0; z--) {
+                                                if (monthTimeInt[z] > 60) {
+                                                    monthTimeInt[z - 1] += monthTimeInt[z] / 60;
+                                                    monthTimeInt[z] = monthTimeInt[z] % 60;
                                                 }
                                             }
-                                            String updateMonthTime = monthTimeInt[0]+":"+monthTimeInt[1]+":"+monthTimeInt[2];
+                                            String updateMonthTime = monthTimeInt[0] + ":" + monthTimeInt[1] + ":" + monthTimeInt[2];
                                             ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("monthlyDis").setValue(updateMonthDis);
                                             ref.child(myUid).child("monthlyData").child(String.valueOf(monthTimestamp)).child("monthlyTime").setValue(updateMonthTime);
 
-                                        }else{ //당일 누적기록이 없으면
+                                        } else { //당일 누적기록이 없으면
                                             ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalTime").setValue(getTime(time));
                                             ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalDis").setValue(dis);
                                             ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("date").setValue(today);
@@ -485,7 +481,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                                             //유저 인포
                                             ref.child(myUid).child("userInfo").child("nickname").setValue(nickname);
                                             ref.child(myUid).child("userInfo").child("profile").setValue(userProfile);
-                                            Log.e("nickname", nickname+", "+userProfile);
+                                            Log.e("nickname", nickname + ", " + userProfile);
                                             ref.child(myUid).child("userInfo").child("upDownImg").setValue(0);
                                             ref.child(myUid).child("userInfo").child("upDownTxt").setValue(0);
 
@@ -499,13 +495,13 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
                                         }
 
-                                    }catch (Exception e){
+                                    } catch (Exception e) {
                                         e.printStackTrace();
                                     }
 
                                     uploadCheck[0] = true;
                                     break;
-                                }else{ //해당 uid로 기존 기록이 없으면 userInfo도 업로드
+                                } else { //해당 uid로 기존 기록이 없으면 userInfo도 업로드
 
                                     //누적기록
                                     ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalTime").setValue(getTime(time));
@@ -551,12 +547,12 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         }
 
                     });
-                }else{
+                } else {
                     Toast.makeText(getApplicationContext()
                             , "주행기록이 0km 입니다.", Toast.LENGTH_SHORT).show();
                 }
                 Intent intent = getIntent();
-                setResult(RESULT_OK,intent);
+                setResult(RESULT_OK, intent);
                 finish();
             }
         });
