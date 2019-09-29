@@ -55,7 +55,6 @@ public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int i) {
-        final FollowItem item = mlist.get(i);
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance().getCurrentUser();
         final String myUid = auth.getUid();
@@ -79,7 +78,7 @@ public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.Vi
             @Override
             public void onClick(View v) {
                 holder.addFriend.setEnabled(false);
-                Toast.makeText(context, uid, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "팔로잉 되었습니다.", Toast.LENGTH_SHORT).show();
                 //USER의 팔로잉 팔로워 수 증가
                 Userref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

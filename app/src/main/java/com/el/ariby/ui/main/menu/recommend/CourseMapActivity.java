@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.CountDownTimer;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -97,6 +98,8 @@ public class CourseMapActivity extends AppCompatActivity {
         endY = intent.getStringExtra("endY");
         Log.e("intents : ", startX+", "+startY);
 
+
+        //getMapFind(startX, startY, endX, endY);
 
         getMapFind(startX, startY, endX, endY);
         MapPoint markerPointStart = MapPoint.mapPointWithGeoCoord(
@@ -188,7 +191,6 @@ public class CourseMapActivity extends AppCompatActivity {
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0),
                                 (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1));
                         MapPoint marketPoint3 = MapPoint.mapPointWithGeoCoord(points.getY(), points.getX());
-                        Log.d("marketPoint3", String.valueOf((Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0))+"\r"+ (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1));
                         memberPoints.add(points);
                         MapPOIItem marker3 = new MapPOIItem(); // 마커 생성
                         marker3.setItemName(repo.getFeatures().get(i).getProperties().getDescription());
@@ -234,6 +236,99 @@ public class CourseMapActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void getMapFind2(final String startX, final String startY,
+                             final String endX, final String endY,
+                             final String passList) {
+        Retrofit retrofit = SelfCall.createRetrofit(MapFindApi.BASEURL);
+        MapFindApi apiService = retrofit.create(MapFindApi.class);
+        Call<MapFindRepoResponse> call =
+                apiService.getMapFind2("d7673b71-bc89-416a-9ac6-019e5d8f327a", "1",
+                        startX, startY, endX, endY, "123", "234", passList);
+
+        call.enqueue(new Callback<MapFindRepoResponse>() {
+            @Override
+            public void onResponse(Call<MapFindRepoResponse> call,
+                                   Response<MapFindRepoResponse> response) {
+
+                MapFindRepoResponse repo = response.body();
+                int featuresSize;
+                try {
+                    featuresSize = repo.getFeatures().size();
+                } catch (Exception e) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CourseMapActivity.this);
+                    builder.setMessage("목적지까지 연결도로가 없거나 단절되어 길안내가 불가능 합니다.");
+                    builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    builder.show();
+                    return;
+                }
+
+                MapPolyline polyline = new MapPolyline();
+                polyline.setTag(1000);
+                polyline.setLineColor(Color.argb(128, 255, 51, 0)); // Polyline 컬러 지정.
+
+                polyline.addPoint(MapPoint.mapPointWithGeoCoord(
+                        Double.parseDouble(startY), Double.parseDouble(startX)));
+                for (int i = 0; i < featuresSize; i++) {
+                    String type = repo.getFeatures().get(i).getGeometry().getType();
+                    PointDouble points;
+                    if (type.equals("Point")) {
+                        points = new PointDouble(
+                                (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(0),
+                                (Double) repo.getFeatures().get(i).getGeometry().getCoordinates().get(1));
+                        MapPoint marketPoint3 = MapPoint.mapPointWithGeoCoord(points.getY(), points.getX());
+                        memberPoints.add(points);
+                        MapPOIItem marker3 = new MapPOIItem(); // 마커 생성
+                        marker3.setItemName(repo.getFeatures().get(i).getProperties().getDescription());
+                        marker3.setTag(3);
+                        marker3.setMapPoint(marketPoint3);
+                        marker3.setMarkerType(MapPOIItem.MarkerType.RedPin);
+
+                        mapView.addPOIItem(marker3);
+
+                        polyline.addPoint(MapPoint.mapPointWithGeoCoord(points.getY(), points.getX()));
+                    } else if (type.equals("LineString")) {
+                        List<Object> list = repo.getFeatures().get(i).getGeometry().getCoordinates();
+                        for (int k = 0; k < list.size(); k++) { // k
+                            String[] lit = String.valueOf(list.get(k)).split(" ");
+                            Double lineX = Double.parseDouble(lit[0].substring(1, lit[0].length() - 1));
+                            Double lineY = Double.parseDouble(lit[1].substring(0, lit[1].length() - 1));
+                            polyline.addPoint(MapPoint.mapPointWithGeoCoord(lineY, lineX));
+                        }
+                    }
+                }
+                polyline.addPoint(MapPoint.mapPointWithGeoCoord(Double.parseDouble(endY), Double.parseDouble(endX)));
+                mapView.addPolyline(polyline);
+                MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
+                int padding = 150; // px
+                mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
+                kilo = repo.getFeatures().get(0).getProperties().
+                        getTotalDistance().doubleValue() / 1000;
+                Double time2 = (kilo / 13.0) * 60; // 자전거 소요시간 공식 (거리/속도)*분
+
+                int kcal = (int) (72 * 0.0939 * Math.round(time2)); // 평균 몸무게 62 + 자전거 무게 10 * 속도칼로리소비계수*분
+                txtTakeTime.setText(Math.round(time2) + "분");
+                if (kilo >= 1.0) //
+                    txtTakeKilo.setText(Math.round(kilo * 10) / 10.0 + "km");
+                else
+                    txtTakeKilo.setText(Math.round(kilo * 1000) + "m");
+
+                txtTakeKcal.setText(kcal + "kcal");
+            }
+
+            @Override
+            public void onFailure(Call<MapFindRepoResponse> call, Throwable t) {
+                Log.d("TEST : ", t.getMessage());
+            }
+        });
+    }
+
+
     private ArrayList<Double> startLocationService() {
         CourseMapActivity.GPSListener gpsListener = new CourseMapActivity.GPSListener();
         long minTime = 10000;
@@ -317,7 +412,7 @@ public class CourseMapActivity extends AppCompatActivity {
                     intent.putExtra("endY",endX);
                     intent.putExtra("kilo",kilo);
                     layout.removeAllViews();
-                    startActivity(intent);
+                    startActivityForResult(intent,1000);
 
                 } else if(which == 1) {
                     Intent intent = new Intent(getApplicationContext(), MapNavigationRaspberryActivity.class);
@@ -333,5 +428,20 @@ public class CourseMapActivity extends AppCompatActivity {
             }
         });
         builder.show();
+    }
+    @Override
+    protected void onPause() {
+        layout.removeAllViews();
+        super.onPause();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK) {
+            if(requestCode==1000) {
+                finish();
+            }
+        }
     }
 }

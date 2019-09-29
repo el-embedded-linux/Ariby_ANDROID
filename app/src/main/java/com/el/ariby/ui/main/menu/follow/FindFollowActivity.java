@@ -62,24 +62,26 @@ public class FindFollowActivity extends AppCompatActivity {
         mBinding.listFindFollow.setLayoutManager(new LinearLayoutManager(this));
         // 리사이클러뷰에 SimpleTextAdapter 객체 지정.
         editTextFilter = findViewById(R.id.edittxt_find_follow);
-        doWork(new Callback() {
-            @Override
-            public void success(ArrayList<String> nick,ArrayList<String> profile,ArrayList<String> follower,ArrayList<String> follow) {
-                ArrayList<String> checkNick = nick;
-                if(checkNick.isEmpty()){
-                    mRecyclerView.setVisibility(View.GONE);
-                    emptyView.setVisibility(View.VISIBLE);
-                }else{
-                    emptyView.setVisibility(View.GONE);
-                    mRecyclerView.setVisibility(View.VISIBLE);
-                }
-            }
-            @Override
-            public void fail(String errorMessage) {
 
-            }
-        });
+        A th1 = new A();
 
+        B th2 = new B();
+
+        C th3 = new C();
+
+        th1.start();
+        th2.start();
+        try {
+
+            th1.join();
+            th2.join();
+            // join(): 두 개 이상의 쓰레드가 동작할 시 하나의 쓰레드에 대해서 지속을 거는 것. 두 개의 쓰레드가 진행하고 있는데 한 쓰레드에 대해서 join 걸면                                           // 그 쓰레드가 끝날때 까지 기다려준다.
+
+            // cf.) sleep()은 전체 쓰레드에 대해 지연을 건다. 하지만 join()은 특정 쓰레드에 대해 지연을 건다.
+
+        } catch(InterruptedException e) {}
+
+        th3.start();
 
     }
 
@@ -91,70 +93,6 @@ public class FindFollowActivity extends AppCompatActivity {
         userRef = database.getReference("USER");
     }
 
-    public interface Callback{
-        void success(ArrayList<String> nick,ArrayList<String> profile,ArrayList<String> follower,ArrayList<String> follow);
-        void fail(String errorMessage);
-    }
-
-    public void doWork(final Callback mCallback) {
-        DatabaseReference myRef = database.getReference();
-        //followerRef = database.getReference("FRIEND").child("follower").child(myUid)
-        followerRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Followlist.add(snapshot.getKey());
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if(Followlist.contains(snapshot.getKey()) || auth.getUid().equals(snapshot.getKey())){
-
-                    } else{
-                        UidList.add(snapshot.getKey());
-                    }
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                for (int i =0; i<UidList.size(); i++){
-                    nickname = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("nickname").getValue()));
-                    profileUrl = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("userImageURL").getValue()));
-                    followerNum = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("followerNum").getValue()));
-                    followNum = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("followNum").getValue()));
-                    mList.add(new FollowItem(profileUrl, nickname, followNum ,followerNum, UidList.get(i)));
-                }
-                mRecyclerView.setAdapter(new com.el.ariby.ui.main.menu.follow.FindFollowAdapter(getApplicationContext(), mList , R.layout.activity_find_follow));
-                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
     public class FindFollowAdapter extends BaseAdapter {
 
         @Override
@@ -180,6 +118,92 @@ public class FindFollowActivity extends AppCompatActivity {
         }
 
         public void addItem(FollowItem item){ mList.add(item); }
+    }
+
+    class A extends Thread {
+
+        public void run() {
+
+            followerRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Followlist.add(snapshot.getKey());
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
+    }
+
+    class B extends Thread {
+
+        public void run() {
+
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        if(Followlist.contains(snapshot.getKey()) || auth.getUid().equals(snapshot.getKey())){
+
+                        } else{
+                            UidList.add(snapshot.getKey());
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
+    }
+
+    class C extends Thread {
+
+        public void run() {
+
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    //for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    for (int i =0; i<UidList.size(); i++){
+                        nickname = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("nickname").getValue()));
+                        profileUrl = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("userImageURL").getValue()));
+                        followerNum = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("followerNum").getValue()));
+                        followNum = (String.valueOf(dataSnapshot.child(UidList.get(i)).child("followNum").getValue()));
+                        mList.add(new FollowItem(profileUrl, nickname, followNum ,followerNum, UidList.get(i)));
+                    }
+                    if(mList.isEmpty()){
+                        mRecyclerView.setVisibility(View.GONE);
+                        emptyView.setVisibility(View.VISIBLE);
+                    }else{
+                        emptyView.setVisibility(View.GONE);
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                    }
+                    mRecyclerView.setAdapter(new com.el.ariby.ui.main.menu.follow.FindFollowAdapter(getApplicationContext(), mList , R.layout.activity_find_follow));
+                    mAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
     }
 }
 

@@ -72,7 +72,7 @@ public class FollowListAdapter extends RecyclerView.Adapter<FollowListAdapter.Vi
             @Override
             public void onClick(View v) {
                 holder.cancleFollow.setEnabled(false);
-                Toast.makeText(context, uid, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "취소 되었습니다.", Toast.LENGTH_SHORT).show();
                 //USER의 팔로잉 팔로워 수 감소
                 Userref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
