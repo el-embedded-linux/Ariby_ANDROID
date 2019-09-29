@@ -50,7 +50,7 @@ public class RidingrecordAdapter extends RecyclerView.Adapter<RidingrecordAdapte
         holder.date.setText(item.getDate());
         holder.ridingTime.setText(item.getRidingtime());
         holder.ridingKm.setText(item.getRidingkm());
-
+        holder.ridingKcal.setText(item.getRidingkcal());
     }
 
     @Override

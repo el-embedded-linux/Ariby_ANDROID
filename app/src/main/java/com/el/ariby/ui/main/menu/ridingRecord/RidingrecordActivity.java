@@ -60,7 +60,8 @@ public class RidingrecordActivity extends AppCompatActivity {
                                 String ridingTime = dataSnapshot.child(timestamp).child("time").getValue().toString();
                                 String date = dataSnapshot.child(timestamp).child("date").getValue().toString();
                                 String ridingDis = dataSnapshot.child(timestamp).child("distance").getValue().toString()+"km";
-                                RidingrecordItems.add(new Ridingrecorditem(date, ridingDis, ridingTime));
+                                String kcal = dataSnapshot.child(timestamp).child("kcal").getValue().toString()+"kcal";
+                                RidingrecordItems.add(new Ridingrecorditem(date, ridingDis, ridingTime, kcal));
                                 adapter.notifyDataSetChanged();
                             }
 

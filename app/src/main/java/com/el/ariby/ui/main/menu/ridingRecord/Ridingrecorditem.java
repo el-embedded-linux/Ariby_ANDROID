@@ -40,10 +40,11 @@ public class Ridingrecorditem {
     }
 
 
-    public Ridingrecorditem(String date, String ridingkm, String ridingtime) {
+    public Ridingrecorditem(String date, String ridingkm, String ridingtime, String ridingkcal) {
         this.date = date;
         this.ridingtime = ridingtime;
         this.ridingkm = ridingkm;
+        this.ridingkcal = ridingkcal;
     }
 
 }

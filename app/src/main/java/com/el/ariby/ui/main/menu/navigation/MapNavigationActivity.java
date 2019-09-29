@@ -2,6 +2,7 @@ package com.el.ariby.ui.main.menu.navigation;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -68,6 +69,8 @@ public class MapNavigationActivity extends AppCompatActivity implements
     Date total = new Date(); //하루 누적 주행기록
 
     String nickname, userProfile;
+    String weight = "50.0";
+    Double kcal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -384,24 +387,37 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
         final String route = "dailyData/data/" + nowTimestamp + "/";
 
+        userRef = database.getReference("USER");
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                nickname = dataSnapshot.child(myUid).child("nickname").getValue().toString();
+                userProfile = dataSnapshot.child(myUid).child("userImageURL").getValue().toString();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
         final boolean[] uploadCheck = {false};
         if(myDistance > 0.0){
-            userRef = database.getReference("USER");
 
-            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            //final Double finalKcal = kcal;
+            SharedPreferences pref = getSharedPreferences("com.el.ariby_joining", MODE_PRIVATE);
+            int weight = pref.getInt("weight", 0);
+            String riding = getMin(time);
+            Log.d("ridingTime : ", getMin(time));
+            Log.d("weight : ", String.valueOf(weight));
+            /*if(Double.parseDouble(getMin(time))<=0.0){
 
-                    nickname = dataSnapshot.child(myUid).child("nickname").getValue().toString();
-                    userProfile = dataSnapshot.child(myUid).child("userImageURL").getValue().toString();
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
+            }*/
+            kcal =(3.0 * (3.5 * Double.parseDouble(String.valueOf(weight)) * Double.parseDouble(getMin(time))))*5;
+            Log.e("kcal : ", String.valueOf(kcal));
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -534,7 +550,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                     ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("distance").setValue(dis);
                     ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("time").setValue(getTime(time));
                     ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("date").setValue(today);
-
+                    ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("kcal").setValue(kcal);
                 }
 
                 @Override
@@ -605,6 +621,12 @@ public class MapNavigationActivity extends AppCompatActivity implements
         sec = sec % 60;
         min = min % 60;
         return hour + ":" + min + ":" + sec;
+    }
+
+    public String getMin(long sec){
+        long min;
+        min = sec/60;
+        return String.valueOf(min);
     }
 }
 
