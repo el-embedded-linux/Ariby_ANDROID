@@ -103,6 +103,9 @@ public class Group_MapActivity extends AppCompatActivity
     Double longitude = 127.03892;
     ListView listView = null;
 
+   // Double latitude = 0.0;
+    //Double longitude = 0.0;
+
     //drawer
     ArrayList<MemberListItem> memberListItems = new ArrayList<>();
     MemberListAdapter memberListAdapter;
@@ -337,7 +340,25 @@ public class Group_MapActivity extends AppCompatActivity
             public void onTick(long millisUntilFinished) {
                 Log.e("countdownTimer : ", String.valueOf(count));
                 count--;
-                startLocationService();
+                //startLocationService();
+                LocationManager manager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(getApplicationContext(),
+                                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+
+                }
+                Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                Double updateLat = location.getLatitude();
+                Double updateLon = location.getLongitude();
+                //latitude+=0.001;
+                //longitude+=0.001;
+                ref.child(groupName).child("members").child(String.valueOf(myPosition)).child("lat").setValue(updateLat);
+                ref.child(groupName).child("members").child(String.valueOf(myPosition)).child("lon").setValue(updateLon);
+                //Toast.makeText(Group_MapActivity.this, "uploaded", Toast.LENGTH_SHORT).show();
+
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @SuppressLint("LongLogTag")
                     @Override
@@ -374,7 +395,7 @@ public class Group_MapActivity extends AppCompatActivity
             @Override
             public void onFinish() {
                 Log.d("finished", "finished");
-                //countDownTimer.start();
+                countDownTimer.start();
             }
         };
     }
@@ -541,9 +562,7 @@ public class Group_MapActivity extends AppCompatActivity
                     Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
 
         }
-
         Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
         ArrayList<Double> list = new ArrayList<>();
         list.add(location.getLatitude());
         list.add(location.getLongitude());
@@ -553,17 +572,14 @@ public class Group_MapActivity extends AppCompatActivity
                 "\nLongitude : " + location.getLongitude();
         Log.i("Group_SampleLocation ", msg);
         Log.d("myPosition check", String.valueOf(myPosition));
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-
-        ref.child(groupName).child("members").child(String.valueOf(myPosition)).child("lat").setValue(latitude);
-        ref.child(groupName).child("members").child(String.valueOf(myPosition)).child("lon").setValue(longitude);
-        String msg1 = "Latitude : " + latitude + "\nLongitude : " + longitude;
-        Toast.makeText(Group_MapActivity.this, msg1, Toast.LENGTH_SHORT).show();
-        latitude = latitude + 0.001;
-        longitude = longitude + 0.001;
+        //latitude = location.getLatitude();
+        //longitude = location.getLongitude();
+        //latitude += 0.00001;
+        //longitude += 0.00002;
         return list;
     }
+
+
 
     protected Bitmap getCircularBitmap(Bitmap srcBitmap) {
         int squareBitmapWidth = Math.min(srcBitmap.getWidth(), srcBitmap.getHeight());
