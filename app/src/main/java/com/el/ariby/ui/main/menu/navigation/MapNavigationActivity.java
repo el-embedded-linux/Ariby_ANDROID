@@ -78,7 +78,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
     Date total = new Date(); //하루 누적 주행기록
 
     String nickname, userProfile;
-    String weight = "50.0";
+    String weight = "50";
     Double kcal;
 
     //2019.09.30 선룡이가 추가함 라즈베리파이 통신용 변수들
@@ -90,6 +90,9 @@ public class MapNavigationActivity extends AppCompatActivity implements
     String raspDescription = "";
     DatagramSocket socket;
     InetAddress serverAddr;
+
+    final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+    final String myUid = mUser.getUid();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +125,24 @@ public class MapNavigationActivity extends AppCompatActivity implements
         endX = intent.getStringExtra("endX");
         progressDialog = new ProgressDialog(MapNavigationActivity.this);
         progressDialog.setMessage("데이터를 로딩중입니다.");
+
+        userRef = database.getReference("USER");
+
+        Log.e("myUid : ", myUid);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                nickname = dataSnapshot.child(myUid).child("nickname").getValue().toString();
+                userProfile = dataSnapshot.child(myUid).child("userImageURL").getValue().toString();
+                weight = dataSnapshot.child(myUid).child("weight").getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         getMapFind(startY, startX, endY, endX);
 
@@ -398,9 +419,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                         Double.valueOf(disList.get(2)), "kilometer"); // 현재위치 X
 
                 final Double dis = Math.round(myDistance * 10) / 10.0;
-                final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-                final String myUid = mUser.getUid();
-                Log.e("myUid : ", myUid);
+
                 long currentTime = System.currentTimeMillis();
                 final Date date = new Date(currentTime);
                 Date rightNow = new Date(currentTime); //단일 주행기록
@@ -456,32 +475,17 @@ public class MapNavigationActivity extends AppCompatActivity implements
 
                 final boolean[] uploadCheck = {false};
                 if (myDistance > 0.0) {
-                    userRef = database.getReference("USER");
 
-                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                            nickname = dataSnapshot.child(myUid).child("nickname").getValue().toString();
-                            userProfile = dataSnapshot.child(myUid).child("userImageURL").getValue().toString();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
-                    SharedPreferences pref = getSharedPreferences("com.el.ariby_joining", MODE_PRIVATE);
-                    int weight = pref.getInt("weight", 0);
+                    /*SharedPreferences pref = getSharedPreferences("com.el.ariby_joining", MODE_PRIVATE);
+                    int weight = pref.getInt("weight", 0);*/
                     String riding = getMin(time);
+                    double returnTime = Double.parseDouble(riding);
                     Log.d("ridingTime : ", getMin(time));
                     Log.d("weight : ", String.valueOf(weight));
-                    Double returnTime = Double.parseDouble(riding);
-            if(returnTime<=0.0){
-                returnTime+=0.0001;
-            }
-                    kcal =(3.0 * (3.5 * Double.parseDouble(String.valueOf(weight)) * returnTime))*5;
+                    int inputWeight = Integer.parseInt(weight);
+
+                    kcal =(3.0 * (3.5 * inputWeight * returnTime))*5;
                     Log.e("kcal : ", String.valueOf(kcal));
 
                     ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -581,6 +585,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                                     break;
                                 } else { //해당 uid로 기존 기록이 없으면 userInfo도 업로드
 
+                                    Log.e("기존 uid 기록 없음 : ", "none");
                                     //누적기록
                                     ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalTime").setValue(getTime(time));
                                     ref.child(myUid).child("dailyData").child(String.valueOf(totalTimestamp)).child("dailyTotalDis").setValue(dis);
@@ -616,7 +621,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
                             ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("distance").setValue(dis);
                             ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("time").setValue(getTime(time));
                             ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("date").setValue(today);
-
+                            ref.child(myUid).child("dailyData").child("data").child(String.valueOf(nowTimestamp)).child("kcal").setValue(kcal);
                         }
 
                         @Override

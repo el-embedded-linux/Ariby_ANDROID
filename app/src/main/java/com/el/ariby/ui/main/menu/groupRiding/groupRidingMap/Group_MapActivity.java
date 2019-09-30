@@ -545,14 +545,16 @@ public class Group_MapActivity extends AppCompatActivity
         Location location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         ArrayList<Double> list = new ArrayList<>();
-        list.add(latitude);
-        list.add(longitude);
+        list.add(location.getLatitude());
+        list.add(location.getLongitude());
 
         String msg = "Group_Last Known Location -> Latitude : " +
                 location.getLatitude() +
                 "\nLongitude : " + location.getLongitude();
         Log.i("Group_SampleLocation ", msg);
         Log.d("myPosition check", String.valueOf(myPosition));
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
 
         ref.child(groupName).child("members").child(String.valueOf(myPosition)).child("lat").setValue(latitude);
         ref.child(groupName).child("members").child(String.valueOf(myPosition)).child("lon").setValue(longitude);
