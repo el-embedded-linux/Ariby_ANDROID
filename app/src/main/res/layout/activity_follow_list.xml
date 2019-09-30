@@ -15,10 +15,33 @@
     android:orientation="vertical"
     android:background="#fff"
     tools:context=".ui.main.menu.follow.FollowListActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/border_bottom">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="5dp"
+        android:text="팔로잉 리스트"
+        android:textSize="20dp"
+        android:textColor="@color/colorBlack"
+        android:layout_marginStart="7dp"
+        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="현재 내가 팔로잉 하는 유저 리스트입니다."
+            android:layout_marginStart="7dp"
+            android:layout_marginBottom="7dp"/>
+</LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_follow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scrollbars="vertical"
         android:background="#fff">
     </android.support.v7.widget.RecyclerView>
     <TextView

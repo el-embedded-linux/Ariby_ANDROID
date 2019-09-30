@@ -3,11 +3,15 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <ImageView
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_follower_profile"
         android:layout_width="65dp"
         android:layout_height="match_parent"
-        android:id="@+id/img_follower_profile"
-        android:layout_weight="1" />
+        android:src="@drawable/default_image"
+        android:layout_weight="1"
+        android:layout_margin="7dp"
+        />
 
     <LinearLayout
         android:orientation="vertical"

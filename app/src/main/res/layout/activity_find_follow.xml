@@ -15,13 +15,35 @@
         android:orientation="vertical"
         android:background="#fff"
         tools:context=".ui.main.menu.follow.FindFollowActivity">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/border_bottom">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp"
+                android:text="친구 찾기"
+                android:textSize="20dp"
+                android:textColor="@color/colorBlack"
+                android:layout_marginStart="7dp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="닉네임으로 친구를 찾아보세요."
+                android:layout_marginStart="7dp"
+                android:layout_marginBottom="7dp"/>
+        </LinearLayout>
         <EditText
             android:id="@+id/edittxt_find_follow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="검색어를 입력해주세요."
             android:textColorHint="#555252"
-            android:textColor="#000"/>
+            android:textColor="#555252"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list_find_follow"
             android:layout_width="match_parent"
