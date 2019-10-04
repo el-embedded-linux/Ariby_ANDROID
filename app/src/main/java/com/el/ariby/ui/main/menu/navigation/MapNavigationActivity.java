@@ -4,13 +4,13 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.databinding.DataBindingUtil;
+
+import androidx.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -21,8 +21,6 @@ import com.el.ariby.databinding.ActivityMapNavigationBinding;
 import com.el.ariby.ui.api.MapFindApi;
 import com.el.ariby.ui.api.SelfCall;
 import com.el.ariby.ui.api.response.MapFindRepoResponse;
-import com.el.ariby.ui.main.menu.groupRiding.groupRidingMap.Group_MapActivity;
-import com.el.ariby.ui.main.menu.groupRiding.groupRidingMap.MemberListItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;

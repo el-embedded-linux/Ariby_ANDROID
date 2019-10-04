@@ -1,15 +1,13 @@
 package com.el.ariby.ui.main.menu.groupRiding;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
+import androidx.cardview.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.el.ariby.R;
-
-import org.w3c.dom.Text;
 
 
 public class CustomGroupRide extends LinearLayout {

@@ -1,9 +1,8 @@
 package com.el.ariby.ui.main.menu.navigation;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.el.ariby.R;
 

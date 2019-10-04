@@ -49,7 +49,7 @@
         android:spinnerMode="dropdown"
         android:stateListAnimator="@drawable/spinner_sla"></Spinner>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_layout_rank"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -61,5 +61,5 @@
             android:divider="#979797"
             android:dividerHeight="2px">
         </ListView>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </RelativeLayout>

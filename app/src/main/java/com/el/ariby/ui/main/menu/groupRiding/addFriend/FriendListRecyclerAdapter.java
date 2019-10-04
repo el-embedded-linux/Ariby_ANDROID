@@ -3,15 +3,12 @@ package com.el.ariby.ui.main.menu.groupRiding.addFriend;
 import android.content.Context;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 
 import com.el.ariby.R;
@@ -19,7 +16,6 @@ import com.squareup.picasso.Picasso;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class FriendListRecyclerAdapter extends RecyclerView.Adapter<GroupViewHolder>{
 

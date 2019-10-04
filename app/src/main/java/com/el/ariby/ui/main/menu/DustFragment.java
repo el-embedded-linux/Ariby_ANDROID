@@ -12,16 +12,15 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.el.ariby.R;
 import com.el.ariby.databinding.FragmentDustBinding;
@@ -37,7 +36,6 @@ import com.el.ariby.ui.api.response.GeoRepoResponse;
 import com.el.ariby.ui.api.response.MeasureRepoResponse;
 import com.el.ariby.ui.api.response.WeatherRepoResponse;
 import com.el.ariby.ui.main.menu.dust.DustHourData;
-import com.el.ariby.ui.main.menu.groupRiding.groupRidingMap.Group_MapActivity;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
