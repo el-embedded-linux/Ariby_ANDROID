@@ -110,6 +110,15 @@ public class GroupRideActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+
+
     public class GroupRidingAdapter extends BaseAdapter{
 
         @Override

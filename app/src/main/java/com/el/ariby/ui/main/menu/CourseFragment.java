@@ -46,23 +46,38 @@ public class CourseFragment extends Fragment {
     int leaderNo = 0;
     int i=0;
 
+    final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+    final String myUid = mUser.getUid();
+    RecyclerView recyclerView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_group, container, false);
         adapter = new GroupRidingAdapter();
-        final RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view) ;
+        recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         createGroup = view.findViewById(R.id.btn_createG);
 
-        final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("GROUP_RIDING");
         myGroupRef = database.getReference("GROUP_RIDING_MEMBERS");
-        final String myUid = mUser.getUid();
 
+        callList();
+        createGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getContext(), CreateGroupActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        return view;
+    }
+
+
+    public void callList(){
         myGroupRef.child(myUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -71,7 +86,6 @@ public class CourseFragment extends Fragment {
                 if(dataSnapshot.exists()){
                     for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         String groupName = dataSnapshot1.getKey();
-                        Log.d("내 그룹 : ", groupName);
                         myGroupList.add(groupName);
                         //i++;
                     }
@@ -94,7 +108,6 @@ public class CourseFragment extends Fragment {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String groupName = snapshot.getKey();
                         if (myGroupList.get(index).equals(groupName)) {
-                            Log.e("hhhh", groupName);
                             String startPoint = snapshot.child("startPoint").child("name").getValue().toString();
                             String endPoint = snapshot.child("endPoint").child("name").getValue().toString();
                             String leader = snapshot.child("members").child("0").child("nickname").getValue().toString();
@@ -115,19 +128,13 @@ public class CourseFragment extends Fragment {
             }
         });
 
-
-        createGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(getContext(), CreateGroupActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
-        return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        callList();
+    }
 
     public class GroupRidingAdapter extends BaseAdapter {
 
