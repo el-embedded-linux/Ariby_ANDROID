@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,7 +38,7 @@ public class CourseFragment extends Fragment {
     Button createGroup;
     GroupRidingAdapter adapter;
     ArrayList<GroupRideItem> groupRideItems = new ArrayList<GroupRideItem>();
-
+    TextView txtEmpty;
     FirebaseDatabase database;
     DatabaseReference ref;
     DatabaseReference myGroupRef;
@@ -58,7 +59,7 @@ public class CourseFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         createGroup = view.findViewById(R.id.btn_createG);
-
+        txtEmpty = view.findViewById(R.id.txt_empty);
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("GROUP_RIDING");
         myGroupRef = database.getReference("GROUP_RIDING_MEMBERS");
@@ -92,6 +93,15 @@ public class CourseFragment extends Fragment {
                     }
                 }
                 adapter.notifyDataSetChanged();
+                if(myGroupList.isEmpty()){
+                    txtEmpty.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                    return;
+                }else{
+                    txtEmpty.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     int index = 0;
                     @SuppressLint("LongLogTag")

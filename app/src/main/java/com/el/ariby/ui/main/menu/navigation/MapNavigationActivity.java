@@ -474,13 +474,14 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 final boolean[] uploadCheck = {false};
                 if (myDistance > 0.0) {
 
-
-                    /*SharedPreferences pref = getSharedPreferences("com.el.ariby_joining", MODE_PRIVATE);
-                    int weight = pref.getInt("weight", 0);*/
                     String riding = getMin(time);
                     double returnTime = Double.parseDouble(riding);
                     Log.d("ridingTime : ", getMin(time));
                     Log.d("weight : ", String.valueOf(weight));
+                    if(weight.equals("")){
+                        weight = "50";
+                        Log.d("weight is null", "");
+                    }
                     int inputWeight = Integer.parseInt(weight);
 
                     kcal =(3.0 * (3.5 * inputWeight * returnTime))*5;

@@ -64,10 +64,16 @@ public class RidingrecordActivity extends AppCompatActivity {
                                 RidingrecordItems.add(new Ridingrecorditem(date, ridingDis, ridingTime, kcal));
                                 adapter.notifyDataSetChanged();
                             }
-
                         }
                         recyclerView.setAdapter(new com.el.ariby.ui.main.menu.ridingRecord.RidingrecordAdapter(getApplicationContext(), RidingrecordItems, R.layout.activity_ridingrecord));
                         adapter.notifyDataSetChanged();
+                    if(RidingrecordItems.isEmpty()){
+                        recyclerView.setVisibility(View.GONE);
+                        emptyView.setVisibility(View.VISIBLE);
+                    }else{
+                        emptyView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                     }
 
                 @Override

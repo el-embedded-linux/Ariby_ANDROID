@@ -45,6 +45,22 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/txt_empty"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="가입된 그룹이 없습니다."
+            android:textSize="30dp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_createG"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/group_title"
+        />
+
+
+
         <Button
             android:id="@+id/btn_createG"
             android:layout_width="match_parent"
