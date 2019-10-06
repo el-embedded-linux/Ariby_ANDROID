@@ -4,17 +4,18 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.el.ariby.R;
 import com.el.ariby.ui.main.menu.groupRiding.CreateGroupActivity;
@@ -31,7 +32,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-
 public class CourseFragment extends Fragment {
     private static View view;
     Button createGroup;
@@ -45,7 +45,6 @@ public class CourseFragment extends Fragment {
     final ArrayList<String> myGroupList = new ArrayList<>();
     int leaderNo = 0;
     int i=0;
-
     final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
     final String myUid = mUser.getUid();
     RecyclerView recyclerView;
@@ -54,7 +53,7 @@ public class CourseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_group, container, false);
         adapter = new GroupRidingAdapter();
-        recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view) ;
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -64,7 +63,8 @@ public class CourseFragment extends Fragment {
         ref = database.getReference("GROUP_RIDING");
         myGroupRef = database.getReference("GROUP_RIDING_MEMBERS");
 
-        callList();
+        showList();
+
         createGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,8 +76,7 @@ public class CourseFragment extends Fragment {
         return view;
     }
 
-
-    public void callList(){
+    public void showList(){
         myGroupRef.child(myUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -85,55 +84,54 @@ public class CourseFragment extends Fragment {
                 myGroupList.clear();
                 if(dataSnapshot.exists()){
                     for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        //String groupName = dataSnapshot1.getValue().toString();
                         String groupName = dataSnapshot1.getKey();
+                        Log.d("내 그룹 : ", groupName);
                         myGroupList.add(groupName);
                         //i++;
                     }
                 }
                 adapter.notifyDataSetChanged();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            int index = 0;
-            @SuppressLint("LongLogTag")
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                adapter.clearItem();
-                for(int i=0 ; i < myGroupList.size(); i++ ) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        String groupName = snapshot.getKey();
-                        if (myGroupList.get(index).equals(groupName)) {
-                            String startPoint = snapshot.child("startPoint").child("name").getValue().toString();
-                            String endPoint = snapshot.child("endPoint").child("name").getValue().toString();
-                            String leader = snapshot.child("members").child("0").child("nickname").getValue().toString();
-                            groupRideItems.add(new GroupRideItem(groupName, startPoint, endPoint, leader));
-                            index++;
-                            break;
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    int index = 0;
+                    @SuppressLint("LongLogTag")
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        adapter.clearItem();
+                        for(int i=0 ; i < myGroupList.size(); i++ ) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                String groupName = snapshot.getKey();
+                                if (myGroupList.get(index).equals(groupName)) {
+                                    Log.e("hhhh", groupName);
+                                    String startPoint = snapshot.child("startPoint").child("name").getValue().toString();
+                                    String endPoint = snapshot.child("endPoint").child("name").getValue().toString();
+                                    String leader = snapshot.child("members").child("0").child("nickname").getValue().toString();
+                                    groupRideItems.add(new GroupRideItem(groupName, startPoint, endPoint, leader));
+                                    index++;
+                                    break;
+                                }
+                            }
                         }
+                        recyclerView.setAdapter(new RecyclerAdapter(getContext(), groupRideItems, R.layout.activity_group));
+                        adapter.notifyDataSetChanged();
                     }
-                }
-                recyclerView.setAdapter(new RecyclerAdapter(getContext(), groupRideItems, R.layout.activity_group));
-                myGroupList.clear();
-                adapter.notifyDataSetChanged();
-            }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        callList();
+        showList();
     }
 
     public class GroupRidingAdapter extends BaseAdapter {
@@ -161,7 +159,6 @@ public class CourseFragment extends Fragment {
         }
 
         public void addItem(GroupRideItem item){ groupRideItems.add(item); }
-
         public void clearItem(){groupRideItems.clear();}
     }
 
@@ -170,4 +167,3 @@ public class CourseFragment extends Fragment {
 
 
 }
-

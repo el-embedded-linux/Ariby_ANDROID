@@ -284,7 +284,7 @@ public class RankFragment extends Fragment {
                                 adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                             }
                         } catch (Exception e4) {
-
+                            e4.printStackTrace();
                         }
                     }
                 }
@@ -408,7 +408,7 @@ public class RankFragment extends Fragment {
                                             }
                                         }
                                     } catch (Exception e3) {
-
+                                        e3.printStackTrace();
                                     }
                                 }
                             }
@@ -463,7 +463,7 @@ public void dailyRank(){
                             adapter.addItem(new RankingItem(profile, nickname, runningDistance, runningTime, rank, changed, imgUpDown));
                         }
                     } catch (Exception e2) {
-
+                        e2.printStackTrace();
                     }
                 }
             }
@@ -621,7 +621,7 @@ public void dailyRank(){
                                     }
 
                                 } catch (Exception e3) {
-
+                                    e3.printStackTrace();
                                 }
                             }
                         }
@@ -685,7 +685,7 @@ public void dailyRank(){
                                                                            }
                                                                        }
                                                                    } catch (Exception e1) {
-
+                                                                        e1.printStackTrace();
                                                                    }
                                                                }
                                                            }
@@ -813,6 +813,7 @@ public void dailyRank(){
 
                                                                                    }
                                                                                } catch (Exception e) {
+                                                                                e.printStackTrace();
 
                                                                                }
                                                                            }
@@ -1010,7 +1011,7 @@ public void dailyRank(){
                                             }
                                         }
                                     } catch (Exception e) {
-
+                                        e.printStackTrace();
                                     }
                                 }
                             }
