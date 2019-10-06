@@ -411,10 +411,15 @@ public class MapNavigationActivity extends AppCompatActivity implements
                 timer.cancel();
 
                 Double myDistance = distance(
-                        Double.valueOf(disList.get(3)), //start Y
-                        Double.valueOf(disList.get(4)), //start X
+                        Double.valueOf(disList.get(4)), //start Y
+                        Double.valueOf(disList.get(3)), //start X
                         Double.valueOf(disList.get(1)), //현재위치 Y
                         Double.valueOf(disList.get(2)), "kilometer"); // 현재위치 X
+
+                Log.e("테스트", disList.get(3));
+                Log.e("테스트", disList.get(4));
+                Log.e("테스트", disList.get(1));
+                Log.e("테스트", disList.get(2));
 
                 final Double dis = Math.round(myDistance * 10) / 10.0;
 
