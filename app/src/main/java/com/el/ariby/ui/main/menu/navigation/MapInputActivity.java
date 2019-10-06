@@ -104,9 +104,6 @@ public class MapInputActivity extends AppCompatActivity {
             !TextUtils.isEmpty(edtEnd.getText().toString())) {
 
         }
-
-        Toast.makeText(getApplicationContext(),"onPause",Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
@@ -116,7 +113,6 @@ public class MapInputActivity extends AppCompatActivity {
                 !TextUtils.isEmpty(edtEnd.getText().toString())) {
             result = 1;
         }
-        Toast.makeText(getApplicationContext(),"onResume",Toast.LENGTH_SHORT).show();
     }
 
     /**

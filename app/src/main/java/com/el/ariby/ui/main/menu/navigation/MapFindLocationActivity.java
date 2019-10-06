@@ -1,5 +1,6 @@
 package com.el.ariby.ui.main.menu.navigation;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -419,43 +420,24 @@ public class MapFindLocationActivity extends AppCompatActivity implements
         intent.putExtra("endX", endX);
         intent.putExtra("endY", endY);
         intent.putExtra("kilo", kilo);
-        layout.removeAllViews();
-        startActivityForResult(intent,1000);
 
-        ArrayList<String> list = new ArrayList<>();
-        list.add("스마트폰");
-        list.add("라즈베리파이");
-
-        final CharSequence[] items = list.toArray(new String[list.size()]);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("디바이스 선택");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("안내를 시작하시겠습니까?");
+        builder.setPositiveButton("네", new Dialog.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    Intent intent = new Intent(getApplicationContext(), MapNavigationActivity.class);
-                    intent.putExtra("startX", startX);
-                    intent.putExtra("startY", startY);
-                    intent.putExtra("endX", endX);
-                    intent.putExtra("endY", endY);
-                    intent.putExtra("kilo", kilo);
-                    layout.removeAllViews();
-                    startActivityForResult(intent,1000);
-
-                } else if (which == 1) {
-                    Intent intent = new Intent(getApplicationContext(), MapNavigationRaspberryActivity.class);
-                    intent.putExtra("startX", startX);
-                    intent.putExtra("startY", startY);
-                    intent.putExtra("endX", endX);
-                    intent.putExtra("endY", endY);
-                    intent.putExtra("kilo", kilo);
-                    layout.removeAllViews();
-                    startActivity(intent);
-                }
-
+                Intent intent = new Intent(getApplicationContext(), MapNavigationActivity.class);
+                intent.putExtra("startX", startX);
+                intent.putExtra("startY", startY);
+                intent.putExtra("endX", endX);
+                intent.putExtra("endY", endY);
+                intent.putExtra("kilo", kilo);
+                layout.removeAllViews();
+                startActivityForResult(intent,1000);
             }
         });
-        //builder.show();
+        builder.setNegativeButton("아니오", null);
+        builder.show();
     }
 
     @Override

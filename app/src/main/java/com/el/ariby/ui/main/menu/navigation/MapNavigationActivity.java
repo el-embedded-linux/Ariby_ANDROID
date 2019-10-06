@@ -373,7 +373,7 @@ public class MapNavigationActivity extends AppCompatActivity implements
             ++naviCount;
 
             if (naviMembers.get(naviCount).getDescription().equals("도착")) {
-                Toast.makeText(getApplicationContext(), "도착", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "도착했습니다. 안내를 종료합니다.", Toast.LENGTH_LONG).show();
                 /*final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("도착했습니다. 안내를 종료합니다.");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
