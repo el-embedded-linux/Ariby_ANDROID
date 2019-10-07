@@ -2,7 +2,7 @@ package com.el.ariby.ui.main.menu.follow;
 
 import java.util.ArrayList;
 
-public class FollowItem extends ArrayList<String> {
+public class FollowItem{
     private String iconDrawable;
     private String nick;
     private String follwingNum, followerNum;
@@ -34,8 +34,8 @@ public class FollowItem extends ArrayList<String> {
         this.uid=uid;
     }
 
-    public FollowItem(String uid){
-        this.uid=uid;
+    public FollowItem(String nick){
+        this.nick=nick;
     }
 
     public String getUid() {

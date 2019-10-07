@@ -5,10 +5,13 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,18 +27,24 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.ViewHolder> {
+public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.ViewHolder> implements Filterable {
     Context context;
-    private ArrayList<FollowItem> mlist;
+    private ArrayList<FollowItem> mlist ;
+    ArrayList<FollowItem> unFilteredlist;
     int item_layout;
     FirebaseUser auth;
     DatabaseReference Userref, Followref, Followerref;
     FirebaseDatabase database;
+    Filter listFilter;
+
     FindFollowAdapter(Context context, ArrayList<FollowItem> list, int item_layout) {
         this.context = context;
         this.mlist = list;
+        this.unFilteredlist = list;
         this.item_layout = item_layout;
+        Log.d("mlist", String.valueOf(mlist));
     }
 
     @NonNull
@@ -56,7 +65,6 @@ public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.Vi
         Userref = database.getReference("USER");
         Followref = database.getReference("FRIEND").child("following").child(myUid);
         Followerref = database.getReference("FRIEND").child("follower").child(uid);
-
         String nickname = mlist.get(i).getNick();
         String followNum = mlist.get(i).getFollwingNum();
         String followerNum = mlist.get(i).getFollowerNum();
@@ -125,10 +133,39 @@ public class FindFollowAdapter extends RecyclerView.Adapter<FindFollowAdapter.Vi
         });
     }
 
-
     @Override
     public int getItemCount() {
         return mlist.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String charString = constraint.toString();
+                if(charString.isEmpty()) {
+                    mlist = unFilteredlist;
+                } else {
+                    ArrayList<FollowItem> filteringList = new ArrayList<>();
+                    for(FollowItem name : unFilteredlist) {
+                        if(name.getNick().toUpperCase().contains(constraint.toString().toUpperCase())) {
+                            filteringList.add(name);
+                        }
+                    }
+                    mlist = filteringList;
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mlist;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mlist = (ArrayList<FollowItem>)results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
