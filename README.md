@@ -1,4 +1,4 @@
 # Bicycle Riding Application
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/krIY7ZB1JHI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
+# ARIBY_Android Presentation
+[![Video Label](http://img.youtube.com/vi/krIY7ZB1JHI/0.jpg)](https://www.youtube.com/watch?v=krIY7ZB1JHI=0s)
