@@ -31,4 +31,4 @@
   
   
 # ARIBY_Android Presentation(Youtube)
-[![Video Label](http://img.youtube.com/vi/krIY7ZB1JHI/0.jpg)](https://www.youtube.com/watch?v=krIY7ZB1JHI=0s)
+[![Video Label](https://img.youtube.com/vi/GIodJxksGkQ/0.jpg)](https://www.youtube.com/watch?v=GIodJxksGkQ&t=1s)
