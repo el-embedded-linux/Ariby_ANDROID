@@ -4,11 +4,13 @@
 ● 현재 지역의 통합대기정보, 날씨 데이터 제공  
 ● 서울 지역의 추천 경로 제공 및 길찾기 제공  
 
+
 # 사용한 라이브러리
 ● Retrofit2 + OkHttp3  
 ● Glide  
 ● Firebase Auth, Database, Storage  
 ● 
+
 
 # ARIBY_Android Presentation
 [![Video Label](http://img.youtube.com/vi/krIY7ZB1JHI/0.jpg)](https://www.youtube.com/watch?v=krIY7ZB1JHI=0s)
