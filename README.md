@@ -7,9 +7,10 @@
 
 # 사용한 라이브러리
 ● Retrofit2 + OkHttp3  
-● Glide  
+● Glide + Picasso  
 ● Firebase Auth, Database, Storage  
-● 
+● CardView + RecyclerView  
+● KakaoMap + Tmap  
 
 
 # ARIBY_Android Presentation
