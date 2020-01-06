@@ -7,9 +7,15 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Build;
 import android.os.Bundle;
+
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
@@ -23,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.el.ariby.R;
+import com.el.ariby.databinding.ActivityMapSearchBinding;
 import com.el.ariby.ui.main.menu.groupRiding.CreateGroupActivity;
 import com.skt.Tmap.TMapData;
 import com.skt.Tmap.TMapPOIItem;
@@ -36,36 +43,29 @@ import java.util.ArrayList;
 public class MapSearchActivity extends AppCompatActivity implements
         MapSearchAdapter.MapDataOnClickListener {
 
-    EditText etMapName;
-    RecyclerView mRecycle;
     MapSearchAdapter mAdapter;
-    RecyclerView.LayoutManager mLayout;
     ArrayList<MapData> mArrayList;
     ArrayList<MapData> mArrayListTest;
-    Button btnLocation;
-    ImageView btnBack;
+
+    ActivityMapSearchBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map_search);
+        binding=DataBindingUtil.setContentView(this,R.layout.activity_map_search);
 
-        btnLocation=findViewById(R.id.btn_location);
-        etMapName=findViewById(R.id.et_map_name);
-        mRecycle=findViewById(R.id.my_recycler_view);
-        btnBack=findViewById(R.id.btn_back);
-        mLayout = new LinearLayoutManager(this);
-        mRecycle.setLayoutManager(mLayout);
         mArrayList=new ArrayList<>();
         mArrayListTest=new ArrayList<>();
+
         mAdapter=new MapSearchAdapter(this);
-        mRecycle.setAdapter(mAdapter);
+        binding.myRecyclerView.setAdapter(mAdapter);
 
         TMapTapi tMapTapi = new TMapTapi(this);
         tMapTapi.setSKTMapAuthentication("d7673b71-bc89-416a-9ac6-019e5d8f327a");
         final TMapData tmapdata = new TMapData();
 
-        etMapName.addTextChangedListener(new TextWatcher() {
+
+        binding.etMapName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -73,7 +73,7 @@ public class MapSearchActivity extends AppCompatActivity implements
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String str = etMapName.getText().toString();
+                String str = binding.etMapName.getText().toString();
 
                 tmapdata.findAllPOI(str, new TMapData.FindAllPOIListenerCallback() {
                     @Override
@@ -85,7 +85,7 @@ public class MapSearchActivity extends AppCompatActivity implements
                                 목록을 받고 기존 ArrayList에 추가시키는 방식으로 하면 해결된다.
                                  */
                         for (int i = 0; i < poiItem.size(); i++) {
-                            TMapPOIItem item = (TMapPOIItem) poiItem.get(i);
+                            TMapPOIItem item = poiItem.get(i);
                             //if(!(item.getPOIAddress().length()<0))
                             mArrayListTest.add(new MapData(item.getPOIName(),item.getPOIPoint().toString()));
                         }
@@ -107,7 +107,7 @@ public class MapSearchActivity extends AppCompatActivity implements
             public void afterTextChanged(Editable s) {
             }
         });
-        btnLocation.setOnClickListener(new View.OnClickListener() {
+        binding.btnLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArrayList<Double> list = startLocationService();
@@ -120,7 +120,7 @@ public class MapSearchActivity extends AppCompatActivity implements
             }
         });
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
+        binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -133,13 +133,14 @@ public class MapSearchActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         // 키보드 띄우기
-        etMapName.requestFocus();
+        binding.etMapName.requestFocus();
         InputMethodManager inputMethodManager =
                 ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
-        inputMethodManager.showSoftInput(etMapName, InputMethodManager.SHOW_IMPLICIT);
+        inputMethodManager.showSoftInput(binding.etMapName, InputMethodManager.SHOW_IMPLICIT);
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private ArrayList<Double> startLocationService() {
         MapSearchActivity.GPSListener gpsListener = new MapSearchActivity.GPSListener();
         long minTime = 10000;
