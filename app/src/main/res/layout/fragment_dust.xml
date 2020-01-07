@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="java.util.ArrayList"/>
+        <import type="com.el.ariby.ui.main.menu.dust.DustHourData"/>
+        <variable
+            name="dustdata"
+            type="DustHourData" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout"
@@ -64,7 +73,7 @@
             android:layout_marginTop="80dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="52dp"
-            android:text="30"
+            android:text="@{dustdata.khaiValue}"
             android:textAlignment="center"
             android:textColor="#fff"
             android:textSize="72dp"
@@ -208,7 +217,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="19dp"
                     android:layout_marginTop="8dp"
-                    android:text="25㎍/㎥"
+                    android:text="@{@string/pm_value(dustdata.pm10Value)}"
                     android:textColor="#fff"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="@+id/img_dust1"
@@ -220,7 +229,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="25㎍/㎥"
+                    android:text="@{@string/pm_value(dustdata.pm25Value)}"
                     android:textColor="#fff"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="@+id/img_dust2"
@@ -232,7 +241,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="25ppm"
+                    android:text="@{@string/cn_value(dustdata.no2Value)}"
                     android:textColor="#fff"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="@+id/img_dust3"
@@ -244,7 +253,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="25ppm"
+                    android:text="@{@string/cn_value(dustdata.coValue)}"
                     android:textColor="#fff"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="@+id/img_dust4"

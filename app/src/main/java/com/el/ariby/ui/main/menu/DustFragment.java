@@ -91,12 +91,6 @@ public class DustFragment extends Fragment {
                 .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
                 .check();
 
-        mBinding.btnWeather.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
 
     PermissionListener permissionlistener = new PermissionListener() {
@@ -213,11 +207,7 @@ public class DustFragment extends Fragment {
                         for (int i = 0; i < dustHourData.size(); i++) {
                             if (!isNullDustHourData(dustHourData.get(i))) {
                                 DustHourData list = dustHourData.get(i);
-                                mBinding.txtKhai.setText(list.getKhaiValue());
-                                mBinding.txtDust1.setText(list.getPm10Value().concat("㎍/㎥"));
-                                mBinding.txtDust2.setText(list.getPm25Value().concat("㎍/㎥"));
-                                mBinding.txtDust3.setText(list.getNo2Value().concat("ppm"));
-                                mBinding.txtDust4.setText(list.getCoValue().concat("ppm"));
+                                mBinding.setDustdata(list);
                                 setDustView(Integer.parseInt(list.getKhaiValue()),
                                         Integer.parseInt(list.getPm10Value()),
                                         Integer.parseInt(list.getPm25Value()),
@@ -232,8 +222,15 @@ public class DustFragment extends Fragment {
                             for (int i = 0; i < dustHourData.size(); i++) {
                                 if (!isNullDustData(dustHourData.get(i))) {
                                     DustHourData list = dustHourData.get(i);
-                                    mBinding.txtDust1.setText(list.getPm10Value().concat("㎍/㎥"));
-                                    mBinding.txtDust2.setText(list.getPm25Value().concat("㎍/㎥"));
+                                    mBinding.setDustdata(list);
+                                    Log.e("getCoValue : ", list.getCoValue());
+                                    Log.e("getKhaiValue : ", list.getKhaiValue());
+                                    Log.e("getNo2Value : ", list.getNo2Value());
+                                    Log.e("getPm10Value : ", list.getPm10Value());
+                                    Log.e("getPm25Value : ", list.getPm25Value());
+
+
+
                                     setDustPmView(Integer.parseInt(list.getPm10Value()),
                                             Integer.parseInt(list.getPm25Value()));
                                     break;
@@ -353,21 +350,13 @@ public class DustFragment extends Fragment {
             AlertDialog.Builder dialog=new AlertDialog.Builder(getContext());
             dialog.setTitle("나가기");
             dialog.setMessage("GPS가 꺼져있습니다. GPS를 키시겠습니까?");
-            dialog.setPositiveButton("네", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    intent.addCategory(Intent.CATEGORY_DEFAULT);
-                    startActivity(intent);
-                }
+            dialog.setPositiveButton("네", (dialog12, which) -> {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                startActivity(intent);
             });
 
-            dialog.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
+            dialog.setNegativeButton("아니오", (dialog1, which) -> dialog1.cancel());
             dialog.show();
         } else {
             // LocationManaer.NETWORK_PROVIDER : 기지국들로부터 현재 위치 확인
