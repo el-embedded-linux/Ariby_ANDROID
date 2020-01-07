@@ -23,13 +23,7 @@
         <activity android:name=".ui.main.menu.follow.FollowListActivity" />
         <activity android:name=".ui.main.menu.navigation.MapFindLocationActivity" />
         <activity android:name=".ui.main.menu.follow.FindFollowActivity" />
-        <activity android:name=".ui.main.menu.navigation.MapSearchActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".ui.main.menu.navigation.MapSearchActivity"/>
         <activity android:name=".ui.main.menu.navigation.MapInputActivity" />
         <activity android:name=".ui.main.MapActivity" />
         <activity android:name=".ui.main.menu.club.ClubMemberActivity" />
@@ -39,7 +33,13 @@
         <activity android:name=".ui.main.menu.groupRiding.GroupRideActivity" />
         <activity android:name=".ui.join.NicknameActivity" />
         <activity android:name=".ui.login.LoginActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".SplashActivity"/>
         <activity android:name=".FirstActivity" />
         <activity android:name=".ui.join.HeightActivity" />
