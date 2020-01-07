@@ -18,23 +18,25 @@
 ● 대기오염정보조회서비스 (https://www.data.go.kr/dataset/15000581/openapi.do)  
 ● 측정소정보조회 서비스 (https://www.data.go.kr/dataset/15000660/openapi.do)  
 ● 동네예보정보조회서비스 (https://www.data.go.kr/dataset/15000099/openapi.do)  
+
+# 제작자(EL)
+● 이다원, 이원경, 신희재
   
 # ● Firebase를 이용한 회원관리
-![Alt Text](https://github.com/el-embedded-linux/Ariby_ANDROID/blob/master/app/src/main/res/drawable/1.gif)
+![Alt Text](https://github.com/el-embedded-linux/Ariby_ANDROID/blob/master/app/src/main/res/drawable/gif_1.gif)
   
   
 # ● 네비게이션 기능
-![Alt Text](https://github.com/el-embedded-linux/Ariby_ANDROID/blob/master/app/src/main/res/drawable/3.gif)
+![Alt Text](https://github.com/el-embedded-linux/Ariby_ANDROID/blob/master/app/src/main/res/drawable/gif_3.gif)
   
   
 # ● 커뮤니티 기능
-![Alt Text](https://github.com/el-embedded-linux/Ariby_ANDROID/blob/master/app/src/main/res/drawable/2.gif)
+![Alt Text](https://github.com/el-embedded-linux/Ariby_ANDROID/blob/master/app/src/main/res/drawable/gif_2.gif)
   
   
 # ● 그룹라이딩 및 추천경로
-![Alt Text](https://github.com/el-embedded-linux/Ariby_ANDROID/blob/master/app/src/main/res/drawable/4.gif)
+![Alt Text](https://github.com/el-embedded-linux/Ariby_ANDROID/blob/master/app/src/main/res/drawable/gif_4.gif)
   
-
   
   
 # ARIBY_Android Presentation(Youtube)
