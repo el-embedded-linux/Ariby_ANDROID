@@ -7,35 +7,30 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.databinding.DataBindingUtil;
 
 import com.el.ariby.R;
 import com.el.ariby.databinding.ActivityMapSearchBinding;
 import com.el.ariby.ui.main.menu.groupRiding.CreateGroupActivity;
+import com.jakewharton.rxbinding3.widget.RxTextView;
 import com.skt.Tmap.TMapData;
 import com.skt.Tmap.TMapPOIItem;
 import com.skt.Tmap.TMapTapi;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 /**
  * 출발지, 도착지 검색 액티비티
@@ -47,85 +42,54 @@ public class MapSearchActivity extends AppCompatActivity implements
     ArrayList<MapData> mArrayList;
     ArrayList<MapData> mArrayListTest;
 
+    ArrayList<MapData> test;
+
     ActivityMapSearchBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=DataBindingUtil.setContentView(this,R.layout.activity_map_search);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_map_search);
 
-        mArrayList=new ArrayList<>();
-        mArrayListTest=new ArrayList<>();
+        mArrayList = new ArrayList<>();
+        mArrayListTest = new ArrayList<>();
 
-        mAdapter=new MapSearchAdapter(this);
+        test = new ArrayList<>();
+
+        mAdapter = new MapSearchAdapter(this);
         binding.myRecyclerView.setAdapter(mAdapter);
 
         TMapTapi tMapTapi = new TMapTapi(this);
         tMapTapi.setSKTMapAuthentication("d7673b71-bc89-416a-9ac6-019e5d8f327a");
         final TMapData tmapdata = new TMapData();
 
-
-        binding.etMapName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String str = binding.etMapName.getText().toString();
-
-                tmapdata.findAllPOI(str, new TMapData.FindAllPOIListenerCallback() {
-                    @Override
-                    public void onFindAllPOI(ArrayList<TMapPOIItem> poiItem) {
-                        mArrayListTest.clear();
-                                /*
-                                 java.lang.IndexOutOfBoundsException: Inconsistency detected
-                                너무 빠른 요청은 에러를 발생시키기 때문에 새로운 ArrayList를 만들어서
-                                목록을 받고 기존 ArrayList에 추가시키는 방식으로 하면 해결된다.
-                                 */
-                        for (int i = 0; i < poiItem.size(); i++) {
-                            TMapPOIItem item = poiItem.get(i);
-                            //if(!(item.getPOIAddress().length()<0))
-                            mArrayListTest.add(new MapData(item.getPOIName(),item.getPOIPoint().toString()));
-                        }
-
-                        // ui 접근
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mArrayList.clear();
-                                mArrayList.addAll(mArrayListTest);
-                                mAdapter.replaceAll(mArrayListTest);
+        Disposable map = RxTextView.textChangeEvents(binding.etMapName)
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .map(text -> text.getText().toString())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(text ->
+                        tmapdata.findAllPOI(text, item -> {
+                            test.clear();
+                            for (int i = 0; i < item.size(); i++) {
+                                TMapPOIItem item2 = item.get(i);
+                                test.add(new MapData(item2.getPOIName(), item2.getPOIPoint().toString()));
                             }
-                        });
-                    }
-                });
-            }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-        binding.btnLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArrayList<Double> list = startLocationService();
-                Intent intent = getIntent();
-                intent.putExtra("X",Double.toString(list.get(0)));
-                intent.putExtra("Y",Double.toString(list.get(1)));
-                setResult(MapInputActivity.CODE_MAP_CURRENT_SEARCH, intent);
-                setResult(CreateGroupActivity.CODE_MAP_CURRENT_SEARCH, intent);
-                finish();
-            }
+                            runOnUiThread(() ->
+                                    mAdapter.replaceAll(test));
+                        }));
+
+        binding.btnLocation.setOnClickListener(v -> {
+            ArrayList<Double> list = startLocationService();
+            Intent intent = getIntent();
+            intent.putExtra("X", Double.toString(list.get(0)));
+            intent.putExtra("Y", Double.toString(list.get(1)));
+            setResult(MapInputActivity.CODE_MAP_CURRENT_SEARCH, intent);
+            setResult(CreateGroupActivity.CODE_MAP_CURRENT_SEARCH, intent);
+            finish();
         });
 
-        binding.btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        binding.btnBack.setOnClickListener(v -> finish());
 
     }
 
@@ -176,6 +140,7 @@ public class MapSearchActivity extends AppCompatActivity implements
 
     /**
      * MapSearchAdapter 리스너 구현
+     *
      * @param mapData MapData
      */
     @Override
